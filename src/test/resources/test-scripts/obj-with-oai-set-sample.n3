@@ -1,0 +1,48 @@
+@prefix nt: <http://www.jcp.org/jcr/nt/1.0> .
+@prefix ns001: <info:fedora/fedora-system:def/model#> .
+@prefix test: <info:fedora/test/> .
+@prefix ns002: <info:fedora/fedora-system:def/relations-external#> .
+@prefix ns003: <http://scholarsphere.psu.edu/ns#> .
+@prefix ns004: <http://purl.org/dc/terms/> .
+@prefix xs: <http://www.w3.org/2001/XMLSchema> .
+@prefix mode: <http://www.modeshape.org/1.0> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix oai: <http://www.openarchives.org/OAI/2.0/> .
+@prefix ns006: <http://www.w3.org/ns/auth/acl#> .
+@prefix ns005: <http://id.loc.gov/vocabulary/relators/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sv: <http://www.jcp.org/jcr/sv/1.0> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix fedoraconfig: <http://fedora.info/definitions/v4/config#> .
+@prefix image: <http://www.modeshape.org/images/1.0> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix mix: <http://www.jcp.org/jcr/mix/1.0> .
+@prefix premis: <http://www.loc.gov/premis/rdf/v1#> .
+@prefix authz: <http://fedora.info/definitions/v4/authorization#> .
+@prefix xsi: <http://www.w3.org/2001/XMLSchema-instance> .
+@prefix fedora: <http://fedora.info/definitions/v4/repository#> .
+@prefix ldp: <http://www.w3.org/ns/ldp#> .
+
+
+<http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/obj-with-oai-set> a ldp:RDFSource , ldp:Container , <http://www.jcp.org/jcr/nt/1.0folder> , <http://www.jcp.org/jcr/nt/1.0hierarchyNode> , <http://www.jcp.org/jcr/nt/1.0base> , <http://www.jcp.org/jcr/mix/1.0created> , fedora:Container , fedora:Resource , fedora:Resource , <http://www.jcp.org/jcr/mix/1.0created> , <http://www.jcp.org/jcr/mix/1.0lastModified> , <http://www.jcp.org/jcr/mix/1.0referenceable> ;
+	fedora:primaryType "nt:folder"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dc:title "Object with OAI Set"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dc:creator "Charoenwattana, Piyapong"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:created "2015-02-26T22:33:29.184Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+	fedora:lastModified "2015-02-27T18:08:17.882Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+	dc:subject "OAI Set"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedoraconfig:isPartOfOAISet "oai-test-set"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:mixinTypes "fedora:Container"^^<http://www.w3.org/2001/XMLSchema#string> , "fedora:Resource"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:lastModifiedBy "fedoraAdmin"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:uuid "cbefcb49-e486-4a64-9e69-d168c5d171c2"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:createdBy "fedoraAdmin"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:writable "true"^^<http://www.w3.org/2001/XMLSchema#boolean> ;
+	fedora:hasParent <http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/> ;
+	fedora:hasAccessRoles <http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/obj-with-oai-set/fcr:accessroles> .
+
+<http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/obj-with-oai-set/fcr:export?format=jcr/xml> dc:format <http://fedora.info/definitions/v4/repository#jcr/xml> .
+
+<http://fedora.info/definitions/v4/repository#jcr/xml> rdfs:label "jcr/xml"^^<http://www.w3.org/2001/XMLSchema#string> .
+
+<http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/obj-with-oai-set> fedora:exportsAs <http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/obj-with-oai-set/fcr:export?format=jcr/xml> .

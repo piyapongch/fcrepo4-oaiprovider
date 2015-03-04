@@ -1,0 +1,2 @@
+# This script creates a OAI set from oai_set.xml file
+curl -X POST http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/oai/sets -H "Content-Type: text/xml" -d @oai_set.xml -u fedoraAdmin:fedoraAdmin

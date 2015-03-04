@@ -1,0 +1,52 @@
+[
+    {
+        "@id": "http://fedora.info/definitions/v4/repository#jcr/xml",
+        "http://www.w3.org/2000/01/rdf-schema#label": [{"@value": "jcr/xml"}]
+    },
+    {
+        "@id": "http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/obj-with-oai-set",
+        "@type": [
+            "http://www.w3.org/ns/ldp#RDFSource",
+            "http://www.w3.org/ns/ldp#Container",
+            "http://www.jcp.org/jcr/nt/1.0folder",
+            "http://www.jcp.org/jcr/nt/1.0hierarchyNode",
+            "http://www.jcp.org/jcr/nt/1.0base",
+            "http://www.jcp.org/jcr/mix/1.0created",
+            "http://fedora.info/definitions/v4/repository#Container",
+            "http://fedora.info/definitions/v4/repository#Resource",
+            "http://www.jcp.org/jcr/mix/1.0lastModified",
+            "http://www.jcp.org/jcr/mix/1.0referenceable"
+        ],
+        "http://fedora.info/definitions/v4/config#isPartOfOAISet": [{"@value": "oai-test-set"}],
+        "http://fedora.info/definitions/v4/repository#created": [{
+            "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+            "@value": "2015-02-26T22:33:29.184Z"
+        }],
+        "http://fedora.info/definitions/v4/repository#createdBy": [{"@value": "fedoraAdmin"}],
+        "http://fedora.info/definitions/v4/repository#exportsAs": [{"@id": "http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/obj-with-oai-set/fcr:export?format=jcr/xml"}],
+        "http://fedora.info/definitions/v4/repository#hasAccessRoles": [{"@id": "http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/obj-with-oai-set/fcr:accessroles"}],
+        "http://fedora.info/definitions/v4/repository#hasParent": [{"@id": "http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/"}],
+        "http://fedora.info/definitions/v4/repository#lastModified": [{
+            "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+            "@value": "2015-02-27T18:08:17.882Z"
+        }],
+        "http://fedora.info/definitions/v4/repository#lastModifiedBy": [{"@value": "fedoraAdmin"}],
+        "http://fedora.info/definitions/v4/repository#mixinTypes": [
+            {"@value": "fedora:Container"},
+            {"@value": "fedora:Resource"}
+        ],
+        "http://fedora.info/definitions/v4/repository#primaryType": [{"@value": "nt:folder"}],
+        "http://fedora.info/definitions/v4/repository#uuid": [{"@value": "cbefcb49-e486-4a64-9e69-d168c5d171c2"}],
+        "http://fedora.info/definitions/v4/repository#writable": [{
+            "@type": "http://www.w3.org/2001/XMLSchema#boolean",
+            "@value": "true"
+        }],
+        "http://purl.org/dc/elements/1.1/creator": [{"@value": "Charoenwattana, Piyapong"}],
+        "http://purl.org/dc/elements/1.1/subject": [{"@value": "OAI Set"}],
+        "http://purl.org/dc/elements/1.1/title": [{"@value": "Object with OAI Set"}]
+    },
+    {
+        "@id": "http://localhost:8080/fcrepo-webapp-plus-rbacl-4.1.0/rest/obj-with-oai-set/fcr:export?format=jcr/xml",
+        "http://purl.org/dc/elements/1.1/format": [{"@id": "http://fedora.info/definitions/v4/repository#jcr/xml"}]
+    }
+]

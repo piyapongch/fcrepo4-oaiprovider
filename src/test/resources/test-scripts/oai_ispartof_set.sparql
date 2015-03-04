@@ -1,0 +1,1 @@
+INSERT {<> <http://fedora.info/definitions/v4/config#isPartOfOAISet> "oai-test-set-2"} WHERE {}
