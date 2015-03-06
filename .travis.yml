@@ -1,7 +1,6 @@
 language: java
 jdk:
   - oraclejdk7
-install: mvn install -DskipTests=true
 notifications:
   email:
       - piyapong.charoenwattana@ualberta.ca
