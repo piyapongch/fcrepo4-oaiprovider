@@ -1,6 +1,9 @@
 language: java
 jdk:
   - oraclejdk7
+branches:
+    only:
+        - pcharoen
 notifications:
   email:
       - piyapong.charoenwattana@ualberta.ca
