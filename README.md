@@ -1,6 +1,6 @@
 OAI Provider for Fedora 4
 =========================
-[![Build Status](https://travis-ci.org/ualbertalib/fcrepo4-oaiprovider.svg?branch=dev)](https://travis-ci.org/ualbertalib/fcrepo4-oaiprovider)
+[![Build Status](https://travis-ci.org/ualbertalib/fcrepo4-oaiprovider.svg?branch=pcharoen)](https://travis-ci.org/ualbertalib/fcrepo4-oaiprovider)
 
 Implements [Open Archives Protocol Version 2.0](http://www.openarchives.org/OAI/openarchivesprotocol.html) using Fedora 4 as the backend.
 
