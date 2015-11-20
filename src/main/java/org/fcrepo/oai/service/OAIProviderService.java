@@ -97,7 +97,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
@@ -169,8 +168,7 @@ public class OAIProviderService {
     /**
      * Sets property has set spec.
      *
-     * @param propertyHasSetSpec
-     *            the property has set spec
+     * @param propertyHasSetSpec the property has set spec
      */
     public void setPropertyHasSetSpec(final String propertyHasSetSpec) {
         this.propertyHasSetSpec = propertyHasSetSpec;
@@ -179,8 +177,7 @@ public class OAIProviderService {
     /**
      * Sets property set name.
      *
-     * @param propertySetName
-     *            the property set name
+     * @param propertySetName the property set name
      */
     public void setPropertySetName(final String propertySetName) {
         this.propertySetName = propertySetName;
@@ -189,8 +186,7 @@ public class OAIProviderService {
     /**
      * Sets property has sets.
      *
-     * @param propertyHasSets
-     *            the property has sets
+     * @param propertyHasSets the property has sets
      */
     public void setPropertyHasSets(final String propertyHasSets) {
         this.propertyHasSets = propertyHasSets;
@@ -199,8 +195,7 @@ public class OAIProviderService {
     /**
      * Sets max list size.
      *
-     * @param maxListSize
-     *            the max list size
+     * @param maxListSize the max list size
      */
     public void setMaxListSize(final int maxListSize) {
         this.maxListSize = maxListSize;
@@ -209,8 +204,7 @@ public class OAIProviderService {
     /**
      * Sets property is part of set.
      *
-     * @param propertyIsPartOfSet
-     *            the property is part of set
+     * @param propertyIsPartOfSet the property is part of set
      */
     public void setPropertyIsPartOfSet(final String propertyIsPartOfSet) {
         this.propertyIsPartOfSet = propertyIsPartOfSet;
@@ -219,8 +213,7 @@ public class OAIProviderService {
     /**
      * Set propertyOaiRepositoryName
      * 
-     * @param propertyOaiRepositoryName
-     *            the oai repository name
+     * @param propertyOaiRepositoryName the oai repository name
      */
     public void setPropertyOaiRepositoryName(final String propertyOaiRepositoryName) {
         this.propertyOaiRepositoryName = propertyOaiRepositoryName;
@@ -229,8 +222,7 @@ public class OAIProviderService {
     /**
      * Set propertyOaiDescription
      * 
-     * @param propertyOaiDescription
-     *            the oai description
+     * @param propertyOaiDescription the oai description
      */
     public void setPropertyOaiDescription(final String propertyOaiDescription) {
         this.propertyOaiDescription = propertyOaiDescription;
@@ -239,8 +231,7 @@ public class OAIProviderService {
     /**
      * Set propertyOaiAdminEmail
      * 
-     * @param propertyOaiAdminEmail
-     *            the oai admin email
+     * @param propertyOaiAdminEmail the oai admin email
      */
     public void setPropertyOaiAdminEmail(final String propertyOaiAdminEmail) {
         this.propertyOaiAdminEmail = propertyOaiAdminEmail;
@@ -249,8 +240,7 @@ public class OAIProviderService {
     /**
      * Set oaiNamespace
      * 
-     * @param oaiNamespace
-     *            the oai namespace
+     * @param oaiNamespace the oai namespace
      */
     public void setOaiNamespace(final String oaiNamespace) {
         this.oaiNamespace = oaiNamespace;
@@ -259,8 +249,7 @@ public class OAIProviderService {
     /**
      * Sets sets root path.
      *
-     * @param setsRootPath
-     *            the sets root path
+     * @param setsRootPath the sets root path
      */
     public void setSetsRootPath(final String setsRootPath) {
         this.setsRootPath = setsRootPath;
@@ -269,8 +258,7 @@ public class OAIProviderService {
     /**
      * Sets sets enabled.
      *
-     * @param setsEnabled
-     *            the sets enabled
+     * @param setsEnabled the sets enabled
      */
     public void setSetsEnabled(final boolean setsEnabled) {
         this.setsEnabled = setsEnabled;
@@ -279,8 +267,7 @@ public class OAIProviderService {
     /**
      * Sets auto generate oai dc.
      *
-     * @param autoGenerateOaiDc
-     *            the auto generate oai dc
+     * @param autoGenerateOaiDc the auto generate oai dc
      */
     public void setAutoGenerateOaiDc(final boolean autoGenerateOaiDc) {
         this.autoGenerateOaiDc = autoGenerateOaiDc;
@@ -289,8 +276,7 @@ public class OAIProviderService {
     /**
      * Sets metadata formats.
      *
-     * @param metadataFormats
-     *            the metadata formats
+     * @param metadataFormats the metadata formats
      */
     public void setMetadataFormats(final Map<String, MetadataFormat> metadataFormats) {
         this.metadataFormats = metadataFormats;
@@ -299,8 +285,7 @@ public class OAIProviderService {
     /**
      * Sets descriptive content.
      *
-     * @param descriptiveContent
-     *            the descriptive content
+     * @param descriptiveContent the descriptive content
      */
     public void setDescriptiveContent(final Map<String, String> descriptiveContent) {
         this.descriptiveContent = descriptiveContent;
@@ -309,8 +294,7 @@ public class OAIProviderService {
     /**
      * Service intitialization
      *
-     * @throws RepositoryException
-     *             the repository exception
+     * @throws RepositoryException the repository exception
      */
     @PostConstruct
     public void init() throws RepositoryException {
@@ -345,10 +329,8 @@ public class OAIProviderService {
     /**
      * Instantiates a new OAI provider service.
      *
-     * @throws DatatypeConfigurationException
-     *             the datatype configuration exception
-     * @throws JAXBException
-     *             the jAXB exception
+     * @throws DatatypeConfigurationException the datatype configuration exception
+     * @throws JAXBException the jAXB exception
      */
     public OAIProviderService() throws DatatypeConfigurationException, JAXBException {
         this.dataFactory = DatatypeFactory.newInstance();
@@ -359,15 +341,11 @@ public class OAIProviderService {
     /**
      * Identify jAXB element.
      *
-     * @param session
-     *            the session
-     * @param uriInfo
-     *            the uri info
+     * @param session the session
+     * @param uriInfo the uri info
      * @return the jAXB element
-     * @throws RepositoryException
-     *             the repository exception
-     * @throws JAXBException
-     *             the jAXB exception
+     * @throws RepositoryException the repository exception
+     * @throws JAXBException the jAXB exception
      */
     public JAXBElement<OAIPMHtype> identify(final Session session, final UriInfo uriInfo)
         throws RepositoryException, JAXBException {
@@ -417,15 +395,11 @@ public class OAIProviderService {
     /**
      * List metadata formats.
      *
-     * @param session
-     *            the session
-     * @param uriInfo
-     *            the uri info
-     * @param identifier
-     *            the identifier
+     * @param session the session
+     * @param uriInfo the uri info
+     * @param identifier the identifier
      * @return the jAXB element
-     * @throws RepositoryException
-     *             the repository exception
+     * @throws RepositoryException the repository exception
      */
     public JAXBElement<OAIPMHtype> listMetadataFormats(final Session session, final UriInfo uriInfo,
         final String identifier) throws RepositoryException {
@@ -486,17 +460,12 @@ public class OAIProviderService {
     /**
      * Gets record.
      *
-     * @param session
-     *            the session
-     * @param uriInfo
-     *            the uri info
-     * @param identifier
-     *            the identifier
-     * @param metadataPrefix
-     *            the metadata prefix
+     * @param session the session
+     * @param uriInfo the uri info
+     * @param identifier the identifier
+     * @param metadataPrefix the metadata prefix
      * @return the record
-     * @throws RepositoryException
-     *             the repository exception
+     * @throws RepositoryException the repository exception
      */
     public JAXBElement<OAIPMHtype> getRecord(final Session session, final UriInfo uriInfo, final String identifier,
         final String metadataPrefix) throws RepositoryException {
@@ -567,16 +536,11 @@ public class OAIProviderService {
     /**
      * Creates a OAI error response for JAX-B
      *
-     * @param verb
-     *            the verb
-     * @param identifier
-     *            the identifier
-     * @param metadataPrefix
-     *            the metadata prefix
-     * @param errorCode
-     *            the error code
-     * @param msg
-     *            the msg
+     * @param verb the verb
+     * @param identifier the identifier
+     * @param metadataPrefix the metadata prefix
+     * @param errorCode the error code
+     * @param msg the msg
      * @return the jAXB element
      */
     public static JAXBElement<OAIPMHtype> error(final VerbType verb, final String identifier,
@@ -598,23 +562,15 @@ public class OAIProviderService {
     /**
      * List identifiers.
      *
-     * @param session
-     *            the session
-     * @param uriInfo
-     *            the uri info
-     * @param metadataPrefix
-     *            the metadata prefix
-     * @param from
-     *            the from
-     * @param until
-     *            the until
-     * @param set
-     *            the set
-     * @param offset
-     *            the offset
+     * @param session the session
+     * @param uriInfo the uri info
+     * @param metadataPrefix the metadata prefix
+     * @param from the from
+     * @param until the until
+     * @param set the set
+     * @param offset the offset
      * @return the jAXB element
-     * @throws RepositoryException
-     *             the repository exception
+     * @throws RepositoryException the repository exception
      */
     public JAXBElement<OAIPMHtype> listIdentifiers(final Session session, final UriInfo uriInfo,
         final String metadataPrefix, final String from, final String until, final String set, final int offset)
@@ -707,21 +663,14 @@ public class OAIProviderService {
     /**
      * Encode resumption token.
      *
-     * @param verb
-     *            the verb
-     * @param metadataPrefix
-     *            the metadata prefix
-     * @param from
-     *            the from
-     * @param until
-     *            the until
-     * @param set
-     *            the set
-     * @param offset
-     *            the offset
+     * @param verb the verb
+     * @param metadataPrefix the metadata prefix
+     * @param from the from
+     * @param until the until
+     * @param set the set
+     * @param offset the offset
      * @return the string
-     * @throws UnsupportedEncodingException
-     *             the unsupported encoding exception
+     * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     public static String encodeResumptionToken(final String verb, final String metadataPrefix, final String from,
         final String until, final String set, final int offset) throws UnsupportedEncodingException {
@@ -735,11 +684,9 @@ public class OAIProviderService {
     /**
      * Url encode.
      *
-     * @param value
-     *            the value
+     * @param value the value
      * @return the string
-     * @throws UnsupportedEncodingException
-     *             the unsupported encoding exception
+     * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     public static String urlEncode(final String value) throws UnsupportedEncodingException {
         return URLEncoder.encode(value, "UTF-8");
@@ -748,11 +695,9 @@ public class OAIProviderService {
     /**
      * Url decode.
      *
-     * @param value
-     *            the value
+     * @param value the value
      * @return the string
-     * @throws UnsupportedEncodingException
-     *             the unsupported encoding exception
+     * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     public static String urlDecode(final String value) throws UnsupportedEncodingException {
         return URLDecoder.decode(value, "UTF-8");
@@ -761,11 +706,9 @@ public class OAIProviderService {
     /**
      * Decode resumption token.
      *
-     * @param token
-     *            the token
+     * @param token the token
      * @return the resumption token
-     * @throws UnsupportedEncodingException
-     *             the unsupported encoding exception
+     * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     public static ResumptionToken decodeResumptionToken(final String token) throws UnsupportedEncodingException {
         final String[] data = StringUtils.splitPreserveAllTokens(new String(Base64.decodeBase64(token)), ':');
@@ -781,15 +724,11 @@ public class OAIProviderService {
     /**
      * List sets.
      *
-     * @param session
-     *            the session
-     * @param uriInfo
-     *            the uri info
-     * @param offset
-     *            the offset
+     * @param session the session
+     * @param uriInfo the uri info
+     * @param offset the offset
      * @return the jAXB element
-     * @throws RepositoryException
-     *             the repository exception
+     * @throws RepositoryException the repository exception
      */
     public JAXBElement<OAIPMHtype> listSets(final Session session, final UriInfo uriInfo, final int offset)
         throws RepositoryException {
@@ -811,32 +750,20 @@ public class OAIProviderService {
             final String propHasOAISetName = getPropertyName(session, createProperty(propertySetName));
             final String propHasOAISetSpec = getPropertyName(session, createProperty(propertyHasSetSpec));
 
-            // get set list from triples
-            final FedoraResource root = this.nodeService.find(session, setsRootPath);
-            RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-                .filter(new PropertyPredicate(propertyOaiRepositoryName));
-            triples = root.getTriples(converter, PropertiesRdfContext.class)
-                .filter(new PropertyPredicate(propertyHasSets));
-            if (!triples.hasNext()) {
+            final String setJql = "SELECT [" + propHasOAISetName + "] AS name," + " [" + propHasOAISetSpec
+                + "] AS spec FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath
+                + "] like '%/setspec/%'";
+            final RowIterator setResult = executeQuery(queryManager, setJql);
+            if (!setResult.hasNext()) {
                 return error(VerbType.LIST_IDENTIFIERS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
                     "No record found");
             }
-
-            while (triples.hasNext()) {
-                final Triple triple = triples.next();
-                final String setPath = triple.getObject().toString().split("setspec")[1];
-                final String setJql = "SELECT DISTINCT [" + propHasOAISetName + "] AS name," + " [" + propHasOAISetSpec
-                    + "] AS spec FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath + "] like '%"
-                    + setPath + "'";
-
-                final RowIterator setResult = executeQuery(queryManager, setJql);
-                while (setResult.hasNext()) {
-                    final SetType set = oaiFactory.createSetType();
-                    final Row sol = setResult.nextRow();
-                    set.setSetName(valueConverter.convert(sol.getValue("name")).asLiteral().getString());
-                    set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
-                    sets.getSet().add(set);
-                }
+            while (setResult.hasNext()) {
+                final SetType set = oaiFactory.createSetType();
+                final Row sol = setResult.nextRow();
+                set.setSetName(valueConverter.convert(sol.getValue("name")).asLiteral().getString());
+                set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
+                sets.getSet().add(set);
             }
 
             oai.setListSets(sets);
@@ -850,15 +777,11 @@ public class OAIProviderService {
     /**
      * Create set.
      *
-     * @param session
-     *            the session
-     * @param uriInfo
-     *            the uri info
-     * @param src
-     *            the src
+     * @param session the session
+     * @param uriInfo the uri info
+     * @param src the src
      * @return the string
-     * @throws RepositoryException
-     *             the repository exception
+     * @throws RepositoryException the repository exception
      */
     public String createSet(final Session session, final UriInfo uriInfo, final InputStream src)
         throws RepositoryException {
@@ -917,24 +840,16 @@ public class OAIProviderService {
 
     /**
      * List records.
-     *
-     * @param session
-     *            the session
-     * @param uriInfo
-     *            the uri info
-     * @param metadataPrefix
-     *            the metadata prefix
-     * @param from
-     *            the from
-     * @param until
-     *            the until
-     * @param set
-     *            the set
-     * @param offset
-     *            the offset
+     * 
+     * @param session the session
+     * @param uriInfo the uri info
+     * @param metadataPrefix the metadata prefix
+     * @param from the from
+     * @param until the until
+     * @param set the set
+     * @param offset the offset
      * @return the jAXB element
-     * @throws RepositoryException
-     *             the repository exception
+     * @throws RepositoryException the repository exception
      */
     public JAXBElement<OAIPMHtype> listRecords(final Session session, final UriInfo uriInfo,
         final String metadataPrefix, final String from, final String until, final String set, final int offset)
@@ -1057,6 +972,14 @@ public class OAIProviderService {
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
         jql.append(" WHERE ");
+
+        // filter out audit node
+        jql.append("res.[" + propJcrPath + "] NOT LIKE '%audit%'");
+        jql.append(" AND ");
+
+        // filter out setspec node
+        jql.append("res.[" + propJcrPath + "] NOT LIKE '%setspec%'");
+        jql.append(" AND ");
 
         // mixin type constraint
         jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
