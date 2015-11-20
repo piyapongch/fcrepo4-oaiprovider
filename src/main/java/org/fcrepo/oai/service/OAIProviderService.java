@@ -113,6 +113,10 @@ public class OAIProviderService {
 
     private static final ObjectFactory oaiFactory = new ObjectFactory();
 
+    private static final String AUDIT_CONTAINER = "fcrepo.audit.container";
+
+    private static String AUDIT_CONTAINER_NAME;
+
     private final DatatypeFactory dataFactory;
 
     private final Unmarshaller unmarshaller;
@@ -324,6 +328,10 @@ public class OAIProviderService {
             root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiAdminEmail)), adminEmail);
             session.save();
         }
+
+        // set audit container name
+        AUDIT_CONTAINER_NAME = System.getProperty(AUDIT_CONTAINER);
+        AUDIT_CONTAINER_NAME = AUDIT_CONTAINER_NAME != null ? AUDIT_CONTAINER_NAME.replaceAll("/", "") : null;
     }
 
     /**
@@ -751,8 +759,8 @@ public class OAIProviderService {
             final String propHasOAISetSpec = getPropertyName(session, createProperty(propertyHasSetSpec));
 
             final String setJql = "SELECT [" + propHasOAISetName + "] AS name," + " [" + propHasOAISetSpec
-                + "] AS spec FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath
-                + "] like '%/setspec/%'";
+                + "] AS spec FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath + "] LIKE '%/"
+                + setsRootPath.replaceAll(".*/", "") + "/%'";
             final RowIterator setResult = executeQuery(queryManager, setJql);
             if (!setResult.hasNext()) {
                 return error(VerbType.LIST_IDENTIFIERS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
@@ -974,11 +982,13 @@ public class OAIProviderService {
         jql.append(" WHERE ");
 
         // filter out audit node
-        jql.append("res.[" + propJcrPath + "] NOT LIKE '%audit%'");
-        jql.append(" AND ");
+        if (AUDIT_CONTAINER_NAME != null) {
+            jql.append("res.[" + propJcrPath + "] NOT LIKE '%" + AUDIT_CONTAINER_NAME + "%'");
+            jql.append(" AND ");
+        }
 
         // filter out setspec node
-        jql.append("res.[" + propJcrPath + "] NOT LIKE '%setspec%'");
+        jql.append("res.[" + propJcrPath + "] NOT LIKE '%" + setsRootPath.replaceAll(".*/", "") + "%'");
         jql.append(" AND ");
 
         // mixin type constraint
