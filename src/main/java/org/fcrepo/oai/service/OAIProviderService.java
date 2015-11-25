@@ -117,6 +117,8 @@ public class OAIProviderService {
 
     private static String AUDIT_CONTAINER_NAME;
 
+    private static String SET_ROOT_NAME;
+
     private final DatatypeFactory dataFactory;
 
     private final Unmarshaller unmarshaller;
@@ -305,8 +307,8 @@ public class OAIProviderService {
         /* check if set root node exists */
         final Session session = sessionFactory.getInternalSession();
 
-        final NamespaceRegistry namespaceRegistry = (org.modeshape.jcr.api.NamespaceRegistry) session.getWorkspace()
-            .getNamespaceRegistry();
+        final NamespaceRegistry namespaceRegistry =
+            (org.modeshape.jcr.api.NamespaceRegistry) session.getWorkspace().getNamespaceRegistry();
         // Register the oai namespace if it's not found
         if (!namespaceRegistry.isRegisteredPrefix("oai")) {
             namespaceRegistry.registerNamespace("oai", oaiNamespace);
@@ -332,6 +334,9 @@ public class OAIProviderService {
         // set audit container name
         AUDIT_CONTAINER_NAME = System.getProperty(AUDIT_CONTAINER);
         AUDIT_CONTAINER_NAME = AUDIT_CONTAINER_NAME != null ? AUDIT_CONTAINER_NAME.replaceAll("/", "") : null;
+
+        // set set root name
+        SET_ROOT_NAME = setsRootPath.replaceAll(".*/", "");
     }
 
     /**
@@ -357,8 +362,8 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> identify(final Session session, final UriInfo uriInfo)
         throws RepositoryException, JAXBException {
-        final HttpResourceConverter converter = new HttpResourceConverter(session,
-            uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
 
         final FedoraResource root = this.nodeService.find(session, setsRootPath);
 
@@ -371,18 +376,20 @@ public class OAIProviderService {
         id.setProtocolVersion("2.0");
 
         // repository name, project version
-        RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyOaiRepositoryName));
+        RdfStream triples =
+            root.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(propertyOaiRepositoryName));
         id.setRepositoryName(triples.next().getObject().getLiteralValue().toString());
 
         // admin email
-        triples = root.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyOaiAdminEmail));
+        triples =
+            root.getTriples(converter, PropertiesRdfContext.class).filter(new PropertyPredicate(propertyOaiAdminEmail));
         id.getAdminEmail().add(0, triples.next().getObject().getLiteralValue().toString());
 
         // description
-        triples = root.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyOaiDescription));
+        triples =
+            root.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(propertyOaiDescription));
         final String description = triples.next().getObject().getLiteralValue().toString();
         final DescriptionType desc = oaiFactory.createDescriptionType();
         desc.setAny(new JAXBElement<String>(new QName("general"), String.class, description));
@@ -413,8 +420,8 @@ public class OAIProviderService {
         final String identifier) throws RepositoryException {
 
         final ListMetadataFormatsType listMetadataFormats = oaiFactory.createListMetadataFormatsType();
-        final HttpResourceConverter converter = new HttpResourceConverter(session,
-            uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
 
         /* check which formats are available on top of oai_dc for this object */
         if (identifier != null && !identifier.isEmpty()) {
@@ -430,8 +437,9 @@ public class OAIProviderService {
                     if (mdf.getPrefix().equals("oai_dc")) {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else {
-                        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                            .filter(new PropertyPredicate(mdf.getPropertyName()));
+                        final RdfStream triples =
+                            obj.getTriples(converter, PropertiesRdfContext.class)
+                                .filter(new PropertyPredicate(mdf.getPropertyName()));
                         if (triples.hasNext()) {
                             listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                         }
@@ -505,7 +513,7 @@ public class OAIProviderService {
             record = this.createRecord(session, format, obj.getPath(), uriInfo);
             getRecord.setRecord(record);
             oai.setGetRecord(getRecord);
-            return this.oaiFactory.createOAIPMH(oai);
+            return oaiFactory.createOAIPMH(oai);
         } catch (final IOException e) {
             log.error("Unable to create OAI record for object " + obj.getPath());
             return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
@@ -519,13 +527,20 @@ public class OAIProviderService {
         return jcrPropertiesGenerator.generateDC(session, obj, uriInfo);
     }
 
+    private JAXBElement<OaiDcType> generateOaiEtdms(final Session session, final Container obj, final UriInfo uriInfo)
+        throws RepositoryException {
+
+        return jcrPropertiesGenerator.generateDC(session, obj, uriInfo);
+    }
+
     private JAXBElement<String> fetchOaiResponse(final Container obj, final Session session,
         final MetadataFormat format, final UriInfo uriInfo) throws RepositoryException, IOException {
 
-        final HttpResourceConverter converter = new HttpResourceConverter(session,
-            uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(format.getPropertyName()));
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
+        final RdfStream triples =
+            obj.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(format.getPropertyName()));
 
         if (!triples.hasNext()) {
             log.error("There is no OAI record of type " + format.getPrefix() + " associated with the object "
@@ -609,12 +624,12 @@ public class OAIProviderService {
                 e.getMessage());
         }
 
-        final HttpResourceConverter converter = new HttpResourceConverter(session,
-            uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
         final ValueConverter valueConverter = new ValueConverter(session, converter);
 
-        final String jql = listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, from, until, set, maxListSize,
-            offset);
+        final String jql =
+            listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, from, until, set, maxListSize, offset);
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final RowIterator result = executeQuery(queryManager, jql);
@@ -637,16 +652,18 @@ public class OAIProviderService {
                 final Container obj = this.containerService.findOrCreate(session, path);
                 h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
 
-                final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                    .filter(new PropertyPredicate(propertyIsPartOfSet));
+                final RdfStream triples =
+                    obj.getTriples(converter, PropertiesRdfContext.class)
+                        .filter(new PropertyPredicate(propertyIsPartOfSet));
                 final List<String> setNames = new ArrayList<>();
                 while (triples.hasNext()) {
                     setNames.add(triples.next().getObject().getLiteralValue().toString());
                 }
                 for (final String name : setNames) {
                     final Container setObject = this.containerService.findOrCreate(session, setsRootPath + "/" + name);
-                    final RdfStream setTriples = setObject.getTriples(converter, PropertiesRdfContext.class)
-                        .filter(new PropertyPredicate(propertyHasSetSpec));
+                    final RdfStream setTriples =
+                        setObject.getTriples(converter, PropertiesRdfContext.class)
+                            .filter(new PropertyPredicate(propertyHasSetSpec));
                     h.getSetSpec().add(setTriples.next().getObject().getLiteralValue().toString());
                 }
                 ids.getHeader().add(h);
@@ -683,9 +700,10 @@ public class OAIProviderService {
     public static String encodeResumptionToken(final String verb, final String metadataPrefix, final String from,
         final String until, final String set, final int offset) throws UnsupportedEncodingException {
 
-        final String[] data = new String[] { urlEncode(verb), urlEncode(metadataPrefix),
-            urlEncode(from != null ? from : ""), urlEncode(until != null ? until : ""),
-            urlEncode(set != null ? set : ""), urlEncode(String.valueOf(offset)) };
+        final String[] data =
+            new String[] { urlEncode(verb), urlEncode(metadataPrefix), urlEncode(from != null ? from : ""),
+                urlEncode(until != null ? until : ""), urlEncode(set != null ? set : ""),
+                urlEncode(String.valueOf(offset)) };
         return Base64.encodeBase64URLSafeString(StringUtils.join(data, ':').getBytes("UTF-8"));
     }
 
@@ -740,8 +758,8 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> listSets(final Session session, final UriInfo uriInfo, final int offset)
         throws RepositoryException {
-        final HttpResourceConverter converter = new HttpResourceConverter(session,
-            uriInfo.getBaseUriBuilder().clone().path(FedoraLdp.class));
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraLdp.class));
         final ValueConverter valueConverter = new ValueConverter(session, converter);
 
         try {
@@ -758,9 +776,10 @@ public class OAIProviderService {
             final String propHasOAISetName = getPropertyName(session, createProperty(propertySetName));
             final String propHasOAISetSpec = getPropertyName(session, createProperty(propertyHasSetSpec));
 
-            final String setJql = "SELECT [" + propHasOAISetName + "] AS name," + " [" + propHasOAISetSpec
-                + "] AS spec FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath + "] LIKE '%/"
-                + setsRootPath.replaceAll(".*/", "") + "/%'";
+            final String setJql =
+                "SELECT [" + propHasOAISetName + "] AS name," + " [" + propHasOAISetSpec + "] AS spec FROM ["
+                    + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath + "] LIKE '%/"
+                    + setsRootPath.replaceAll(".*/", "") + "/%'";
             final RowIterator setResult = executeQuery(queryManager, setJql);
             if (!setResult.hasNext()) {
                 return error(VerbType.LIST_IDENTIFIERS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
@@ -793,8 +812,8 @@ public class OAIProviderService {
      */
     public String createSet(final Session session, final UriInfo uriInfo, final InputStream src)
         throws RepositoryException {
-        final HttpResourceConverter converter = new HttpResourceConverter(session,
-            uriInfo.getBaseUriBuilder().clone().path(FedoraLdp.class));
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraLdp.class));
         try {
             final SetType set = this.unmarshaller.unmarshal(new StreamSource(src), SetType.class).getValue();
             final String setId = getSetId(set);
@@ -811,8 +830,9 @@ public class OAIProviderService {
             }
             final Container setObject = this.containerService.findOrCreate(session, setsRootPath + "/" + setId);
 
-            final StringBuilder sparql = new StringBuilder("INSERT DATA {<" + converter.toDomain(setRoot.getPath())
-                + "> <" + propertyHasSets + "> <" + converter.toDomain(setObject.getPath()) + ">}");
+            final StringBuilder sparql =
+                new StringBuilder("INSERT DATA {<" + converter.toDomain(setRoot.getPath()) + "> <" + propertyHasSets
+                    + "> <" + converter.toDomain(setObject.getPath()) + ">}");
             setRoot.updateProperties(converter, sparql.toString(), new RdfStream());
 
             sparql.setLength(0);
@@ -863,8 +883,8 @@ public class OAIProviderService {
         final String metadataPrefix, final String from, final String until, final String set, final int offset)
             throws RepositoryException {
 
-        final HttpResourceConverter converter = new HttpResourceConverter(session,
-            uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
         final ValueConverter valueConverter = new ValueConverter(session, converter);
 
         if (metadataPrefix == null) {
@@ -891,8 +911,8 @@ public class OAIProviderService {
                 "Sets are not enabled");
         }
 
-        final String jql = listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, from, until, set, maxListSize,
-            offset);
+        final String jql =
+            listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, from, until, set, maxListSize, offset);
         try {
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -932,8 +952,8 @@ public class OAIProviderService {
     private RecordType createRecord(final Session session, final MetadataFormat mdf, final String s,
         final UriInfo uriInfo) throws IOException, RepositoryException {
 
-        final HttpResourceConverter converter = new HttpResourceConverter(session,
-            uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
         final HeaderType h = oaiFactory.createHeaderType();
         final String subjectUri = converter.toDomain(s).getURI();
         h.setIdentifier(subjectUri);
@@ -942,30 +962,34 @@ public class OAIProviderService {
         h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
         // get set names this object is part of
 
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyIsPartOfSet));
+        final RdfStream triples =
+            obj.getTriples(converter, PropertiesRdfContext.class).filter(new PropertyPredicate(propertyIsPartOfSet));
         final List<String> setNames = new ArrayList<>();
         while (triples.hasNext()) {
             setNames.add(triples.next().getObject().getLiteralValue().toString());
         }
         for (final String name : setNames) {
             final Container setObject = this.containerService.findOrCreate(session, setsRootPath + "/" + name);
-            final RdfStream setTriples = setObject.getTriples(converter, PropertiesRdfContext.class)
-                .filter(new PropertyPredicate(propertyHasSetSpec));
+            final RdfStream setTriples =
+                setObject.getTriples(converter, PropertiesRdfContext.class)
+                    .filter(new PropertyPredicate(propertyHasSetSpec));
             h.getSetSpec().add(setTriples.next().getObject().getLiteralValue().toString());
         }
 
         // get the metadata record from fcrepo
-        final MetadataType md = this.oaiFactory.createMetadataType();
+        final MetadataType md = oaiFactory.createMetadataType();
         if (mdf.getPrefix().equals("oai_dc")) {
             /* generate a OAI DC reponse using the DC Generator from fcrepo4 */
             md.setAny(generateOaiDc(session, obj, uriInfo));
+        } else if (mdf.getPrefix().equals("oai_etdms")) {
+            /* generate a OAI DC reponse using the DC Generator from fcrepo4 */
+            md.setAny(generateOaiEtdms(session, obj, uriInfo));
         } else {
             /* generate a OAI response from the linked Binary */
             md.setAny(fetchOaiResponse(obj, session, mdf, uriInfo));
         }
 
-        final RecordType record = this.oaiFactory.createRecordType();
+        final RecordType record = oaiFactory.createRecordType();
         record.setMetadata(md);
         record.setHeader(h);
         return record;
@@ -988,7 +1012,7 @@ public class OAIProviderService {
         }
 
         // filter out setspec node
-        jql.append("res.[" + propJcrPath + "] NOT LIKE '%" + setsRootPath.replaceAll(".*/", "") + "%'");
+        jql.append("res.[" + propJcrPath + "] NOT LIKE '%" + SET_ROOT_NAME + "%'");
         jql.append(" AND ");
 
         // mixin type constraint
@@ -1040,8 +1064,8 @@ public class OAIProviderService {
      */
     private String getPropertyName(final Session session, final Property predicate) throws RepositoryException {
 
-        final NamespaceRegistry namespaceRegistry = (org.modeshape.jcr.api.NamespaceRegistry) session.getWorkspace()
-            .getNamespaceRegistry();
+        final NamespaceRegistry namespaceRegistry =
+            (org.modeshape.jcr.api.NamespaceRegistry) session.getWorkspace().getNamespaceRegistry();
         final Map<String, String> namespaceMapping = emptyMap();
         return getPropertyNameFromPredicate(namespaceRegistry, predicate, namespaceMapping);
     }

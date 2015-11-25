@@ -15,21 +15,19 @@
  */
 package org.fcrepo.oai.dublincore;
 
-import com.hp.hpl.jena.graph.Triple;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBElement;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.fcrepo.http.api.FedoraNodes;
 import org.fcrepo.http.commons.api.rdf.HttpResourceConverter;
-import org.fcrepo.kernel.impl.rdf.impl.PropertiesRdfContext;
 import org.fcrepo.kernel.models.Container;
-import org.fcrepo.kernel.utils.iterators.RdfStream;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
 import org.purl.dc.elements._1.ElementType;
 import org.purl.dc.elements._1.ObjectFactory;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBElement;
 
 /**
  * The type Jcr properties generator.
@@ -39,8 +37,7 @@ import javax.xml.bind.JAXBElement;
 public class JcrPropertiesGenerator {
     private static final ObjectFactory dcFactory = new ObjectFactory();
     private static final org.openarchives.oai._2_0.oai_dc.ObjectFactory oaiDcFactory =
-            new org.openarchives.oai._2_0.oai_dc.ObjectFactory();
-
+        new org.openarchives.oai._2_0.oai_dc.ObjectFactory();
 
     /**
      * Generate dC.
@@ -52,35 +49,42 @@ public class JcrPropertiesGenerator {
      * @throws RepositoryException if repository exception occurred
      */
     public JAXBElement<OaiDcType> generateDC(final Session session, final Container obj, final UriInfo uriInfo)
-            throws RepositoryException {
+        throws RepositoryException {
 
-        final HttpResourceConverter converter = new HttpResourceConverter(session, uriInfo.getBaseUriBuilder()
-                .clone().path(FedoraNodes.class));
-        final OaiDcType oaidc = this.oaiDcFactory.createOaiDcType();
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
+        final OaiDcType oaidc = oaiDcFactory.createOaiDcType();
+        Value[] values;
 
-        final ElementType valId = this.dcFactory.createElementType();
+        // dc:identifier
+        final ElementType valId = dcFactory.createElementType();
         valId.setValue(escape(converter.toDomain(obj.getPath()).getURI()));
-        oaidc.getTitleOrCreatorOrSubject().add(this.dcFactory.createIdentifier(valId));
+        oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(valId));
 
-        final ElementType valCreated = this.dcFactory.createElementType();
+        // dc:date
+        final ElementType valCreated = dcFactory.createElementType();
         valCreated.setValue(escape(obj.getCreatedDate().toString()));
-        oaidc.getTitleOrCreatorOrSubject().add(this.dcFactory.createDate(valCreated));
+        oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(valCreated));
 
-        final ElementType valCreator = this.dcFactory.createElementType();
-        valCreator.setValue(escape(obj.getProperty("jcr:createdBy").getValue().getString()));
-        oaidc.getTitleOrCreatorOrSubject().add(this.dcFactory.createCreator(valCreator));
-
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class);
-        while (triples.hasNext()) {
-            final ElementType valRel = this.dcFactory.createElementType();
-            final Triple triple = triples.next();
-            valRel.setValue(escape(triple.getPredicate().toString() + " " + triple.getObject().toString()));
-            oaidc.getTitleOrCreatorOrSubject().add(this.dcFactory.createRelation(valRel));
+        // dc:creator
+        values = obj.hasProperty("dc:creator") ? obj.getProperty("dc:creator").getValues() : null;
+        for (int i = 0; values != null && i < values.length; i++) {
+            final ElementType type = dcFactory.createElementType();
+            type.setValue(escape(values[i].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(type));
         }
 
-        oaidc.getTitleOrCreatorOrSubject().add(this.dcFactory.createSubject(valId));
+        // dc:title
+        values = obj.hasProperty("dc:title") ? obj.getProperty("dc:title").getValues() : null;
+        for (int i = 0; values != null && i < values.length; i++) {
+            final ElementType type = dcFactory.createElementType();
+            type.setValue(escape(values[i].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createTitle(type));
+        }
 
-        return this.oaiDcFactory.createDc(oaidc);
+        // TODO: add all dc elements
+
+        return oaiDcFactory.createDc(oaidc);
     }
 
     private String escape(final String orig) {
