@@ -5,20 +5,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <context:property-placeholder/>
-
     <context:annotation-config/>
 
-    <!-- Mints PIDs-->
-    <bean class="org.fcrepo.mint.UUIDPidMinter"/>
+    <context:component-scan base-package="org.fcrepo"/>
 
-    <bean name="jcrPropertiesGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
-
+    <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
+    
+    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>
+    
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
         <property name="autoGenerateOaiDc" value="true"/>
         <property name="maxListSize" value="5"/>
         <property name="setsEnabled" value="true"/>
-        <property name="setsRootPath" value="/oai-cache/setspec"/>
+        <property name="setsRootPath" value="/oai/setspec"/>
         <property name="propertyIsPartOfSet" value="http://fedora.info/definitions/v4/config#isPartOfOAISet"/>
         <property name="propertyHasSets" value="http://fedora.info/definitions/v4/config#hasOAISet"/>
         <property name="propertySetName" value="http://fedora.info/definitions/v4/config#hasOAISetName"/>
@@ -30,13 +29,14 @@
         <property name="metadataFormats">
             <map>
                 <entry key="oai_dc" value-ref="dublinCoreOaiFormat" />
+                <entry key="oai_etdms" value-ref="etdmsOaiFormat" />
                 <entry key="marc21" value-ref="marc21OaiFormat" />
                 <entry key="premis" value-ref="premisOaiFormat" />
             </map>
         </property>
         <property name="descriptiveContent">
             <map>
-                <entry key="repositoryName" value="Fedora ${project.version}" />
+                <entry key="repositoryName" value="Fedora 4.2.0" />
                 <entry key="description" value="An example repository description" />
                 <entry key="adminEmail" value="admin@example.com" />
             </map>
@@ -48,6 +48,13 @@
         <property name="schemaUrl" value="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"/>
         <property name="namespace" value="http://www.openarchives.org/OAI/2.0/oai_dc/"/>
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiDCRecord"/>
+    </bean>
+
+    <bean name="etdmsOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
+        <property name="prefix" value="oai_etdms"/>
+        <property name="schemaUrl" value="http://www.ndltd.org/standards/metadata/etdms/1.1/etdmsdc.xsd http://www.ndltd.org/standards/metadata/etdms/1.1/etdmsdcterms.xsd"/>
+        <property name="namespace" value="http://www.ndltd.org/standards/metadata/etdms/1.1/"/>
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiETDMSRecord"/>
     </bean>
 
     <bean name="marc21OaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
