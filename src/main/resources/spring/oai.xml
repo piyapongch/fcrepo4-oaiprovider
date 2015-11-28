@@ -9,7 +9,9 @@
 
     <context:component-scan base-package="org.fcrepo"/>
 
-    <bean name="jcrPropertiesGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
+    <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
+
+    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>
 
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
         <property name="autoGenerateOaiDc" value="true"/>

@@ -12,8 +12,10 @@
     <!-- Mints PIDs-->
     <bean class="org.fcrepo.mint.UUIDPidMinter"/>
 
-    <bean name="jcrPropertiesGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
-
+    <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
+    
+    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>
+    
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
         <property name="autoGenerateOaiDc" value="true"/>
         <property name="maxListSize" value="5"/>

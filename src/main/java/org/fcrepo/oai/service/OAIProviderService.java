@@ -169,7 +169,10 @@ public class OAIProviderService {
     private RepositoryService repositoryService;
 
     @Autowired
-    private JcrPropertiesGenerator jcrPropertiesGenerator;
+    private JcrPropertiesGenerator jcrDcGenerator;
+
+    @Autowired
+    private org.fcrepo.oai.etdms.JcrPropertiesGenerator jcrEtdmsGenerator;
 
     /**
      * Sets property has set spec.
@@ -524,13 +527,13 @@ public class OAIProviderService {
     private JAXBElement<OaiDcType> generateOaiDc(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
 
-        return jcrPropertiesGenerator.generateDC(session, obj, uriInfo);
+        return jcrDcGenerator.generateDC(session, obj, uriInfo);
     }
 
     private JAXBElement<OaiDcType> generateOaiEtdms(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
 
-        return jcrPropertiesGenerator.generateDC(session, obj, uriInfo);
+        return jcrDcGenerator.generateDC(session, obj, uriInfo);
     }
 
     private JAXBElement<String> fetchOaiResponse(final Container obj, final Session session,
