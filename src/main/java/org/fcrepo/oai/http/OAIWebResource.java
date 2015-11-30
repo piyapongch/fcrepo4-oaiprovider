@@ -93,11 +93,11 @@ public class OAIWebResource {
      */
     @GET
     @Produces(MediaType.TEXT_XML)
-    public Object getOAIResponse(
-            final @QueryParam("verb") String verbParam, final @QueryParam("identifier") String identifierParam,
-            final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
-            final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
-            final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo)
+    public Object getOAIResponse(final @QueryParam("verb") String verbParam,
+        final @QueryParam("identifier") String identifierParam,
+        final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
+        final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
+        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo)
             throws RepositoryException {
 
         int offset = 0;
@@ -110,8 +110,10 @@ public class OAIWebResource {
         final String identifier;
 
         if (resumptionToken != null && !resumptionToken.isEmpty()) {
-            /* If there's a resumption token present the data provided in the
-                base64 encoded token is used to generate the request */
+            /*
+             * If there's a resumption token present the data provided in the base64 encoded token is used to generate
+             * the request
+             */
             try {
                 final ResumptionToken token = OAIProviderService.decodeResumptionToken(resumptionToken);
                 identifier = null;
@@ -123,7 +125,7 @@ public class OAIWebResource {
                 offset = token.getOffset();
             } catch (Exception e) {
                 return providerService.error(null, null, null, OAIPMHerrorcodeType.BAD_RESUMPTION_TOKEN,
-                        "Resumption token is invalid");
+                    "Resumption token is invalid");
             }
         } else {
             /* otherwise just read the query params */
@@ -138,7 +140,7 @@ public class OAIWebResource {
         /* decide what to do depending on the verb passed */
         if (verb == null) {
             return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
-                    "Verb is required");
+                "Verb is required");
         }
 
         /* identify response */
@@ -148,7 +150,7 @@ public class OAIWebResource {
                 return providerService.identify(this.session, uriInfo);
             } catch (JAXBException | IllegalArgumentException e) {
                 return providerService.error(VerbType.IDENTIFY, identifier, metadataPrefix,
-                        OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
+                    OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
 
@@ -159,7 +161,7 @@ public class OAIWebResource {
                 return providerService.listMetadataFormats(this.session, uriInfo, identifier);
             } catch (IllegalArgumentException e) {
                 return providerService.error(VerbType.LIST_METADATA_FORMATS, identifier, metadataPrefix,
-                        OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
+                    OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
 
@@ -171,7 +173,7 @@ public class OAIWebResource {
 
             } catch (IllegalArgumentException e) {
                 return providerService.error(VerbType.GET_RECORD, identifier, metadataPrefix,
-                        OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
+                    OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
 
@@ -182,7 +184,7 @@ public class OAIWebResource {
                 return providerService.listIdentifiers(this.session, uriInfo, metadataPrefix, from, until, set, offset);
             } catch (IllegalArgumentException e) {
                 return providerService.error(VerbType.LIST_IDENTIFIERS, identifier, metadataPrefix,
-                        OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
+                    OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
 
@@ -192,7 +194,7 @@ public class OAIWebResource {
                 verifyEmpty(identifier);
             } catch (IllegalArgumentException e) {
                 return providerService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
-                        OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
+                    OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
             return providerService.listSets(session, uriInfo, offset);
         }
@@ -201,14 +203,14 @@ public class OAIWebResource {
         if (verb.equals(LIST_RECORDS.value())) {
             try {
                 verifyEmpty(identifier);
-                return  providerService.listRecords(this.session, uriInfo, metadataPrefix, from, until, set, offset);
+                return providerService.listRecords(this.session, uriInfo, metadataPrefix, from, until, set, offset);
             } catch (IllegalArgumentException e) {
                 return providerService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
-                        OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
+                    OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
         return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_VERB,
-                "Unknown verb '" + verb + "'");
+            "Unknown verb '" + verb + "'");
     }
 
     private void verifyEmpty(final String... data) throws IllegalArgumentException {

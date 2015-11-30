@@ -26,8 +26,8 @@ import org.fcrepo.http.api.FedoraNodes;
 import org.fcrepo.http.commons.api.rdf.HttpResourceConverter;
 import org.fcrepo.kernel.models.Container;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
-import org.purl.dc.elements._1.ElementType;
 import org.purl.dc.elements._1.ObjectFactory;
+import org.purl.dc.elements._1.SimpleLiteral;
 
 /**
  * The type Jcr properties generator.
@@ -59,45 +59,44 @@ public class JcrPropertiesGenerator {
         // dc:type
         values = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[i].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
         }
 
         // dc:creator
         values = obj.hasProperty("dcterms:creator") ? obj.getProperty("dcterms:creator").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[i].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(simple));
         }
         values = obj.hasProperty("marcrel:dis") ? obj.getProperty("marcrel:dis").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[i].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(simple));
         }
 
         // dc:contributor
         values = obj.hasProperty("dcterms:contributor") ? obj.getProperty("dcterms:contributor").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[i].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
         }
         values = obj.hasProperty("marcrel:ths") ? obj.getProperty("marcrel:ths").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[i].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
         }
-        values =
-            obj.hasProperty("ualterms:thesiscommitteemember")
-                ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
+        values = obj.hasProperty("ualterms:thesiscommitteemember")
+            ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[i].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
         }
 
         // dc:publisher (concatenate grantor and discipline/department contents)
@@ -105,174 +104,174 @@ public class JcrPropertiesGenerator {
             obj.hasProperty("vivo:AcademicDepartment") ? obj.getProperty("vivo:AcademicDepartment").getValues() : null;
         values = obj.hasProperty("marcrel:dgg") ? obj.getProperty("marcrel:dgg").getValues() : null;
         if (values == null) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("University of Alberta"));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape("University of Alberta"));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(simple));
         } else {
-            final ElementType type = dcFactory.createElementType();
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
             final StringBuffer value = new StringBuffer(values[0].getString());
             if (vals != null) {
                 for (int i = 0; i < vals.length; i++) {
                     value.append(i == 0 ? "; " : ", ").append(vals[i].getString());
                 }
             }
-            // value.append(vals == null ? "." : "");
-            type.setValue(escape(value.toString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(type));
+            value.append(vals == null ? "." : "");
+            simple.getContent().add(escape(value.toString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(simple));
         }
 
         // dc:subject
         values = obj.hasProperty("dcterms:subject") ? obj.getProperty("dcterms:subject").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
         }
         values = obj.hasProperty("dcterms:temporal") ? obj.getProperty("dcterms:temporal").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
         }
         values = obj.hasProperty("dcterms:spatial") ? obj.getProperty("dcterms:spatial").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
         }
 
         // dc:description (add prefix in content: "Specialization: ")
         values =
             obj.hasProperty("ualterms:specialization") ? obj.getProperty("ualterms:specialization").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Specialization: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
         // dc:date
         values = obj.hasProperty("dcterms:created") ? obj.getProperty("dcterms:created").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(simple));
         }
         values = obj.hasProperty("dcterms:dateAccepted") ? obj.getProperty("dcterms:dateAccepted").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(simple));
         }
 
         // dc:title
         values = obj.hasProperty("dcterms:title") ? obj.getProperty("dcterms:title").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createTitle(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[i].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createTitle(simple));
         }
 
         // dc:description (add prefix in content: "Degree: ")
         values = obj.hasProperty("bibo:ThesisDegree") ? obj.getProperty("bibo:ThesisDegree").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Degree: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
         // dc:identifier
         values = obj.hasProperty("dcterms:identifier") ? obj.getProperty("dcterms:identifier").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Degree: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
         values = obj.hasProperty("ualterms:trid") ? obj.getProperty("ualterms:trid").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Degree: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
         values = obj.hasProperty("ualterms:ser") ? obj.getProperty("ualterms:ser").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Degree: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
         values =
             obj.hasProperty("ualterms:fedora3handle") ? obj.getProperty("ualterms:fedora3handle").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Degree: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
 
         // dc:description
         values = obj.hasProperty("dcterms:description") ? obj.getProperty("dcterms:description").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Degree: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
         // dc:description (add prefix in content: "Abstract: ")
         values = obj.hasProperty("dcterms:abstract") ? obj.getProperty("dcterms:abstract").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Abstract: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
         // dc:language
         values = obj.hasProperty("dcterms:language") ? obj.getProperty("dcterms:language").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Abstract: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createLanguage(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createLanguage(simple));
         }
 
         // dc:relation
         values = obj.hasProperty("dcterms:relation") ? obj.getProperty("dcterms:relation").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(simple));
         }
         values = obj.hasProperty("dcterms:isVersionOf") ? obj.getProperty("dcterms:isVersionOf").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Abstract: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(simple));
         }
 
         // dc:source
         values = obj.hasProperty("dcterms:source") ? obj.getProperty("dcterms:source").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Abstract: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSource(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSource(simple));
         }
 
         // dc:rights
         values = obj.hasProperty("dcterms:rights") ? obj.getProperty("dcterms:rights").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Abstract: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
         values = obj.hasProperty("dcterms:license") ? obj.getProperty("dcterms:license").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Abstract: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
 
         // dc:format
         values = obj.hasProperty("dcterms:format") ? obj.getProperty("dcterms:format").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            final ElementType type = dcFactory.createElementType();
-            type.setValue(escape("Abstract: " + values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(type));
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(escape(values[0].getString()));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
 
         return oaiDcFactory.createDc(oaidc);

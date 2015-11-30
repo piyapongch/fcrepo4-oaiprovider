@@ -9,9 +9,9 @@
 
     <context:component-scan base-package="org.fcrepo"/>
 
-    <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
+<!--    <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>-->
 
-    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>
+<!--    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>-->
 
     <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>
 
@@ -53,7 +53,7 @@
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiDCRecord"/>
     </bean>
 
-    <bean name="qualifiedDublinCoreOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
+<!--    <bean name="qualifiedDublinCoreOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
         <property name="prefix" value="oai_qdc"/>
         <property name="schemaUrl" value="http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcterms.xsd"/>
         <property name="namespace" value="http://purl.org/dc/terms/"/>
@@ -66,7 +66,7 @@
         <property name="namespace" value="http://www.ndltd.org/standards/metadata/etdms/1.0/"/>
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiETDMSRecord"/>
     </bean>
-
+-->
     <bean name="marc21OaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
         <property name="prefix" value="marc21" />
         <property name="schemaUrl" value="http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd" />

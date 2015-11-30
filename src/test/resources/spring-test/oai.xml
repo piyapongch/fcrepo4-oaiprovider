@@ -14,9 +14,9 @@
 
     <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
 
-    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>
+<!--    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>-->
 
-    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>
+<!--    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>-->
     
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
         <property name="autoGenerateOaiDc" value="true"/>
