@@ -13,7 +13,9 @@
     <bean class="org.fcrepo.mint.UUIDPidMinter"/>
 
     <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
-    
+
+    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>
+
     <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>
     
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
@@ -32,6 +34,8 @@
         <property name="metadataFormats">
             <map>
                 <entry key="oai_dc" value-ref="dublinCoreOaiFormat" />
+                <entry key="oai_qdc" value-ref="qualifiedDublinCoreOaiFormat" />
+                <entry key="oai_etdms" value-ref="etdmsOaiFormat" />
                 <entry key="marc21" value-ref="marc21OaiFormat" />
                 <entry key="premis" value-ref="premisOaiFormat" />
             </map>
@@ -50,6 +54,20 @@
         <property name="schemaUrl" value="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"/>
         <property name="namespace" value="http://www.openarchives.org/OAI/2.0/oai_dc/"/>
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiDCRecord"/>
+    </bean>
+
+    <bean name="qualifiedDublinCoreOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
+        <property name="prefix" value="oai_qdc"/>
+        <property name="schemaUrl" value="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"/>
+        <property name="namespace" value="http://www.openarchives.org/OAI/2.0/oai_dc/"/>
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiDCRecord"/>
+    </bean>
+
+    <bean name="etdmsOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
+        <property name="prefix" value="oai_etdms"/>
+        <property name="schemaUrl" value="http://www.ndltd.org/standards/metadata/etdms/1.0/xml.xsd"/>
+        <property name="namespace" value="http://www.ndltd.org/standards/metadata/etdms/1.0/"/>
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiETDMSRecord"/>
     </bean>
 
     <bean name="marc21OaiFormat" class="org.fcrepo.oai.service.MetadataFormat">

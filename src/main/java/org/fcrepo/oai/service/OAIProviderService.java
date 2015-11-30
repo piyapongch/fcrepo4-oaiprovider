@@ -459,6 +459,7 @@ public class OAIProviderService {
         req.setValue(uriInfo.getRequestUri().toASCIIString());
 
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
+        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
         oai.setListMetadataFormats(listMetadataFormats);
         oai.setRequest(req);
         return oaiFactory.createOAIPMH(oai);
@@ -504,6 +505,8 @@ public class OAIProviderService {
         final Container obj = this.containerService.findOrCreate(session, "/" + identifier);
 
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
+        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+
         final RequestType req = oaiFactory.createRequestType();
         req.setVerb(VerbType.GET_RECORD);
         req.setValue(uriInfo.getRequestUri().toASCIIString());
@@ -527,13 +530,13 @@ public class OAIProviderService {
     private JAXBElement<OaiDcType> generateOaiDc(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
 
-        return jcrDcGenerator.generateDC(session, obj, uriInfo);
+        return jcrDcGenerator.generateDc(session, obj, uriInfo);
     }
 
     private JAXBElement<OaiDcType> generateOaiEtdms(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
 
-        return jcrDcGenerator.generateDC(session, obj, uriInfo);
+        return jcrEtdmsGenerator.generateEtdms(session, obj, uriInfo);
     }
 
     private JAXBElement<String> fetchOaiResponse(final Container obj, final Session session,
@@ -643,6 +646,7 @@ public class OAIProviderService {
             }
 
             final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
+            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
             final ListIdentifiersType ids = oaiFactory.createListIdentifiersType();
 
             while (result.hasNext()) {
@@ -775,6 +779,7 @@ public class OAIProviderService {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
 
             final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
+            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
             final ListSetsType sets = oaiFactory.createListSetsType();
             final String propHasOAISetName = getPropertyName(session, createProperty(propertySetName));
             final String propHasOAISetSpec = getPropertyName(session, createProperty(propertyHasSetSpec));
@@ -927,6 +932,7 @@ public class OAIProviderService {
             }
 
             final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
+            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
             final ListRecordsType records = oaiFactory.createListRecordsType();
             while (result.hasNext()) {
                 // check if the records exists

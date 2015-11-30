@@ -35,15 +35,15 @@ public class ListMetadataFormatsIT extends AbstractOAIProviderIT {
         assertEquals(200, resp.getStatusLine().getStatusCode());
 
         OAIPMHtype oaipmh =
-                ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
         assertEquals(0, oaipmh.getError().size());
         assertNotNull(oaipmh.getListMetadataFormats());
-        assertEquals(3, oaipmh.getListMetadataFormats().getMetadataFormat().size());
+        assertEquals(5, oaipmh.getListMetadataFormats().getMetadataFormat().size());
         assertEquals("oai_dc", oaipmh.getListMetadataFormats().getMetadataFormat().get(0).getMetadataPrefix());
-        assertEquals("http://www.openarchives.org/OAI/2.0/oai_dc/", oaipmh.getListMetadataFormats()
-                .getMetadataFormat().get(0).getMetadataNamespace());
-        assertEquals("http://www.openarchives.org/OAI/2.0/oai_dc.xsd", oaipmh.getListMetadataFormats()
-                .getMetadataFormat().get(0).getSchema());
+        assertEquals("http://www.openarchives.org/OAI/2.0/oai_dc/",
+            oaipmh.getListMetadataFormats().getMetadataFormat().get(0).getMetadataNamespace());
+        assertEquals("http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
+            oaipmh.getListMetadataFormats().getMetadataFormat().get(0).getSchema());
         assertNotNull(oaipmh.getRequest());
         assertEquals(VerbType.LIST_METADATA_FORMATS.value(), oaipmh.getRequest().getVerb().value());
     }
@@ -51,12 +51,11 @@ public class ListMetadataFormatsIT extends AbstractOAIProviderIT {
     @Test
     public void testListNonExistingObjectMetadataTypes() throws Exception {
         HttpResponse resp =
-                getOAIPMHResponse(VerbType.LIST_METADATA_FORMATS.value(), "non-existing-pid", "oai_dc", null, null,
-                        null);
+            getOAIPMHResponse(VerbType.LIST_METADATA_FORMATS.value(), "non-existing-pid", "oai_dc", null, null, null);
         assertEquals(200, resp.getStatusLine().getStatusCode());
 
         OAIPMHtype oaipmh =
-                ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
         assertEquals(1, oaipmh.getError().size());
         assertEquals(OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, oaipmh.getError().get(0).getCode());
     }
@@ -71,15 +70,15 @@ public class ListMetadataFormatsIT extends AbstractOAIProviderIT {
         assertEquals(200, resp.getStatusLine().getStatusCode());
 
         OAIPMHtype oaipmh =
-                ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
         assertEquals(0, oaipmh.getError().size());
         assertNotNull(oaipmh.getListMetadataFormats());
         assertEquals(1, oaipmh.getListMetadataFormats().getMetadataFormat().size());
         assertEquals("oai_dc", oaipmh.getListMetadataFormats().getMetadataFormat().get(0).getMetadataPrefix());
-        assertEquals("http://www.openarchives.org/OAI/2.0/oai_dc/", oaipmh.getListMetadataFormats()
-                .getMetadataFormat().get(0).getMetadataNamespace());
-        assertEquals("http://www.openarchives.org/OAI/2.0/oai_dc.xsd", oaipmh.getListMetadataFormats()
-                .getMetadataFormat().get(0).getSchema());
+        assertEquals("http://www.openarchives.org/OAI/2.0/oai_dc/",
+            oaipmh.getListMetadataFormats().getMetadataFormat().get(0).getMetadataNamespace());
+        assertEquals("http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
+            oaipmh.getListMetadataFormats().getMetadataFormat().get(0).getSchema());
         assertNotNull(oaipmh.getRequest());
         assertEquals(VerbType.LIST_METADATA_FORMATS.value(), oaipmh.getRequest().getVerb().value());
     }

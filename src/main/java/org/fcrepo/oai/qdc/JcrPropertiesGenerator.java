@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fcrepo.oai.etdms;
+package org.fcrepo.oai.qdc;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -48,7 +48,7 @@ public class JcrPropertiesGenerator {
      * @return the jAXB element
      * @throws RepositoryException if repository exception occurred
      */
-    public JAXBElement<OaiDcType> generateEtdms(final Session session, final Container obj, final UriInfo uriInfo)
+    public JAXBElement<OaiDcType> generateQdc(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
 
         final HttpResourceConverter converter =

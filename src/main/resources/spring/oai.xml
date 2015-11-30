@@ -11,6 +11,8 @@
 
     <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
 
+    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>
+
     <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>
 
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
@@ -29,6 +31,7 @@
         <property name="metadataFormats">
             <map>
                 <entry key="oai_dc" value-ref="dublinCoreOaiFormat" />
+                <entry key="oai_qdc" value-ref="qualifiedDublinCoreOaiFormat" />
                 <entry key="oai_etdms" value-ref="etdmsOaiFormat" />
                 <entry key="marc21" value-ref="marc21OaiFormat" />
                 <entry key="premis" value-ref="premisOaiFormat" />
@@ -50,10 +53,17 @@
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiDCRecord"/>
     </bean>
 
+    <bean name="qualifiedDublinCoreOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
+        <property name="prefix" value="oai_qdc"/>
+        <property name="schemaUrl" value="http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcterms.xsd"/>
+        <property name="namespace" value="http://purl.org/dc/terms/"/>
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiQDCRecord"/>
+    </bean>
+
     <bean name="etdmsOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
         <property name="prefix" value="oai_etdms"/>
-        <property name="schemaUrl" value="http://www.ndltd.org/standards/metadata/etdms/1.1/etdmsdc.xsd http://www.ndltd.org/standards/metadata/etdms/1.1/etdmsdcterms.xsd"/>
-        <property name="namespace" value="http://www.ndltd.org/standards/metadata/etdms/1.1/"/>
+        <property name="schemaUrl" value="http://www.ndltd.org/standards/metadata/etdms/1.0/xml.xsd"/>
+        <property name="namespace" value="http://www.ndltd.org/standards/metadata/etdms/1.0/"/>
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiETDMSRecord"/>
     </bean>
 
