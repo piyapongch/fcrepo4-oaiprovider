@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.jcr.RepositoryException;
@@ -139,7 +141,7 @@ public class OAIProviderService {
 
     private String propertyOaiAdminEmail;
 
-    private String oaiNamespace;
+    private Map<String, String> namespaces;
 
     private boolean setsEnabled;
 
@@ -247,12 +249,12 @@ public class OAIProviderService {
     }
 
     /**
-     * Set oaiNamespace
+     * The setNamespaces setter method.
      * 
-     * @param oaiNamespace the oai namespace
+     * @param namespaces the namespaces to set
      */
-    public void setOaiNamespace(final String oaiNamespace) {
-        this.oaiNamespace = oaiNamespace;
+    public void setNamespaces(final Map<String, String> namespaces) {
+        this.namespaces = namespaces;
     }
 
     /**
@@ -312,9 +314,13 @@ public class OAIProviderService {
 
         final NamespaceRegistry namespaceRegistry =
             (org.modeshape.jcr.api.NamespaceRegistry) session.getWorkspace().getNamespaceRegistry();
-        // Register the oai namespace if it's not found
-        if (!namespaceRegistry.isRegisteredPrefix("oai")) {
-            namespaceRegistry.registerNamespace("oai", oaiNamespace);
+
+        // Register the namespaces if it's not found
+        final Set<Entry<String, String>> entries = namespaces.entrySet();
+        for (Entry<String, String> entry : entries) {
+            if (!namespaceRegistry.isRegisteredPrefix(entry.getKey())) {
+                namespaceRegistry.registerNamespace(entry.getKey(), entry.getValue());
+            }
         }
 
         if (!this.nodeService.exists(session, setsRootPath)) {

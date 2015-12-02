@@ -240,7 +240,8 @@
 				<version>2.14</version>
 				<configuration>
 					<excludes>**/integration/**/*, **/purl/**/**/**/*,
-						**/openarchives/**/**/*, **/ndltd/**</excludes>
+						**/openarchives/**/**/*, **/ndltd/standards/metadata/etdms/**, 
+						**/ualberta/library/terms/oai_qdc/**</excludes>
 					<systemPropertyVariables>
 						<project.version>${project.version}</project.version>
 					</systemPropertyVariables>

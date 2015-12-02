@@ -15,17 +15,23 @@
  */
 package org.fcrepo.oai.jersey;
 
-import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
-import org.openarchives.oai._2.OAIPMHtype;
-import org.openarchives.oai._2_0.oai_dc.OaiDcType;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.IOException;
-import java.io.Writer;
+
+import org.openarchives.oai._2.OAIPMHtype;
+import org.openarchives.oai._2_0.oai_dc.OaiDcType;
+
+import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 /**
  * The type Oai jaxb provider.
@@ -34,6 +40,25 @@ import java.io.Writer;
  */
 @Provider
 public class OaiJaxbProvider implements ContextResolver<Marshaller> {
+
+    @SuppressWarnings("serial")
+    private static final Map<String, String> namespacePrefixMap() {
+        return Collections.unmodifiableMap(new HashMap<String, String>() {
+            {
+                put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+                put("http://www.openarchives.org/OAI/2.0/", "");
+                put("http://www.openarchives.org/OAI/2.0/oai_dc/", "oai_dc");
+                put("http://purl.org/dc/elements/1.1/", "dc");
+                put("http://www.ndltd.org/standards/metadata/etdms/1.0/", "oai_etdms");
+            }
+        });
+    }
+
+    private static final String schemaLocation =
+        "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\n"
+            + "    http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\n"
+            + "    http://www.ndltd.org/standards/metadata/etdms/1.0/ "
+            + "http://www.ndltd.org/standards/metadata/etdms/1.0/etdms.xsd";
 
     private final Marshaller marshaller;
 
@@ -47,7 +72,7 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
             @Override
             public void escape(final char[] chars, final int start, final int len, final boolean isAttr,
-                               final Writer writer) throws IOException {
+                final Writer writer) throws IOException {
                 final StringBuilder data = new StringBuilder(len);
                 for (int i = start; i < len + start; i++) {
                     if (chars[i] == '&') {
@@ -59,6 +84,16 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
                 writer.write(data.toString());
             }
         });
+        this.marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixMapper() {
+
+            @Override
+            public String getPreferredPrefix(final String namespaceUri, final String suggestion,
+                final boolean requirePrefix) {
+                return namespacePrefixMap().get(namespaceUri);
+            }
+        });
+        this.marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
+        this.marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
     }
 
     @Override

@@ -30,7 +30,17 @@
         <property name="propertyOaiRepositoryName" value="http://www.openarchives.org/OAI/2.0/repositoryName"/>
         <property name="propertyOaiDescription" value="http://www.openarchives.org/OAI/2.0/description"/>
         <property name="propertyOaiAdminEmail" value="http://www.openarchives.org/OAI/2.0/adminEmail"/>
-        <property name="oaiNamespace" value="http://www.openarchives.org/OAI/2.0/"/>
+<!--        <property name="oaiNamespace" value="http://www.openarchives.org/OAI/2.0/"/>-->
+        <property name="namespaces">
+            <map>
+                <entry key="oai" value="http://www.openarchives.org/OAI/2.0/" />
+                <entry key="dcterms" value="http://purl.org/dc/terms/" />
+                <entry key="ualterms" value="http://terms.library.ualberta.ca/" />
+                <entry key="marcrel" value="http://id.loc.gov/vocabulary/relators/" />
+                <entry key="vivo" value="http://vivoweb.org/ontology/core#" />
+                <entry key="bibo" value="http://purl.org/ontology/bibo/" />
+            </map>
+        </property>
         <property name="metadataFormats">
             <map>
                 <entry key="oai_dc" value-ref="dublinCoreOaiFormat" />
