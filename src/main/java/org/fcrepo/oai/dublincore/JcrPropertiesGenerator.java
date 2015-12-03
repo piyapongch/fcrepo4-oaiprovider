@@ -22,8 +22,6 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.fcrepo.http.api.FedoraNodes;
-import org.fcrepo.http.commons.api.rdf.HttpResourceConverter;
 import org.fcrepo.kernel.models.Container;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
 import org.purl.dc.elements._1.ObjectFactory;
@@ -51,8 +49,6 @@ public class JcrPropertiesGenerator {
     public JAXBElement<OaiDcType> generateDc(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
 
-        final HttpResourceConverter converter =
-            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
         final OaiDcType oaidc = oaiDcFactory.createOaiDcType();
         Value[] values;
 
@@ -124,19 +120,19 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:subject") ? obj.getProperty("dcterms:subject").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
         }
         values = obj.hasProperty("dcterms:temporal") ? obj.getProperty("dcterms:temporal").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
         }
         values = obj.hasProperty("dcterms:spatial") ? obj.getProperty("dcterms:spatial").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
         }
 
@@ -145,7 +141,7 @@ public class JcrPropertiesGenerator {
             obj.hasProperty("ualterms:specialization") ? obj.getProperty("ualterms:specialization").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
@@ -153,13 +149,13 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:created") ? obj.getProperty("dcterms:created").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(simple));
         }
         values = obj.hasProperty("dcterms:dateAccepted") ? obj.getProperty("dcterms:dateAccepted").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(simple));
         }
 
@@ -175,7 +171,7 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("bibo:ThesisDegree") ? obj.getProperty("bibo:ThesisDegree").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
@@ -183,26 +179,26 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:identifier") ? obj.getProperty("dcterms:identifier").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
         values = obj.hasProperty("ualterms:trid") ? obj.getProperty("ualterms:trid").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
         values = obj.hasProperty("ualterms:ser") ? obj.getProperty("ualterms:ser").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
         values =
             obj.hasProperty("ualterms:fedora3handle") ? obj.getProperty("ualterms:fedora3handle").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
 
@@ -210,7 +206,7 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:description") ? obj.getProperty("dcterms:description").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
@@ -218,7 +214,7 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:abstract") ? obj.getProperty("dcterms:abstract").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
@@ -226,7 +222,7 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:language") ? obj.getProperty("dcterms:language").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createLanguage(simple));
         }
 
@@ -234,13 +230,13 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:relation") ? obj.getProperty("dcterms:relation").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(simple));
         }
         values = obj.hasProperty("dcterms:isVersionOf") ? obj.getProperty("dcterms:isVersionOf").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(simple));
         }
 
@@ -248,7 +244,7 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:source") ? obj.getProperty("dcterms:source").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSource(simple));
         }
 
@@ -256,13 +252,13 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:rights") ? obj.getProperty("dcterms:rights").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
         values = obj.hasProperty("dcterms:license") ? obj.getProperty("dcterms:license").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
 
@@ -270,7 +266,7 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:format") ? obj.getProperty("dcterms:format").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[0].getString()));
+            simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
 
