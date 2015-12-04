@@ -267,7 +267,7 @@ public class JcrPropertiesGenerator {
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
             simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createFormat(simple));
         }
 
         return oaiDcFactory.createDc(oaidc);

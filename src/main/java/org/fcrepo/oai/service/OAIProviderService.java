@@ -76,8 +76,10 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.modeshape.jcr.api.NamespaceRegistry;
+import org.openarchives.oai._2.DeletedRecordType;
 import org.openarchives.oai._2.DescriptionType;
 import org.openarchives.oai._2.GetRecordType;
+import org.openarchives.oai._2.GranularityType;
 import org.openarchives.oai._2.HeaderType;
 import org.openarchives.oai._2.IdentifyType;
 import org.openarchives.oai._2.ListIdentifiersType;
@@ -323,22 +325,23 @@ public class OAIProviderService {
             }
         }
 
+        Container root;
         if (!this.nodeService.exists(session, setsRootPath)) {
-
             log.info("Initializing OAI root {} ...", setsRootPath);
-
-            final Container root = this.containerService.findOrCreate(session, setsRootPath);
+            root = this.containerService.findOrCreate(session, setsRootPath);
             session.save();
-
-            final String repositoryName = descriptiveContent.get("repositoryName");
-            final String description = descriptiveContent.get("description");
-            final String adminEmail = descriptiveContent.get("adminEmail");
-            root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiRepositoryName)),
-                repositoryName);
-            root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiDescription)), description);
-            root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiAdminEmail)), adminEmail);
-            session.save();
+        } else {
+            log.info("Updating OAI root {} ...", setsRootPath);
+            root = this.containerService.findOrCreate(session, setsRootPath);
         }
+
+        final String repositoryName = descriptiveContent.get("repositoryName");
+        final String description = descriptiveContent.get("description");
+        final String adminEmail = descriptiveContent.get("adminEmail");
+        root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiRepositoryName)), repositoryName);
+        root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiDescription)), description);
+        root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiAdminEmail)), adminEmail);
+        session.save();
 
         // set audit container name
         AUDIT_CONTAINER_NAME = System.getProperty(AUDIT_CONTAINER);
@@ -394,12 +397,19 @@ public class OAIProviderService {
             root.getTriples(converter, PropertiesRdfContext.class).filter(new PropertyPredicate(propertyOaiAdminEmail));
         id.getAdminEmail().add(0, triples.next().getObject().getLiteralValue().toString());
 
+        // granularity
+        id.setGranularity(GranularityType.YYYY_MM_DD_THH_MM_SS_Z);
+
+        // deleteRecord
+        id.setDeletedRecord(DeletedRecordType.NO);
+
         // description
         triples = root.getTriples(converter, PropertiesRdfContext.class)
             .filter(new PropertyPredicate(propertyOaiDescription));
         final String description = triples.next().getObject().getLiteralValue().toString();
         final DescriptionType desc = oaiFactory.createDescriptionType();
-        desc.setAny(new JAXBElement<String>(new QName("general"), String.class, description));
+        desc.setAny(new JAXBElement<String>(new QName("http://www.openarchives.org/OAI/2.0/", "description"),
+            String.class, description));
 
         id.getDescription().add(0, desc);
 
