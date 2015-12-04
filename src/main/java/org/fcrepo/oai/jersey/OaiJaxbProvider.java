@@ -93,7 +93,7 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
             }
         });
         this.marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
-        this.marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        this.marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
     }
 
     @Override
