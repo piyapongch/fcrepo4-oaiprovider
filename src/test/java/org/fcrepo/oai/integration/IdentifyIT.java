@@ -39,18 +39,18 @@ public class IdentifyIT extends AbstractOAIProviderIT {
         assertEquals(200, resp.getStatusLine().getStatusCode());
         String responseContent = EntityUtils.toString(resp.getEntity());
 
-        OAIPMHtype oaipmh = ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(
-                        new ByteArrayInputStream(responseContent.getBytes()))).getValue();
+        OAIPMHtype oaipmh =
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller
+                .unmarshal(new ByteArrayInputStream(responseContent.getBytes()))).getValue();
         assertEquals(0, oaipmh.getError().size());
         assertNotNull(oaipmh.getIdentify());
         assertNotNull(oaipmh.getRequest());
         assertEquals(VerbType.IDENTIFY.value(), oaipmh.getRequest().getVerb().value());
         IdentifyType identifyType = oaipmh.getIdentify();
-        assertEquals("Fedora " + System.getProperty("project.version"),
-                identifyType.getRepositoryName());
+        assertEquals("Fedora " + System.getProperty("project.version"), identifyType.getRepositoryName());
         assertEquals("2.0", identifyType.getProtocolVersion());
         assertTrue(responseContent.contains("An example repository description"));
         assertTrue(oaipmh.getIdentify().getAdminEmail().contains("admin@example.com"));
-        assertEquals(serverAddress, oaipmh.getIdentify().getBaseURL());
+        assertTrue(oaipmh.getIdentify().getBaseURL().contains("http://era.library.ualberta.ca/oai"));
     }
 }

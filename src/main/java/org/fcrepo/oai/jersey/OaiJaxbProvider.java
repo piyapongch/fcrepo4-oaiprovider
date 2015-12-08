@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.openarchives.oai._1_1.eprints.EprintsDescriptionType;
 import org.openarchives.oai._2.OAIPMHtype;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
 
@@ -37,6 +38,7 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
  * The type Oai jaxb provider.
  * 
  * @author Frank Asseg
+ * @author Piyapong Charoenwattana
  */
 @Provider
 public class OaiJaxbProvider implements ContextResolver<Marshaller> {
@@ -68,7 +70,8 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
      * @throws JAXBException the jAXB exception
      */
     public OaiJaxbProvider() throws JAXBException {
-        this.marshaller = JAXBContext.newInstance(OaiDcType.class, OAIPMHtype.class).createMarshaller();
+        this.marshaller =
+            JAXBContext.newInstance(OaiDcType.class, OAIPMHtype.class, EprintsDescriptionType.class).createMarshaller();
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
             @Override
             public void escape(final char[] chars, final int start, final int len, final boolean isAttr,

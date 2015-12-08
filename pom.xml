@@ -172,10 +172,9 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- This dependency is for compile-time: it keeps this module independent 
-			of any given choice of JAX-RS implementation. It must be _after_ the test 
-			gear. Otherwise it will get loaded during test phase, but because this is 
-			just an API, the tests will not be able to execute. -->
+		<!-- This dependency is for compile-time: it keeps this module independent of any given choice of JAX-RS implementation. 
+			It must be _after_ the test gear. Otherwise it will get loaded during test phase, but because this is just an API, the tests 
+			will not be able to execute. -->
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
@@ -224,15 +223,43 @@
 				<version>1.6</version>
 				<executions>
 					<execution>
+						<id>oai-pmh</id>
 						<goals>
 							<goal>xjc</goal>
 						</goals>
+						<configuration>
+							<outputDirectory>target/generated-sources</outputDirectory>
+							<schemaDirectory>src/main/resources/schema/oai-pmh</schemaDirectory>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
 					</execution>
+					<!-- 
+					<execution>
+						<id>oai-identify</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/generated-sources</outputDirectory>
+							<schemaDirectory>src/main/resources/schema/oai-identify</schemaDirectory>
+							<clearOutputDir>false</clearOutputDir>
+							<packageName>org.oai.identify</packageName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>oai-rights</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/generated-sources</outputDirectory>
+							<schemaDirectory>src/main/resources/schema/oai-rights</schemaDirectory>
+							<clearOutputDir>false</clearOutputDir>
+							<packageName>org.oai.rights</packageName>
+						</configuration>
+					</execution>
+					 -->
 				</executions>
-				<configuration>
-					<outputDirectory>target/generated-sources</outputDirectory>
-					<schemaDirectory>src/main/resources/schema</schemaDirectory>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -240,8 +267,8 @@
 				<version>2.14</version>
 				<configuration>
 					<excludes>**/integration/**/*, **/purl/**/**/**/*,
-						**/openarchives/**/**/*, **/ndltd/standards/metadata/etdms/**, 
-						**/ualberta/library/terms/oai_qdc/**</excludes>
+						**/openarchives/**/**/*, **/ndltd/standards/metadata/etdms/**,
+						**/ualberta/library/terms/oai_qdc/**, **/oai/identify/**,**/oai/rights/**</excludes>
 					<systemPropertyVariables>
 						<project.version>${project.version}</project.version>
 					</systemPropertyVariables>

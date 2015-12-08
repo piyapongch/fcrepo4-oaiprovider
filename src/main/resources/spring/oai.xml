@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
     <context:annotation-config/>
@@ -11,9 +10,9 @@
 
     <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
 
-<!--    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>-->
+    <!--    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>-->
 
-<!--    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>-->
+    <!--    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>-->
 
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
         <property name="autoGenerateOaiDc" value="true"/>
@@ -27,30 +26,44 @@
         <property name="propertyOaiRepositoryName" value="http://www.openarchives.org/OAI/2.0/repositoryName"/>
         <property name="propertyOaiDescription" value="http://www.openarchives.org/OAI/2.0/description"/>
         <property name="propertyOaiAdminEmail" value="http://www.openarchives.org/OAI/2.0/adminEmail"/>
+        <property name="propertyOaiBaseUrl" value="http://www.openarchives.org/OAI/2.0/baseUrl"/>
         <property name="namespaces">
             <map>
-                <entry key="oai" value="http://www.openarchives.org/OAI/2.0/" />
-                <entry key="dcterms" value="http://purl.org/dc/terms/" />
-                <entry key="ualterms" value="http://terms.library.ualberta.ca/" />
-                <entry key="marcrel" value="http://id.loc.gov/vocabulary/relators/" />
-                <entry key="vivo" value="http://vivoweb.org/ontology/core#" />
-                <entry key="bibo" value="http://purl.org/ontology/bibo/" />
+                <entry key="oai" value="http://www.openarchives.org/OAI/2.0/"/>
+                <entry key="dcterms" value="http://purl.org/dc/terms/"/>
+                <entry key="ualterms" value="http://terms.library.ualberta.ca/"/>
+                <entry key="marcrel" value="http://id.loc.gov/vocabulary/relators/"/>
+                <entry key="vivo" value="http://vivoweb.org/ontology/core#"/>
+                <entry key="bibo" value="http://purl.org/ontology/bibo/"/>
             </map>
         </property>
         <property name="metadataFormats">
             <map>
-                <entry key="oai_dc" value-ref="dublinCoreOaiFormat" />
-                <entry key="oai_qdc" value-ref="qualifiedDublinCoreOaiFormat" />
-                <entry key="oai_etdms" value-ref="etdmsOaiFormat" />
-                <entry key="marc21" value-ref="marc21OaiFormat" />
-                <entry key="premis" value-ref="premisOaiFormat" />
+                <entry key="oai_dc" value-ref="dublinCoreOaiFormat"/>
+                <entry key="oai_qdc" value-ref="qualifiedDublinCoreOaiFormat"/>
+                <entry key="oai_etdms" value-ref="etdmsOaiFormat"/>
+                <entry key="marc21" value-ref="marc21OaiFormat"/>
+                <entry key="premis" value-ref="premisOaiFormat"/>
             </map>
         </property>
+        <property name="descEnabled" value="false"/>
         <property name="descriptiveContent">
             <map>
-                <entry key="repositoryName" value="Fedora ${project.version}" />
-                <entry key="description" value="An example repository description" />
-                <entry key="adminEmail" value="admin@example.com" />
+                <entry key="repositoryName" value="Fedora ${project.version}"/>
+                <entry key="adminEmail" value="admin@example.com"/>
+                <entry key="baseUrl" value="https://era.library.ualberta.ca/oai"/>
+                <!-- eprints descriptions -->
+                <entry key="description" value="An example repository description"/>
+                <entry key="metadataPolicy"
+                    value="CCSD metadata are freely accessible to all, under the following conditions:
+                    (1) The full name of the author and (2) the full bibliographic reference information for the thesis
+                    must always co-appear prominently with any redisplay of the metadata, in any medium. The metadata
+                    may not be offered for sale."/>
+                <entry key="dataPolicy"
+                    value="CCSD full-text thesis are freely accessible to all under the following
+                    conditions: (1) The full name of the author and (2) the full bibliographic reference information for
+                    the thesis must always co-appear prominently with redisplay of the text, in any medium. The text may
+                    not be offered for sale."/>
             </map>
         </property>
     </bean>
@@ -77,16 +90,16 @@
     </bean>
 
     <bean name="marc21OaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
-        <property name="prefix" value="marc21" />
-        <property name="schemaUrl" value="http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd" />
-        <property name="namespace" value="http://www.loc.gov/MARC21/slim" />
-        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiMarc21Record" />
+        <property name="prefix" value="marc21"/>
+        <property name="schemaUrl" value="http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"/>
+        <property name="namespace" value="http://www.loc.gov/MARC21/slim"/>
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiMarc21Record"/>
     </bean>
 
     <bean name="premisOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
-        <property name="prefix" value="premis" />
-        <property name="schemaUrl" value="http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd" />
-        <property name="namespace" value="info:lc/xmlns/premis-v2" />
-        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiPremisRecord" />
+        <property name="prefix" value="premis"/>
+        <property name="schemaUrl" value="http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd"/>
+        <property name="namespace" value="info:lc/xmlns/premis-v2"/>
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiPremisRecord"/>
     </bean>
 </beans>

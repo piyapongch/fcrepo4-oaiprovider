@@ -31,6 +31,7 @@ import org.purl.dc.elements._1.SimpleLiteral;
  * The type Jcr properties generator.
  *
  * @author Frank Asseg
+ * @author Piyapong Charoenwattana
  */
 public class JcrPropertiesGenerator {
     private static final ObjectFactory dcFactory = new ObjectFactory();
@@ -87,8 +88,9 @@ public class JcrPropertiesGenerator {
             simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
         }
-        values = obj.hasProperty("ualterms:thesiscommitteemember")
-            ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
+        values =
+            obj.hasProperty("ualterms:thesiscommitteemember")
+                ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
             simple.getContent().add(escape(values[i].getString()));
