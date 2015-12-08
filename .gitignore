@@ -5,3 +5,5 @@ fcrepo4-data/
 /.settings/
 /.classpath
 /.project
+schema/
+src/main/xjb-ext/
