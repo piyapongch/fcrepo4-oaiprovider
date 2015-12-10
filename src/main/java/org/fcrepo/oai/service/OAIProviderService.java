@@ -167,6 +167,8 @@ public class OAIProviderService {
 
     private int maxListSize;
 
+    private String baseUrl;
+
     @Autowired
     private BinaryService binaryService;
 
@@ -364,18 +366,18 @@ public class OAIProviderService {
         final String repositoryName = descriptiveContent.get("repositoryName");
         final String description = descriptiveContent.get("description");
         final String adminEmail = descriptiveContent.get("adminEmail");
-        final String baseUrl = descriptiveContent.get("baseUrl");
+        baseUrl = descriptiveContent.get("baseUrl");
         root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiRepositoryName)), repositoryName);
         root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiDescription)), description);
         root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiAdminEmail)), adminEmail);
         root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiBaseUrl)), baseUrl);
         session.save();
 
-        // set audit container name
+        // set audit container name for list resources filter
         AUDIT_CONTAINER_NAME = System.getProperty(AUDIT_CONTAINER);
         AUDIT_CONTAINER_NAME = AUDIT_CONTAINER_NAME != null ? AUDIT_CONTAINER_NAME.replaceAll("/", "") : null;
 
-        // set set root name
+        // set set root name for list resources filter
         SET_ROOT_NAME = setsRootPath.replaceAll(".*/", "");
     }
 
@@ -572,16 +574,16 @@ public class OAIProviderService {
                 "The metadata format is not available");
         }
 
-        // TODO: parse identifier to get object path before get record
-
-        final String path = "/" + identifier;
+        // get object path from identifier
+        String path = identifier.substring(this.baseUrl.length());
+        path = path.startsWith("/") ? path : "/" + path;
         if (!nodeService.exists(session, path)) {
             return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
                 "The requested identifier does not exist");
         }
 
         /* Prepare the OAI response objects */
-        final Container obj = containerService.findOrCreate(session, "/" + identifier);
+        final Container obj = containerService.findOrCreate(session, path);
 
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
         oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
