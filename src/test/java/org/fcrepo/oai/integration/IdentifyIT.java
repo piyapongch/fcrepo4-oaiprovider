@@ -51,6 +51,5 @@ public class IdentifyIT extends AbstractOAIProviderIT {
         assertEquals("2.0", identifyType.getProtocolVersion());
         assertTrue(responseContent.contains("An example repository description"));
         assertTrue(oaipmh.getIdentify().getAdminEmail().contains("admin@example.com"));
-        assertTrue(oaipmh.getIdentify().getBaseURL().contains("http://era.library.ualberta.ca/oai"));
     }
 }
