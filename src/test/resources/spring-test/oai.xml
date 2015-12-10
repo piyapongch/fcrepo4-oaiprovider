@@ -55,7 +55,7 @@
             <map>
                 <entry key="repositoryName" value="Fedora ${project.version}"/>
                 <entry key="adminEmail" value="admin@example.com"/>
-                <entry key="baseUrl" value="http://era.library.ualberta.ca/oai"/>
+                <entry key="baseUrl" value=""/>
                 <!-- eprints descriptions -->
                 <entry key="description" value="An example repository description"/>
                 <entry key="metadataPolicy"
