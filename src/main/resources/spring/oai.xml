@@ -42,8 +42,10 @@
                 <entry key="oai_dc" value-ref="dublinCoreOaiFormat"/>
                 <entry key="oai_qdc" value-ref="qualifiedDublinCoreOaiFormat"/>
                 <entry key="oai_etdms" value-ref="etdmsOaiFormat"/>
+                <!--
                 <entry key="marc21" value-ref="marc21OaiFormat"/>
                 <entry key="premis" value-ref="premisOaiFormat"/>
+                -->
             </map>
         </property>
         <property name="descEnabled" value="false"/>
