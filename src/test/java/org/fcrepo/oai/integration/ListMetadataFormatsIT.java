@@ -51,7 +51,7 @@ public class ListMetadataFormatsIT extends AbstractOAIProviderIT {
     @Test
     public void testListNonExistingObjectMetadataTypes() throws Exception {
         HttpResponse resp =
-            getOAIPMHResponse(VerbType.LIST_METADATA_FORMATS.value(), "non-existing-pid", "oai_dc", null, null, null);
+            getOAIPMHResponse(VerbType.LIST_METADATA_FORMATS.value(), "/non-existing-pid", "oai_dc", null, null, null);
         assertEquals(200, resp.getStatusLine().getStatusCode());
 
         OAIPMHtype oaipmh =
@@ -62,7 +62,7 @@ public class ListMetadataFormatsIT extends AbstractOAIProviderIT {
 
     @Test
     public void testListObjectMetadataTypes() throws Exception {
-        String pid = "oai-test-" + RandomStringUtils.randomAlphabetic(8);
+        String pid = "/oai-test-" + RandomStringUtils.randomAlphabetic(8);
 
         this.createFedoraObject(pid);
 
