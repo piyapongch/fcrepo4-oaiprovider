@@ -133,9 +133,8 @@ public abstract class AbstractOAIProviderIT {
         final HttpPost post = postObjMethod("/");
         if (pid.length() > 0) {
             post.addHeader("Slug", pid);
-            StringBuilder sparql =
-                new StringBuilder("INSERT {").append("<> ")
-                    .append("<info:fedora/fedora-system:def/model#hasModel> \"Batch\"");
+            StringBuilder sparql = new StringBuilder("INSERT {").append("<> ")
+                .append("<info:fedora/fedora-system:def/model#hasModel> \"GenericFile\"");
             ;
             if (set != null && !set.isEmpty()) {
                 sparql.append("; ").append("<http://fedora.info/definitions/v4/config#isPartOfOAISet> ").append("\"")
@@ -145,10 +144,9 @@ public abstract class AbstractOAIProviderIT {
             post.setEntity(new StringEntity(sparql.toString()));
             post.addHeader("Content-Type", "application/sparql-update");
         } else if (set != null && !set.isEmpty()) {
-            StringBuilder sparql =
-                new StringBuilder("INSERT {").append("<> ")
-                    .append("<http://fedora.info/definitions/v4/config#isPartOfOAISet> ").append("\"").append(set)
-                    .append("\" .").append("} WHERE {}");
+            StringBuilder sparql = new StringBuilder("INSERT {").append("<> ")
+                .append("<http://fedora.info/definitions/v4/config#isPartOfOAISet> ").append("\"").append(set)
+                .append("\" .").append("} WHERE {}");
             post.setEntity(new StringEntity(sparql.toString()));
             post.addHeader("Content-Type", "application/sparql-update");
         } else {
@@ -166,9 +164,8 @@ public abstract class AbstractOAIProviderIT {
         if (pid.length() > 0) {
             post.addHeader("Slug", pid);
         }
-        StringBuilder sparql =
-            new StringBuilder("INSERT {").append("<> ").append("<").append(property).append("> ").append("\"")
-                .append(binaryId).append("\" .").append("} WHERE {}");
+        StringBuilder sparql = new StringBuilder("INSERT {").append("<> ").append("<").append(property).append("> ")
+            .append("\"").append(binaryId).append("\" .").append("} WHERE {}");
         post.setEntity(new StringEntity(sparql.toString()));
         post.addHeader("Content-Type", "application/sparql-update");
 
