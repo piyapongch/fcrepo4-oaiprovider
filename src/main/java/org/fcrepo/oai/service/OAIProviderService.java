@@ -119,8 +119,6 @@ public class OAIProviderService {
 
     private static final ObjectFactory oaiFactory = new ObjectFactory();
 
-    private static final String AUDIT_CONTAINER = "fcrepo.audit.container";
-
     private static final String eprintsNs = "http://www.openarchives.org/OAI/1.1/eprints";
 
     private static final String eprintsPrefix = "eprints";
@@ -140,6 +138,8 @@ public class OAIProviderService {
     private String propertyHasSetSpec;
 
     private String propertyHasModel;
+
+    private String propertyHasEmbargo;
 
     private String propertyIsPartOfSet;
 
@@ -224,6 +224,15 @@ public class OAIProviderService {
      */
     public void setPropertyHasModel(final String propertyHasModel) {
         this.propertyHasModel = propertyHasModel;
+    }
+
+    /**
+     * The setPropertyHasEmbargo setter method.
+     * 
+     * @param propertyHasEmbargo the propertyHasEmbargo to set
+     */
+    public void setPropertyHasEmbargo(final String propertyHasEmbargo) {
+        this.propertyHasEmbargo = propertyHasEmbargo;
     }
 
     /**
@@ -1099,16 +1108,21 @@ public class OAIProviderService {
         final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
         final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
+        final String propHasEmbargo = getPropertyName(session, createProperty(propertyHasEmbargo));
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
         jql.append(" WHERE ");
 
-        // filter item object only
+        // item object
         jql.append("res.[" + propHasModel + "] = 'GenericFile'");
         jql.append(" AND ");
 
+        // not embargo
+        jql.append("res.[" + propHasEmbargo + "] IS NULL");
+        jql.append(" AND ");
+
         // mixin type constraint
-        jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
+        // jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
 
         // start datetime constraint
         if (StringUtils.isNotBlank(from)) {
@@ -1127,6 +1141,11 @@ public class OAIProviderService {
             jql.append(" AND ");
             jql.append("res.[" + predicateIsPartOfOAISet + "] = '" + set + "'");
         }
+
+        // check for public item only
+        // IN (SELECT [http://www.w3.org/ns/auth/acl#accessTo] FROM [FEDORA_RESOURCE]
+        // WHERE [info:fedora/fedora-system:def/model#hasModel] = 'Hydra::AccessControls::Permission'
+        // AND [http://www.w3.org/ns/auth/acl#agent] != 'http://projecthydra.org/ns/auth/group#public')
 
         if (limit > 0) {
             jql.append(" LIMIT ").append(maxListSize).append(" OFFSET ").append(offset);

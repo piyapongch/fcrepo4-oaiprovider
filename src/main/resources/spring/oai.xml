@@ -24,6 +24,7 @@
         <property name="propertySetName" value="http://fedora.info/definitions/v4/config#hasOAISetName"/>
         <property name="propertyHasSetSpec" value="http://fedora.info/definitions/v4/config#hasOAISetSpec"/>
         <property name="propertyHasModel" value="info:fedora/fedora-system:def/model#hasModel"/>
+        <property name="propertyHasEmbargo" value="http://projecthydra.org/ns/auth/acl#hasEmbargo"/>
         <property name="propertyOaiRepositoryName" value="http://www.openarchives.org/OAI/2.0/repositoryName"/>
         <property name="propertyOaiDescription" value="http://www.openarchives.org/OAI/2.0/description"/>
         <property name="propertyOaiAdminEmail" value="http://www.openarchives.org/OAI/2.0/adminEmail"/>
