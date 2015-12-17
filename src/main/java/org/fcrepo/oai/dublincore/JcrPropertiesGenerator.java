@@ -107,7 +107,7 @@ public class JcrPropertiesGenerator {
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(simple));
         } else {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            final StringBuffer value = new StringBuffer(values[0].getString());
+            final StringBuilder value = new StringBuilder(values[0].getString());
             if (vals != null) {
                 for (int i = 0; i < vals.length; i++) {
                     value.append(i == 0 ? "; " : ", ").append(vals[i].getString());
