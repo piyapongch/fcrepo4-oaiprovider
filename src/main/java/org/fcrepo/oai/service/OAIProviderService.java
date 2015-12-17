@@ -876,8 +876,7 @@ public class OAIProviderService {
                 + SET_ROOT_NAME + "/%'";
             final RowIterator setResult = executeQuery(queryManager, setJql);
             if (!setResult.hasNext()) {
-                return error(VerbType.LIST_IDENTIFIERS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
-                    "No record found");
+                return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
             }
             while (setResult.hasNext()) {
                 final SetType set = oaiFactory.createSetType();
@@ -1105,7 +1104,7 @@ public class OAIProviderService {
         jql.append(" WHERE ");
 
         // filter item object only
-        jql.append("(res.[" + propHasModel + "] = 'Batch' OR res.[" + propHasModel + "] = 'GenericFile')");
+        jql.append("res.[" + propHasModel + "] = 'GenericFile'");
         jql.append(" AND ");
 
         // mixin type constraint
