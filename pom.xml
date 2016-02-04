@@ -78,6 +78,23 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- jms support -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-spring</artifactId>
+			<version>${activemq.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<!-- test gear -->
 		<dependency>
@@ -233,32 +250,11 @@
 							<clearOutputDir>false</clearOutputDir>
 						</configuration>
 					</execution>
-					<!-- 
-					<execution>
-						<id>oai-identify</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>target/generated-sources</outputDirectory>
-							<schemaDirectory>src/main/resources/schema/oai-identify</schemaDirectory>
-							<clearOutputDir>false</clearOutputDir>
-							<packageName>org.oai.identify</packageName>
-						</configuration>
-					</execution>
-					<execution>
-						<id>oai-rights</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>target/generated-sources</outputDirectory>
-							<schemaDirectory>src/main/resources/schema/oai-rights</schemaDirectory>
-							<clearOutputDir>false</clearOutputDir>
-							<packageName>org.oai.rights</packageName>
-						</configuration>
-					</execution>
-					 -->
+					<!-- <execution> <id>oai-identify</id> <goals> <goal>xjc</goal> </goals> <configuration> <outputDirectory>target/generated-sources</outputDirectory> 
+						<schemaDirectory>src/main/resources/schema/oai-identify</schemaDirectory> <clearOutputDir>false</clearOutputDir> <packageName>org.oai.identify</packageName> 
+						</configuration> </execution> <execution> <id>oai-rights</id> <goals> <goal>xjc</goal> </goals> <configuration> <outputDirectory>target/generated-sources</outputDirectory> 
+						<schemaDirectory>src/main/resources/schema/oai-rights</schemaDirectory> <clearOutputDir>false</clearOutputDir> <packageName>org.oai.rights</packageName> 
+						</configuration> </execution> -->
 				</executions>
 			</plugin>
 			<plugin>
