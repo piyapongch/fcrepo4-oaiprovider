@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -754,6 +755,13 @@ public class OAIProviderService {
 
                 // get base url
                 final FedoraResource root = nodeService.find(session, setsRootPath);
+
+                // test get weakreference
+                final PropertyIterator props = root.getNode().getWeakReferences();
+                while (props.hasNext()) {
+                    final PropertyIterator prop = (PropertyIterator) props.next();
+                }
+
                 RdfStream triples =
                     root.getTriples(converter, PropertiesRdfContext.class)
                         .filter(new PropertyPredicate(propertyOaiBaseUrl));
@@ -1116,59 +1124,46 @@ public class OAIProviderService {
         final String until, final String set, final int limit, final int offset) throws RepositoryException {
 
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
-        final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
         final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
-        final String propHasEmbargo = getPropertyName(session, createProperty(propertyHasEmbargo));
-        final String propAccessTo = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo"));
+        final String propAccessTo =
+            getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo_ref"));
+        final String propMode = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#mode"));
+        final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
         final StringBuilder jql = new StringBuilder();
-        jql.append("SELECT res.[" + propJcrPath + "] AS sub FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
-        jql.append(" LEFT OUTER JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
+        jql.append("SELECT res.[" + propJcrPath + "] AS sub, per.[" + propAgent + "] as agent ");
+        jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
+        jql.append(" JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
         jql.append(" ON res.[jcr:uuid] = per.[" + propAccessTo + "] ");
-        jql.append("WHERE");
+        jql.append("WHERE ");
 
-        // TODO: add private and restricted object filter
-        // public item
-        // THIS DOES NOT WORK WITH URL (FEDORA PROPERTY webacl:accessTo
-        // jql.append("LOCALNAME() NOT IN (SELECT fcr.[webacl:accessTo] FROM [" + FedoraJcrTypes.FEDORA_RESOURCE
-        // + "] AS [fcr]");
-        // jql.append(" WHERE fcr.[model:hasModel] = 'Hydra::AccessControls::Permission'");
-        // jql.append(" AND fcr.[webacl:agent] != 'http://projecthydra.org/ns/auth/group#public')");
-        // jql.append(" AND ");
+        // items
+        jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
 
-        // THIS WORKS WITH PATH
-        // jql.append("LOCALNAME() IN ('object-1')");
-        // jql.append(" AND ");
+        // permission
+        jql.append(" AND");
+        jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
 
-        // item object
-        jql.append("  res.[" + propHasModel + "] = 'GenericFile'");
-
-        // not private items
-        jql.append("  AND ");
-        jql.append("  per.[jcr:uuid] IS NULL");
-
-        // not embargo
-        // jql.append("res.[" + propHasEmbargo + "] IS NULL");
-
-        // mixin type constraint
-        // jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
+        // agent, cast to binary to compare with xs:base64binary string property
+        jql.append(" AND");
+        jql.append(" per.[" + propAgent + "] = CAST('http://projecthydra.org/ns/auth/group#public^^URI' AS BINARY)");
 
         // start datetime constraint
         if (StringUtils.isNotBlank(from)) {
-            jql.append(" AND ");
-            jql.append("res.[" + propJcrLastModifiedDate + "] >= CAST( '" + from + "' AS DATE)");
+            jql.append(" AND");
+            jql.append(" res.[" + propJcrLastModifiedDate + "] >= CAST( '" + from + "' AS DATE)");
         }
         // end datetime constraint
         if (StringUtils.isNotBlank(until)) {
-            jql.append(" AND ");
-            jql.append("res.[" + propJcrLastModifiedDate + "] <= CAST( '" + until + "' AS DATE)");
+            jql.append(" AND");
+            jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST( '" + until + "' AS DATE)");
         }
 
         // set constraint
         if (StringUtils.isNotBlank(set)) {
             final String predicateIsPartOfOAISet = getPropertyName(session, createProperty(propertyIsPartOfSet));
-            jql.append(" AND ");
-            jql.append("res.[" + predicateIsPartOfOAISet + "] = '" + set + "'");
+            jql.append(" AND");
+            jql.append(" res.[" + predicateIsPartOfOAISet + "] = '" + set + "'");
         }
 
         if (limit > 0) {
