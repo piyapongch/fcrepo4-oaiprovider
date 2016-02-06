@@ -140,8 +140,6 @@ public class OAIProviderService {
 
     private String propertyHasModel;
 
-    private String propertyHasEmbargo;
-
     private String propertyIsPartOfSet;
 
     private String propertyOaiRepositoryName;
@@ -225,15 +223,6 @@ public class OAIProviderService {
      */
     public void setPropertyHasModel(final String propertyHasModel) {
         this.propertyHasModel = propertyHasModel;
-    }
-
-    /**
-     * The setPropertyHasEmbargo setter method.
-     * 
-     * @param propertyHasEmbargo the propertyHasEmbargo to set
-     */
-    public void setPropertyHasEmbargo(final String propertyHasEmbargo) {
-        this.propertyHasEmbargo = propertyHasEmbargo;
     }
 
     /**
@@ -1124,17 +1113,17 @@ public class OAIProviderService {
         final String until, final String set, final int limit, final int offset) throws RepositoryException {
 
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
+        final String propJcrUuid = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "uuid"));
         final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
         final String propAccessTo =
             getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo_ref"));
-        final String propMode = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#mode"));
         final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
         final StringBuilder jql = new StringBuilder();
-        jql.append("SELECT res.[" + propJcrPath + "] AS sub, per.[" + propAgent + "] as agent ");
+        jql.append("SELECT res.[" + propJcrPath + "] AS sub ");
         jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
         jql.append(" JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
-        jql.append(" ON res.[jcr:uuid] = per.[" + propAccessTo + "] ");
+        jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
         jql.append("WHERE ");
 
         // items
