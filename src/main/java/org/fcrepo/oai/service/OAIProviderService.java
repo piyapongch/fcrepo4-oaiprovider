@@ -1133,19 +1133,19 @@ public class OAIProviderService {
         jql.append(" AND");
         jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
 
-        // agent, cast to binary to compare with xs:base64binary string property
+        // agent, cast to binary for comparing with xs:base64binary string property
         jql.append(" AND");
         jql.append(" per.[" + propAgent + "] = CAST('http://projecthydra.org/ns/auth/group#public^^URI' AS BINARY)");
 
         // start datetime constraint
         if (StringUtils.isNotBlank(from)) {
             jql.append(" AND");
-            jql.append(" res.[" + propJcrLastModifiedDate + "] >= CAST( '" + from + "' AS DATE)");
+            jql.append(" res.[" + propJcrLastModifiedDate + "] >= CAST('" + from + "' AS DATE)");
         }
         // end datetime constraint
         if (StringUtils.isNotBlank(until)) {
             jql.append(" AND");
-            jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST( '" + until + "' AS DATE)");
+            jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST('" + until + "' AS DATE)");
         }
 
         // set constraint
@@ -1154,6 +1154,9 @@ public class OAIProviderService {
             jql.append(" AND");
             jql.append(" res.[" + predicateIsPartOfOAISet + "] = '" + set + "'");
         }
+
+        // order by lastmodified
+        jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
 
         if (limit > 0) {
             jql.append(" LIMIT ").append(maxListSize).append(" OFFSET ").append(offset);
