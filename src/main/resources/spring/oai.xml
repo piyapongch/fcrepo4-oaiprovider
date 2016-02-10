@@ -16,7 +16,7 @@
 
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
         <property name="autoGenerateOaiDc" value="true"/>
-        <property name="maxListSize" value="20"/>
+        <property name="maxListSize" value="100"/>
         <property name="setsEnabled" value="false"/>
         <property name="setsRootPath" value="/oai/setspec"/>
         <property name="propertyIsPartOfSet" value="http://fedora.info/definitions/v4/config#isPartOfOAISet"/>
@@ -52,7 +52,7 @@
         <property name="descEnabled" value="false"/>
         <property name="descriptiveContent">
             <map>
-                <entry key="repositoryName" value="ERA OAI Provider ${project.version}"/>
+                <entry key="repositoryName" value="ERA: Education and Research Archive"/>
                 <entry key="adminEmail" value="eraadmi@ualberta.ca"/>
                 <entry key="baseUrl" value="https://era.library.ualberta.ca/oai"/>
                 <!-- eprints descriptions -->

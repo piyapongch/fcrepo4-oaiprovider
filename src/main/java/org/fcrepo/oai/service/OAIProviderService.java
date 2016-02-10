@@ -97,6 +97,7 @@ import org.openarchives.oai._2.OAIPMHtype;
 import org.openarchives.oai._2.ObjectFactory;
 import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.RequestType;
+import org.openarchives.oai._2.ResumptionTokenType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2.VerbType;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
@@ -1034,8 +1035,10 @@ public class OAIProviderService {
 
             final RequestType req = oaiFactory.createRequestType();
             if (records.getRecord().size() == maxListSize) {
-                req.setResumptionToken(encodeResumptionToken(VerbType.LIST_RECORDS.value(), metadataPrefix, from, until,
-                    set, offset + maxListSize));
+                final ResumptionTokenType token = oaiFactory.createResumptionTokenType();
+                token.setValue(encodeResumptionToken(VerbType.LIST_RECORDS.value(), metadataPrefix, from, until, set,
+                    offset + maxListSize));
+                records.setResumptionToken(token);
             }
             req.setVerb(VerbType.LIST_RECORDS);
             req.setMetadataPrefix(metadataPrefix);
