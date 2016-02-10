@@ -2,7 +2,6 @@
 target/
 fcrepo-oaiprovider.iml
 fcrepo4-data/
-/.settings/
 /.classpath
 /.project
 schema/
