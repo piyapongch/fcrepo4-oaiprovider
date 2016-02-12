@@ -104,9 +104,8 @@ public class JcrPropertiesGenerator {
             simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
         }
-        values =
-            obj.hasProperty("ualterms:thesiscommitteemember")
-                ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
+        values = obj.hasProperty("ualterms:thesiscommitteemember")
+            ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             if (StringUtils.isEmpty(values[i].getString())) {
                 continue;
@@ -124,7 +123,7 @@ public class JcrPropertiesGenerator {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
             simple.getContent().add(escape("University of Alberta"));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(simple));
-        } else {
+        } else if (StringUtils.isNotEmpty(values[0].getString())) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
             final StringBuilder value = new StringBuilder(values[0].getString());
             if (vals != null) {
