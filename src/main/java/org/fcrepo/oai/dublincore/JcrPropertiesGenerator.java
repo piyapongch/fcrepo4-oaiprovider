@@ -15,6 +15,8 @@
  */
 package org.fcrepo.oai.dublincore;
 
+import java.util.regex.Pattern;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -38,6 +40,7 @@ public class JcrPropertiesGenerator {
     private static final ObjectFactory dcFactory = new ObjectFactory();
     private static final org.openarchives.oai._2_0.oai_dc.ObjectFactory oaiDcFactory =
         new org.openarchives.oai._2_0.oai_dc.ObjectFactory();
+    private static final Pattern enc = Pattern.compile("&#.{2}.?;");
 
     /**
      * Generate dC.
@@ -104,8 +107,9 @@ public class JcrPropertiesGenerator {
             simple.getContent().add(escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
         }
-        values = obj.hasProperty("ualterms:thesiscommitteemember")
-            ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
+        values =
+            obj.hasProperty("ualterms:thesiscommitteemember")
+                ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             if (StringUtils.isEmpty(values[i].getString())) {
                 continue;
@@ -121,7 +125,7 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("marcrel:dgg") ? obj.getProperty("marcrel:dgg").getValues() : null;
         if (values == null) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape("University of Alberta"));
+            simple.getContent().add("University of Alberta");
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(simple));
         } else if (StringUtils.isNotEmpty(values[0].getString())) {
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
@@ -329,7 +333,8 @@ public class JcrPropertiesGenerator {
                 continue;
             }
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
+            simple.getContent().add(
+                enc.matcher(values[i].getString()).matches() ? values[i].getString() : escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
         values = obj.hasProperty("dcterms:license") ? obj.getProperty("dcterms:license").getValues() : null;
@@ -338,7 +343,8 @@ public class JcrPropertiesGenerator {
                 continue;
             }
             final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
+            simple.getContent().add(
+                enc.matcher(values[i].getString()).matches() ? values[i].getString() : escape(values[i].getString()));
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
 
