@@ -15,15 +15,12 @@
  */
 package org.fcrepo.oai.dublincore;
 
-import java.util.regex.Pattern;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fcrepo.kernel.models.Container;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
@@ -40,7 +37,6 @@ public class JcrPropertiesGenerator {
     private static final ObjectFactory dcFactory = new ObjectFactory();
     private static final org.openarchives.oai._2_0.oai_dc.ObjectFactory oaiDcFactory =
         new org.openarchives.oai._2_0.oai_dc.ObjectFactory();
-    private static final Pattern enc = Pattern.compile("&#.{2}.?;");
 
     /**
      * Generate dC.
@@ -60,63 +56,57 @@ public class JcrPropertiesGenerator {
         // dc:type
         values = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
         }
 
         // dc:creator
         values = obj.hasProperty("dcterms:creator") ? obj.getProperty("dcterms:creator").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(simple));
         }
         values = obj.hasProperty("marcrel:dis") ? obj.getProperty("marcrel:dis").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(simple));
         }
 
         // dc:contributor
         values = obj.hasProperty("dcterms:contributor") ? obj.getProperty("dcterms:contributor").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
         }
         values = obj.hasProperty("marcrel:ths") ? obj.getProperty("marcrel:ths").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
         }
         values =
             obj.hasProperty("ualterms:thesiscommitteemember")
                 ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
         }
 
         // dc:publisher (concatenate grantor and discipline/department contents)
@@ -136,233 +126,211 @@ public class JcrPropertiesGenerator {
                 }
             }
             value.append(vals == null ? "." : "");
-            simple.getContent().add(escape(value.toString()));
+            simple.getContent().add(value.toString());
             oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(simple));
         }
 
         // dc:subject
         values = obj.hasProperty("dcterms:subject") ? obj.getProperty("dcterms:subject").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
         }
         values = obj.hasProperty("dcterms:temporal") ? obj.getProperty("dcterms:temporal").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
         }
         values = obj.hasProperty("dcterms:spatial") ? obj.getProperty("dcterms:spatial").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
         }
 
         // dc:description (add prefix in content: "Specialization: ")
         values =
             obj.hasProperty("ualterms:specialization") ? obj.getProperty("ualterms:specialization").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
         // dc:date
         values = obj.hasProperty("dcterms:created") ? obj.getProperty("dcterms:created").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(simple));
         }
         values = obj.hasProperty("dcterms:dateAccepted") ? obj.getProperty("dcterms:dateAccepted").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(simple));
         }
 
         // dc:title
         values = obj.hasProperty("dcterms:title") ? obj.getProperty("dcterms:title").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createTitle(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createTitle(simple));
         }
 
         // dc:description (add prefix in content: "Degree: ")
         values = obj.hasProperty("bibo:ThesisDegree") ? obj.getProperty("bibo:ThesisDegree").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
         // dc:identifier
         values = obj.hasProperty("dcterms:identifier") ? obj.getProperty("dcterms:identifier").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
         values = obj.hasProperty("ualterms:trid") ? obj.getProperty("ualterms:trid").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
         values = obj.hasProperty("ualterms:ser") ? obj.getProperty("ualterms:ser").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
         values =
             obj.hasProperty("ualterms:fedora3handle") ? obj.getProperty("ualterms:fedora3handle").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
         }
 
         // dc:description
         values = obj.hasProperty("dcterms:description") ? obj.getProperty("dcterms:description").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
         // dc:description (add prefix in content: "Abstract: ")
         values = obj.hasProperty("dcterms:abstract") ? obj.getProperty("dcterms:abstract").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
 
         // dc:language
         values = obj.hasProperty("dcterms:language") ? obj.getProperty("dcterms:language").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createLanguage(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createLanguage(simple));
         }
 
         // dc:relation
         values = obj.hasProperty("dcterms:relation") ? obj.getProperty("dcterms:relation").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(simple));
         }
         values = obj.hasProperty("dcterms:isVersionOf") ? obj.getProperty("dcterms:isVersionOf").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(simple));
         }
 
         // dc:source
         values = obj.hasProperty("dcterms:source") ? obj.getProperty("dcterms:source").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSource(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSource(simple));
         }
 
         // dc:rights
         values = obj.hasProperty("dcterms:rights") ? obj.getProperty("dcterms:rights").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(
-                enc.matcher(values[i].getString()).matches() ? values[i].getString() : escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
         values = obj.hasProperty("dcterms:license") ? obj.getProperty("dcterms:license").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(
-                enc.matcher(values[i].getString()).matches() ? values[i].getString() : escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
         }
 
         // dc:format
         values = obj.hasProperty("dcterms:format") ? obj.getProperty("dcterms:format").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (StringUtils.isEmpty(values[i].getString())) {
-                continue;
+            if (!StringUtils.isEmpty(values[i].getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(values[i].getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createFormat(simple));
             }
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(escape(values[i].getString()));
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createFormat(simple));
         }
 
         return oaiDcFactory.createDc(oaidc);
     }
 
-    private String escape(final String orig) {
-        return StringEscapeUtils.escapeXml(orig);
-    }
+    // private String escape(final String orig) {
+    // // return StringEscapeUtils.escapeXml(orig);
+    // return orig;
+    // }
 }

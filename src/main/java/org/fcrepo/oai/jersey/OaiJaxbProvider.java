@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openarchives.oai._1_1.eprints.EprintsDescriptionType;
 import org.openarchives.oai._2.OAIPMHtype;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
@@ -72,21 +73,25 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
     public OaiJaxbProvider() throws JAXBException {
         this.marshaller =
             JAXBContext.newInstance(OaiDcType.class, OAIPMHtype.class, EprintsDescriptionType.class).createMarshaller();
+
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
+
             @Override
             public void escape(final char[] chars, final int start, final int len, final boolean isAttr,
                 final Writer writer) throws IOException {
-                final StringBuilder data = new StringBuilder(len);
-                for (int i = start; i < len + start; i++) {
-                    if (chars[i] == '&') {
-                        data.append("&amp;");
-                    } else {
-                        data.append(chars[i]);
-                    }
-                }
-                writer.write(data.toString());
+                // final StringBuilder data = new StringBuilder(len);
+                // for (int i = start; i < len + start; i++) {
+                // if (chars[i] == '&') {
+                // data.append("&amp;");
+                // } else {
+                // data.append(chars[i]);
+                // }
+                // }
+                // writer.write(data.toString());
+                writer.write(StringEscapeUtils.escapeXml(new String(chars)).toCharArray());
             }
         });
+
         this.marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixMapper() {
 
             @Override
