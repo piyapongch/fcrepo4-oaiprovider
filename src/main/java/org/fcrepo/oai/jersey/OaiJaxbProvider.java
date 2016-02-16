@@ -79,15 +79,6 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
             @Override
             public void escape(final char[] chars, final int start, final int len, final boolean isAttr,
                 final Writer writer) throws IOException {
-                // final StringBuilder data = new StringBuilder(len);
-                // for (int i = start; i < len + start; i++) {
-                // if (chars[i] == '&') {
-                // data.append("&amp;");
-                // } else {
-                // data.append(chars[i]);
-                // }
-                // }
-                // writer.write(data.toString());
                 writer.write(StringEscapeUtils.escapeXml(new String(chars)).toCharArray());
             }
         });

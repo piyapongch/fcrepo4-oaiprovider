@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OAI-PMH xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.openarchives.org/OAI/2.0/"
+    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd
+    http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+    <responseDate>2016-02-15T13:28:27.546-07:00</responseDate>
+    <request verb="ListRecords" metadataPrefix="oai_dc"/>
+    <ListRecords>
+        <record>
+            <header>
+                <identifier>https://era.library.ualberta.ca/oai/dev/5h/73/pw/04/5h73pw048</identifier>
+                <datestamp>2016-02-03T20:29:15Z</datestamp>
+            </header>
+            <metadata>
+                <oai_dc:dc>
+                    <dc:type>Report</dc:type>
+                    <dc:creator>Maani, Rouzbeh</dc:creator>
+                    <dc:creator>Yang, Yee-Hong</dc:creator>
+                    <dc:creator>Kalra, Sanjay</dc:creator>
+                    <dc:subject>Texture Analysis</dc:subject>
+                    <dc:subject>Co-occurrence Matrix</dc:subject>
+                    <dc:subject>Amyotrophic Lateral Sclerosis (ALS)</dc:subject>
+                    <dc:subject>Computer Vision and Multimedia Communications</dc:subject>
+                    <dc:subject>Biomarker</dc:subject>
+                    <dc:subject>Brain Parenchymal Fraction (BPF)</dc:subject>
+                    <dc:subject>Aura Matrix</dc:subject>
+                    <dc:date>2014</dc:date>
+                    <dc:date>2014-05-01T09:14:43Z</dc:date>
+                    <dc:title>Texture Analysis of the Brain in Amyotrophic Lateral Sclerosis</dc:title>
+                    <dc:description>In this paper, we applied texture analysis to evaluate cerebral degeneration in amyotrophic lateral sclerosis (ALS). Two well-known methods, the gray level co-occurrence matrix (GLCM) and the gray level aura matrix (GLAM) were employed to extract texture features from routine T1 and T2 MR images. Texture features were analyzed by statistical inference, support vector machine to determine classification rate, and receiver operator characteristic curve (ROC) analysis. Twenty control subjects (average age = 56.8&#177;12.4) and 19 ALS patients (average age = 56.7&#177;13.7) were recruited for the study. Texture features were statistically different in ALS compared to controls (p&lt; 0.0001 for T1, and p&lt; 0.00001 for T2) and provided a classification rate with more than 76%, and 82% accuracy on T1 and T2 weighted images, respectively. ROC analysis yielded area under the curves approaching 0.93, and a maximal sensitivity and specificity of 100% and 95%, respectively. Texture features moderately correlated with parenchymal brain volume suggesting that atrophy partially accounted for the texture results; however, texture features had a superior classification rate indicating that other cerebral pathology due to ALS besides atrophy was being captured by texture analysis. We conclude that texture analysis shows promise as a quantitative biomarker to study cerebral degeneration in ALS. To our best knowledge, this is the first study to apply the GLAM as a texture method to medical image analysis, showing that it provides features superior (or at least comparable) to the well known GLCM features.</dc:description>
+                    <dc:language>English</dc:language>
+                    <dc:rights>Creative Commons Attribution 3.0 Unported</dc:rights>
+                </oai_dc:dc>
+            </metadata>
+        </record>
+        <record>
+            <header>
+                <identifier>https://era.library.ualberta.ca/oai/dev/kk/91/fk/52/kk91fk52b</identifier>
+                <datestamp>2016-02-03T20:37:01Z</datestamp>
+            </header>
+            <metadata>
+                <oai_dc:dc>
+                    <dc:type>Report</dc:type>
+                    <dc:creator>Hindle, Abram</dc:creator>
+                    <dc:creator>Jiang, Feng</dc:creator>
+                    <dc:creator>Wang, Jiemin</dc:creator>
+                    <dc:creator>Nascimento, Mario A.</dc:creator>
+                    <dc:subject>social network analysis</dc:subject>
+                    <dc:subject>Software Engineering</dc:subject>
+                    <dc:date>2013</dc:date>
+                    <dc:date>2013-09-30T11:22:41Z</dc:date>
+                    <dc:title>Mining the Temporal Evolution of the Android Bug Reporting Community via Sliding Windows</dc:title>
+                    <dc:description>The open source development community consists of both paid and volunteer developers as well as new and experienced users. Previous work has applied social network analysis (SNA) to open source communities and has demonstrated value in expertise discovery and triaging. One problem with applying SNA directly to the data of the entire project lifetime is that the impact of local activities will be drowned out. In this paper we provide a method for aggregating, analyzing, and visualizing local (small time periods) interactions of bug reporting participants by using the SNA to measure the betweeness centrality of these participants. In particular we mined the Android bug repository by producing social networks from overlapping 30-day windows of bug reports, each sliding over by day. In this paper we define three patterns of participant behaviour based on their local centrality. We propose a method of analyzing the centrality of bug report participants both locally and globally, then we conduct a thorough case study of the bug reporters&#8217; activity within the Android bug repository. Furthermore, we validate the conclusions of our method by mining the Android version control system and inspecting the Android release history. We found that windowed SNA analysis elicited local behaviour that were invisible during global analysis.</dc:description>
+                    <dc:language>English</dc:language>
+                    <dc:rights>Creative Commons Attribution 3.0 Unported</dc:rights>
+                </oai_dc:dc>
+            </metadata>
+        </record>
+    </ListRecords>
+</OAI-PMH>

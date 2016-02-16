@@ -148,7 +148,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -260,11 +259,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.14</version>
+				<version>2.14</version><!--$NO-MVN-MAN-VER$-->
 				<configuration>
 					<excludes>**/integration/**/*, **/purl/**/**/**/*,
 						**/openarchives/**/**/*, **/ndltd/standards/metadata/etdms/**,
-						**/ualberta/library/terms/oai_qdc/**, **/oai/identify/**,**/oai/rights/**</excludes>
+						**/ualberta/library/terms/oai_qdc/**, **/oai/identify/**,**/oai/rights/**,**/oai/servlet/**</excludes>
 					<systemPropertyVariables>
 						<project.version>${project.version}</project.version>
 					</systemPropertyVariables>
