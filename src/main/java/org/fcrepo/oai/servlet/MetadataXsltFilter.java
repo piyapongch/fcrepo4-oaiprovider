@@ -33,6 +33,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * The MetadataXsltFilter class.
  *
@@ -69,13 +71,12 @@ public class MetadataXsltFilter implements Filter {
         final PrintWriter out = response.getWriter();
         final BufferedHttpResponseWrapper wrapper = new BufferedHttpResponseWrapper((HttpServletResponse) response);
         chain.doFilter(request, wrapper);
-        final byte[] b = wrapper.getBuffer();
-        if (b == null || b.length == 0) {
+        final String resp = new String(wrapper.getBuffer());
+        if (StringUtils.isEmpty(resp)) {
             chain.doFilter(request, response);
             return;
         }
-        final StringReader sr = new StringReader(new String(wrapper.getBuffer()));
-        final Source xmlSource = new StreamSource(sr);
+        final Source xmlSource = new StreamSource(new StringReader(resp));
 
         try {
             final Transformer transformer = factory.newTransformer(xslSource);
@@ -85,11 +86,11 @@ public class MetadataXsltFilter implements Filter {
             response.setContentType("text/xml");
             response.setContentLength(bos.size());
             out.write(new String(bos.toByteArray()));
-            response.flushBuffer();
         } catch (final Exception ex) {
             out.println(ex.toString());
             out.write(wrapper.toString());
         }
+        out.flush();
     }
 
     /**
