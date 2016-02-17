@@ -164,6 +164,8 @@ public class OAIProviderService {
 
     private int maxListSize;
 
+    private final int searchResultSize = 20;
+
     private String baseUrl;
 
     // public agent: "http://projecthydra.org/ns/auth/group#public^^URI" in base64binay encoding
@@ -907,10 +909,7 @@ public class OAIProviderService {
      * @param src the src
      * @return the string
      * @throws RepositoryException the repository exception
-     * @deprecated will be replaced by auto genrated set from collection or community objects
      */
-
-    @Deprecated
     public String createSet(final Session session, final UriInfo uriInfo, final InputStream src)
         throws RepositoryException {
         final HttpResourceConverter converter =
@@ -1187,8 +1186,8 @@ public class OAIProviderService {
         return getPropertyNameFromPredicate(namespaceRegistry, predicate, namespaceMapping);
     }
 
-    private String searchResourceQuery(final Session session, final String mixinTypes, final String criteria)
-        throws RepositoryException {
+    private String searchResourceQuery(final Session session, final String mixinTypes, final String property,
+        final String value, final int limit, final int offset) throws RepositoryException {
 
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
         final String propJcrUuid = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "uuid"));
@@ -1215,12 +1214,17 @@ public class OAIProviderService {
         jql.append(" AND");
         jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
 
-        // searcch conditions
-        jql.append(" AND (").append(criteria).append(")");
+        // searcch criteria
+        jql.append(" AND ");
+        jql.append("(res.[").append(property).append("] LIKE '").append(value).append("')");
 
         // order by lastmodified
         jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
-        jql.append(" LIMIT ").append(20);
+
+        // limit and offset
+        if (limit > 0) {
+            jql.append(" LIMIT ").append(maxListSize).append(" OFFSET ").append(offset);
+        }
 
         return jql.toString();
     }
@@ -1235,7 +1239,7 @@ public class OAIProviderService {
      * @throws RepositoryException the repository exception
      */
     public JAXBElement<OAIPMHtype> search(final Session session, final UriInfo uriInfo, final String metadataPrefix,
-        final String criteria) throws RepositoryException {
+        final String property, final String value, final int offset) throws RepositoryException {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
@@ -1251,7 +1255,8 @@ public class OAIProviderService {
                 "Unavailable metadata format");
         }
 
-        final String jql = searchResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, criteria);
+        final String jql =
+            searchResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, property, value, searchResultSize, offset);
         try {
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -1274,6 +1279,12 @@ public class OAIProviderService {
             }
 
             final RequestType req = oaiFactory.createRequestType();
+            if (records.getRecord().size() == maxListSize) {
+                final ResumptionTokenType token = oaiFactory.createResumptionTokenType();
+                token.setValue(encodeResumptionToken(VerbType.LIST_RECORDS.value(), metadataPrefix, null, null, null,
+                    offset + searchResultSize));
+                records.setResumptionToken(token);
+            }
             req.setVerb(VerbType.LIST_RECORDS);
             req.setMetadataPrefix(metadataPrefix);
             oai.setRequest(req);
