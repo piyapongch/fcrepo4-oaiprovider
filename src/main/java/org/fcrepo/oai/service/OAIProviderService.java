@@ -1186,4 +1186,102 @@ public class OAIProviderService {
         final Map<String, String> namespaceMapping = emptyMap();
         return getPropertyNameFromPredicate(namespaceRegistry, predicate, namespaceMapping);
     }
+
+    private String searchResourceQuery(final Session session, final String mixinTypes, final String criteria)
+        throws RepositoryException {
+
+        final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
+        final String propJcrUuid = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "uuid"));
+        final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
+        final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
+        final String propAccessTo =
+            getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo_ref"));
+        final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
+        final StringBuilder jql = new StringBuilder();
+        jql.append("SELECT res.[" + propJcrPath + "] AS sub ");
+        jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
+        jql.append(" JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
+        jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
+        jql.append("WHERE ");
+
+        // items
+        jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
+
+        // permission
+        jql.append(" AND");
+        jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
+
+        // public agent, cast to binary and compare with xs:base64binary string property
+        jql.append(" AND");
+        jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
+
+        // searcch conditions
+        jql.append(" AND (").append(criteria).append(")");
+
+        // order by lastmodified
+        jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
+        jql.append(" LIMIT ").append(20);
+
+        return jql.toString();
+    }
+
+    /**
+     * List records.
+     *
+     * @param session the session
+     * @param uriInfo the uri info
+     * @param metadataPrefix the metadata prefix
+     * @return the jAXB element
+     * @throws RepositoryException the repository exception
+     */
+    public JAXBElement<OAIPMHtype> search(final Session session, final UriInfo uriInfo, final String metadataPrefix,
+        final String criteria) throws RepositoryException {
+
+        final HttpResourceConverter converter =
+            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
+        final ValueConverter valueConverter = new ValueConverter(session, converter);
+
+        if (metadataPrefix == null) {
+            return error(VerbType.LIST_RECORDS, null, null, OAIPMHerrorcodeType.BAD_ARGUMENT,
+                "metadataprefix is invalid");
+        }
+        final MetadataFormat mdf = metadataFormats.get(metadataPrefix);
+        if (mdf == null) {
+            return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT,
+                "Unavailable metadata format");
+        }
+
+        final String jql = searchResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, criteria);
+        try {
+
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            final RowIterator result = executeQuery(queryManager, jql);
+
+            if (!result.hasNext()) {
+                return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
+                    "No record found");
+            }
+
+            final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
+            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+            final ListRecordsType records = oaiFactory.createListRecordsType();
+            while (result.hasNext()) {
+                // check if the records exists
+                final Row solution = result.nextRow();
+                final Resource subjectUri = valueConverter.convert(solution.getValue("sub")).asResource();
+                final RecordType record = createRecord(session, mdf, converter.asString(subjectUri), uriInfo);
+                records.getRecord().add(record);
+            }
+
+            final RequestType req = oaiFactory.createRequestType();
+            req.setVerb(VerbType.LIST_RECORDS);
+            req.setMetadataPrefix(metadataPrefix);
+            oai.setRequest(req);
+            oai.setListRecords(records);
+            return oaiFactory.createOAIPMH(oai);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw new RepositoryException(e);
+        }
+    }
 }

@@ -97,8 +97,8 @@ public class OAIWebResource {
         final @QueryParam("identifier") String identifierParam,
         final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
-        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo)
-            throws RepositoryException {
+        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
+        final @QueryParam("criteria") String criteria) throws RepositoryException {
 
         int offset = 0;
 
@@ -123,8 +123,8 @@ public class OAIWebResource {
                 set = token.getSet();
                 metadataPrefix = token.getMetadataPrefix();
                 offset = token.getOffset();
-            } catch (Exception e) {
-                return providerService.error(null, null, null, OAIPMHerrorcodeType.BAD_RESUMPTION_TOKEN,
+            } catch (final Exception e) {
+                return OAIProviderService.error(null, null, null, OAIPMHerrorcodeType.BAD_RESUMPTION_TOKEN,
                     "Resumption token is invalid");
             }
         } else {
@@ -139,7 +139,7 @@ public class OAIWebResource {
 
         /* decide what to do depending on the verb passed */
         if (verb == null) {
-            return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
+            return OAIProviderService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
                 "Verb is required");
         }
 
@@ -149,7 +149,7 @@ public class OAIWebResource {
                 verifyEmpty(identifier, metadataPrefix, from, until, set);
                 return providerService.identify(this.session, uriInfo);
             } catch (JAXBException | IllegalArgumentException e) {
-                return providerService.error(VerbType.IDENTIFY, identifier, metadataPrefix,
+                return OAIProviderService.error(VerbType.IDENTIFY, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -159,8 +159,8 @@ public class OAIWebResource {
             try {
                 verifyEmpty(from, until, set);
                 return providerService.listMetadataFormats(this.session, uriInfo, identifier);
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.LIST_METADATA_FORMATS, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_METADATA_FORMATS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -171,8 +171,8 @@ public class OAIWebResource {
                 verifyEmpty(from, until, set);
                 return providerService.getRecord(this.session, uriInfo, identifier, metadataPrefix);
 
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.GET_RECORD, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.GET_RECORD, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -182,8 +182,8 @@ public class OAIWebResource {
             try {
                 verifyEmpty(identifier);
                 return providerService.listIdentifiers(this.session, uriInfo, metadataPrefix, from, until, set, offset);
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.LIST_IDENTIFIERS, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_IDENTIFIERS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -192,8 +192,8 @@ public class OAIWebResource {
         if (verb.equals(LIST_SETS.value())) {
             try {
                 verifyEmpty(identifier);
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
             return providerService.listSets(session, uriInfo, offset);
@@ -204,17 +204,28 @@ public class OAIWebResource {
             try {
                 verifyEmpty(identifier);
                 return providerService.listRecords(this.session, uriInfo, metadataPrefix, from, until, set, offset);
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_RECORDS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
-        return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_VERB,
+
+        /* search records response */
+        if (verb.equals("Search")) {
+            try {
+                verifyEmpty(identifier);
+                return providerService.search(this.session, uriInfo, metadataPrefix, criteria);
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_RECORDS, identifier, metadataPrefix,
+                    OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
+            }
+        }
+        return OAIProviderService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_VERB,
             "Unknown verb '" + verb + "'");
     }
 
     private void verifyEmpty(final String... data) throws IllegalArgumentException {
-        for (String s : data) {
+        for (final String s : data) {
             if (s != null && !s.isEmpty()) {
                 throw new IllegalArgumentException("Wrong argument for method");
             }
