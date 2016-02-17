@@ -15,7 +15,7 @@
     <!--    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>-->
 
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
-        <property name="maxListSize" value="300"/>
+        <property name="maxListSize" value="500"/>
         <property name="setsEnabled" value="false"/>
         <property name="setsRootPath" value="/oai/setspec"/>
         <property name="propertyIsPartOfSet" value="http://fedora.info/definitions/v4/config#isPartOfOAISet"/>
