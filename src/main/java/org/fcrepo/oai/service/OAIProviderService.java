@@ -1216,7 +1216,7 @@ public class OAIProviderService {
 
         // searcch criteria
         jql.append(" AND ");
-        jql.append("(res.[").append(property).append("] LIKE '").append(value).append("')");
+        jql.append("(res.[").append(property).append("] LIKE '%").append(value).append("%')");
 
         // order by lastmodified
         jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
