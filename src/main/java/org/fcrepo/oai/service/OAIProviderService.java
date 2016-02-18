@@ -22,6 +22,7 @@ import static org.fcrepo.kernel.impl.rdf.converters.PropertyConverter.getPropert
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -760,10 +761,11 @@ public class OAIProviderService {
 
             final RequestType req = oaiFactory.createRequestType();
             if (ids.getHeader().size() == maxListSize) {
-
-                // TODO: replace with resumptionToken element
-                req.setResumptionToken(encodeResumptionToken(VerbType.LIST_IDENTIFIERS.value(), metadataPrefix, from,
-                    until, set, offset + maxListSize));
+                final ResumptionTokenType token = oaiFactory.createResumptionTokenType();
+                token.setValue(encodeResumptionToken(VerbType.LIST_IDENTIFIERS.value(), metadataPrefix, from, until,
+                    set, offset + maxListSize));
+                token.setCursor(new BigInteger(String.valueOf(offset)));
+                ids.setResumptionToken(token);
             }
             req.setVerb(VerbType.LIST_IDENTIFIERS);
             req.setMetadataPrefix(metadataPrefix);
@@ -1029,6 +1031,7 @@ public class OAIProviderService {
                 final ResumptionTokenType token = oaiFactory.createResumptionTokenType();
                 token.setValue(encodeResumptionToken(VerbType.LIST_RECORDS.value(), metadataPrefix, from, until, set,
                     offset + maxListSize));
+                token.setCursor(new BigInteger(String.valueOf(offset)));
                 records.setResumptionToken(token);
             }
             req.setVerb(VerbType.LIST_RECORDS);
