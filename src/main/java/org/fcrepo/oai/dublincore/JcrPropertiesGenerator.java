@@ -328,9 +328,4 @@ public class JcrPropertiesGenerator {
 
         return oaiDcFactory.createDc(oaidc);
     }
-
-    // private String escape(final String orig) {
-    // // return StringEscapeUtils.escapeXml(orig);
-    // return orig;
-    // }
 }

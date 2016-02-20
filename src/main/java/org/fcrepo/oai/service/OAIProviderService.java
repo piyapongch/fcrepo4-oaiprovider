@@ -416,8 +416,9 @@ public class OAIProviderService {
         id.setProtocolVersion("2.0");
 
         // repository name, project version
-        RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyOaiRepositoryName));
+        RdfStream triples =
+            root.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(propertyOaiRepositoryName));
         id.setRepositoryName(triples.next().getObject().getLiteralValue().toString());
 
         // base url
@@ -440,8 +441,9 @@ public class OAIProviderService {
         if (descEnabled) {
 
             // description
-            triples = root.getTriples(converter, PropertiesRdfContext.class)
-                .filter(new PropertyPredicate(propertyOaiDescription));
+            triples =
+                root.getTriples(converter, PropertiesRdfContext.class)
+                    .filter(new PropertyPredicate(propertyOaiDescription));
             final String description = triples.next().getObject().getLiteralValue().toString();
             final String metadataPolicy = descriptiveContent.get("metadataPolicy");
             final String dataPolicy = descriptiveContent.get("dataPolicy");
@@ -519,8 +521,9 @@ public class OAIProviderService {
                     if (mdf.getPrefix().equals("oai_dc")) {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else {
-                        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                            .filter(new PropertyPredicate(mdf.getPropertyName()));
+                        final RdfStream triples =
+                            obj.getTriples(converter, PropertiesRdfContext.class)
+                                .filter(new PropertyPredicate(mdf.getPropertyName()));
                         if (triples.hasNext()) {
                             listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                         }
@@ -624,8 +627,9 @@ public class OAIProviderService {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(format.getPropertyName()));
+        final RdfStream triples =
+            obj.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(format.getPropertyName()));
 
         if (!triples.hasNext()) {
             log.error("There is no OAI record of type " + format.getPrefix() + " associated with the object "
@@ -736,24 +740,27 @@ public class OAIProviderService {
 
                 // get base url
                 final FedoraResource root = nodeService.find(session, setsRootPath);
-                RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-                    .filter(new PropertyPredicate(propertyOaiBaseUrl));
+                RdfStream triples =
+                    root.getTriples(converter, PropertiesRdfContext.class)
+                        .filter(new PropertyPredicate(propertyOaiBaseUrl));
                 final String baseUrl = triples.next().getObject().getLiteralValue().toString();
                 h.setIdentifier(baseUrl + path);
 
                 final Container obj = containerService.findOrCreate(session, path);
                 h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
 
-                triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                    .filter(new PropertyPredicate(propertyIsPartOfSet));
+                triples =
+                    obj.getTriples(converter, PropertiesRdfContext.class)
+                        .filter(new PropertyPredicate(propertyIsPartOfSet));
                 final List<String> setNames = new ArrayList<>();
                 while (triples.hasNext()) {
                     setNames.add(triples.next().getObject().getLiteralValue().toString());
                 }
                 for (final String name : setNames) {
                     final Container setObject = containerService.findOrCreate(session, setsRootPath + "/" + name);
-                    final RdfStream setTriples = setObject.getTriples(converter, PropertiesRdfContext.class)
-                        .filter(new PropertyPredicate(propertyHasSetSpec));
+                    final RdfStream setTriples =
+                        setObject.getTriples(converter, PropertiesRdfContext.class)
+                            .filter(new PropertyPredicate(propertyHasSetSpec));
                     h.getSetSpec().add(setTriples.next().getObject().getLiteralValue().toString());
                 }
                 ids.getHeader().add(h);
@@ -793,9 +800,10 @@ public class OAIProviderService {
     public static String encodeResumptionToken(final String verb, final String metadataPrefix, final String from,
         final String until, final String set, final int offset) throws UnsupportedEncodingException {
 
-        final String[] data = new String[] { urlEncode(verb), urlEncode(metadataPrefix),
-            urlEncode(from != null ? from : ""), urlEncode(until != null ? until : ""),
-            urlEncode(set != null ? set : ""), urlEncode(String.valueOf(offset)) };
+        final String[] data =
+            new String[] { urlEncode(verb), urlEncode(metadataPrefix), urlEncode(from != null ? from : ""),
+                urlEncode(until != null ? until : ""), urlEncode(set != null ? set : ""),
+                urlEncode(String.valueOf(offset)) };
         return Base64.encodeBase64URLSafeString(StringUtils.join(data, ':').getBytes("UTF-8"));
     }
 
@@ -871,9 +879,11 @@ public class OAIProviderService {
             final String propHasOAISetName = getPropertyName(session, createProperty(propertySetName));
             final String propHasOAISetSpec = getPropertyName(session, createProperty(propertyHasSetSpec));
 
-            final String setJql = "SELECT [" + propHasOAISetName + "] AS name," + " [" + propHasOAISetSpec
-                + "] AS spec FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath + "] LIKE '%/"
-                + SET_ROOT_NAME + "/%'";
+            // TODO: change query from model:hasModel = 'Collection' and uatermsid:is_community is null
+            final String setJql =
+                "SELECT [" + propHasOAISetName + "] AS name," + " [" + propHasOAISetSpec + "] AS spec FROM ["
+                    + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath + "] LIKE '%/" + SET_ROOT_NAME
+                    + "/%'";
             final RowIterator setResult = executeQuery(queryManager, setJql);
             if (!setResult.hasNext()) {
                 return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
@@ -923,8 +933,9 @@ public class OAIProviderService {
             }
             final Container setObject = containerService.findOrCreate(session, setsRootPath + "/" + setId);
 
-            final StringBuilder sparql = new StringBuilder("INSERT DATA {<" + converter.toDomain(setRoot.getPath())
-                + "> <" + propertyHasSets + "> <" + converter.toDomain(setObject.getPath()) + ">}");
+            final StringBuilder sparql =
+                new StringBuilder("INSERT DATA {<" + converter.toDomain(setRoot.getPath()) + "> <" + propertyHasSets
+                    + "> <" + converter.toDomain(setObject.getPath()) + ">}");
             setRoot.updateProperties(converter, sparql.toString(), new RdfStream());
 
             sparql.setLength(0);
@@ -1071,8 +1082,9 @@ public class OAIProviderService {
         }
         for (final String name : setNames) {
             final Container setObject = containerService.findOrCreate(session, setsRootPath + "/" + name);
-            final RdfStream setTriples = setObject.getTriples(converter, PropertiesRdfContext.class)
-                .filter(new PropertyPredicate(propertyHasSetSpec));
+            final RdfStream setTriples =
+                setObject.getTriples(converter, PropertiesRdfContext.class)
+                    .filter(new PropertyPredicate(propertyHasSetSpec));
             h.getSetSpec().add(setTriples.next().getObject().getLiteralValue().toString());
         }
 
@@ -1135,6 +1147,7 @@ public class OAIProviderService {
         }
 
         // set constraint
+        // TODO: set property to uatermsid:hasCollectionId
         if (StringUtils.isNotBlank(set)) {
             final String predicateIsPartOfOAISet = getPropertyName(session, createProperty(propertyIsPartOfSet));
             jql.append(" AND");
