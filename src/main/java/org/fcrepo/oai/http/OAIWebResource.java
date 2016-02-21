@@ -92,8 +92,64 @@ public class OAIWebResource {
      * @throws RepositoryException the repository exception
      */
     @GET
+    @Path("/")
     @Produces(MediaType.TEXT_XML)
     public Object getOAIResponse(final @QueryParam("verb") String verbParam,
+        final @QueryParam("identifier") String identifierParam,
+        final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
+        final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
+        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
+        final @QueryParam("property") String propery, final @QueryParam("value") String value)
+            throws RepositoryException {
+        return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
+            resumptionToken, uriInfo, propery, value);
+    }
+
+    /**
+     * Gets OAI response.
+     *
+     * @param verbParam the verb
+     * @param identifierParam the identifier
+     * @param metadataPrefixParam the metadata prefix
+     * @param fromParam the from
+     * @param untilParam the until
+     * @param setParam the set
+     * @param resumptionToken the resumption token
+     * @param uriInfo the uri info
+     * @return the oAI response
+     * @throws RepositoryException the repository exception
+     */
+    @POST
+    @Path("/")
+    @Produces(MediaType.TEXT_XML)
+    public Object postOAIResponse(final @QueryParam("verb") String verbParam,
+        final @QueryParam("identifier") String identifierParam,
+        final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
+        final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
+        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
+        final @QueryParam("property") String propery, final @QueryParam("value") String value)
+            throws RepositoryException {
+        return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
+            resumptionToken, uriInfo, propery, value);
+    }
+
+    /**
+     * Gets OAI response.
+     *
+     * @param verbParam the verb
+     * @param identifierParam the identifier
+     * @param metadataPrefixParam the metadata prefix
+     * @param fromParam the from
+     * @param untilParam the until
+     * @param setParam the set
+     * @param resumptionToken the resumption token
+     * @param uriInfo the uri info
+     * @return the oAI response
+     * @throws RepositoryException the repository exception
+     */
+    // @GET
+    @Produces(MediaType.TEXT_XML)
+    public Object createOAIResponse(final @QueryParam("verb") String verbParam,
         final @QueryParam("identifier") String identifierParam,
         final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,

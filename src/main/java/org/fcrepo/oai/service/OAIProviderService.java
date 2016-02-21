@@ -880,10 +880,14 @@ public class OAIProviderService {
             final String propHasOAISetSpec = getPropertyName(session, createProperty(propertyHasSetSpec));
 
             // TODO: change query from model:hasModel = 'Collection' and uatermsid:is_community is null
+            // final String setJql =
+            // "SELECT [" + propHasOAISetName + "] AS name," + " [" + propHasOAISetSpec + "] AS spec FROM ["
+            // + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath + "] LIKE '%/" + SET_ROOT_NAME
+            // + "/%'";
             final String setJql =
-                "SELECT [" + propHasOAISetName + "] AS name," + " [" + propHasOAISetSpec + "] AS spec FROM ["
-                    + FedoraJcrTypes.FEDORA_RESOURCE + "]" + " WHERE [" + propJcrPath + "] LIKE '%/" + SET_ROOT_NAME
-                    + "/%'";
+                "SELECT [mode:localName] AS spec, [dcterms:title] AS name, [dcterms:description] AS desc FROM ["
+                    + FedoraJcrTypes.FEDORA_RESOURCE
+                    + "] WHERE [model:hasModel] = 'Collection' AND [uatermsid:is_community] IS NULL";
             final RowIterator setResult = executeQuery(queryManager, setJql);
             if (!setResult.hasNext()) {
                 return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
@@ -1149,9 +1153,8 @@ public class OAIProviderService {
         // set constraint
         // TODO: set property to uatermsid:hasCollectionId
         if (StringUtils.isNotBlank(set)) {
-            final String predicateIsPartOfOAISet = getPropertyName(session, createProperty(propertyIsPartOfSet));
             jql.append(" AND");
-            jql.append(" res.[" + predicateIsPartOfOAISet + "] = '" + set + "'");
+            jql.append(" res.[uatermsid:hasCollectionId] = '" + set + "'");
         }
 
         // order by lastmodified
