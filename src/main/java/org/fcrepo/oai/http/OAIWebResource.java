@@ -92,7 +92,6 @@ public class OAIWebResource {
      * @throws RepositoryException the repository exception
      */
     @GET
-    @POST
     @Produces(MediaType.TEXT_XML)
     public Object getOAIResponse(final @QueryParam("verb") String verbParam,
         final @QueryParam("identifier") String identifierParam,
