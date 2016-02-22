@@ -748,20 +748,11 @@ public class OAIProviderService {
 
                 final Container obj = containerService.findOrCreate(session, path);
                 h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
-
                 triples =
                     obj.getTriples(converter, PropertiesRdfContext.class)
                         .filter(new PropertyPredicate(propertyIsPartOfSet));
-                final List<String> setNames = new ArrayList<>();
                 while (triples.hasNext()) {
-                    setNames.add(triples.next().getObject().getLiteralValue().toString());
-                }
-                for (final String name : setNames) {
-                    final Container setObject = containerService.findOrCreate(session, setsRootPath + "/" + name);
-                    final RdfStream setTriples =
-                        setObject.getTriples(converter, PropertiesRdfContext.class)
-                            .filter(new PropertyPredicate(propertyHasSetSpec));
-                    h.getSetSpec().add(setTriples.next().getObject().getLiteralValue().toString());
+                    h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
                 }
                 ids.getHeader().add(h);
             }
@@ -1076,20 +1067,12 @@ public class OAIProviderService {
 
         final Container obj = containerService.findOrCreate(session, s);
         h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
-        // get set names this object is part of
 
+        // set setSpecs
         triples =
             obj.getTriples(converter, PropertiesRdfContext.class).filter(new PropertyPredicate(propertyIsPartOfSet));
-        final List<String> setNames = new ArrayList<>();
         while (triples.hasNext()) {
-            setNames.add(triples.next().getObject().getLiteralValue().toString());
-        }
-        for (final String name : setNames) {
-            final Container setObject = containerService.findOrCreate(session, setsRootPath + "/" + name);
-            final RdfStream setTriples =
-                setObject.getTriples(converter, PropertiesRdfContext.class)
-                    .filter(new PropertyPredicate(propertyHasSetSpec));
-            h.getSetSpec().add(setTriples.next().getObject().getLiteralValue().toString());
+            h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
         }
 
         // get the metadata record from fcrepo
