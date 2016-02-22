@@ -767,15 +767,9 @@ public class OAIProviderService {
             }
             req.setVerb(VerbType.LIST_IDENTIFIERS);
             req.setMetadataPrefix(metadataPrefix);
-            if (from != null) {
-                req.setUntil(from);
-            }
-            if (until != null) {
-                req.setUntil(until);
-            }
-            if (set != null) {
-                req.setSet(set);
-            }
+            req.setUntil(from);
+            req.setUntil(until);
+            req.setSet(set);
             oai.setRequest(req);
             oai.setListIdentifiers(ids);
             return oaiFactory.createOAIPMH(oai);
@@ -1146,7 +1140,6 @@ public class OAIProviderService {
         }
 
         // set constraint
-        // TODO: set property to uatermsid:hasCollectionId
         if (StringUtils.isNotBlank(set)) {
             jql.append(" AND");
             jql.append(" res.[uatermsid:hasCollectionId] = '" + set + "'");

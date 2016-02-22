@@ -63,6 +63,7 @@ public class OAIWebResource {
      * @return the response
      * @throws RepositoryException the repository exception
      */
+    // FIXME: to be removed
     // @POST
     // @Path("/sets")
     // @Consumes(MediaType.TEXT_XML)
@@ -113,6 +114,7 @@ public class OAIWebResource {
      * @return the oAI response
      * @throws RepositoryException the repository exception
      */
+    // FIXME: post method supported
     // @POST // remove post method supported
     @Path("/")
     @Produces(MediaType.TEXT_XML)
