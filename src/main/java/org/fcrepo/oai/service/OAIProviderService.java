@@ -767,6 +767,15 @@ public class OAIProviderService {
             }
             req.setVerb(VerbType.LIST_IDENTIFIERS);
             req.setMetadataPrefix(metadataPrefix);
+            if (from != null) {
+                req.setUntil(from);
+            }
+            if (until != null) {
+                req.setUntil(until);
+            }
+            if (set != null) {
+                req.setSet(set);
+            }
             oai.setRequest(req);
             oai.setListIdentifiers(ids);
             return oaiFactory.createOAIPMH(oai);
@@ -1042,6 +1051,9 @@ public class OAIProviderService {
             }
             req.setVerb(VerbType.LIST_RECORDS);
             req.setMetadataPrefix(metadataPrefix);
+            req.setUntil(from);
+            req.setUntil(until);
+            req.setSet(set);
             oai.setRequest(req);
             oai.setListRecords(records);
             return oaiFactory.createOAIPMH(oai);
