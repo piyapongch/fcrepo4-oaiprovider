@@ -22,13 +22,9 @@ import static org.openarchives.oai._2.VerbType.LIST_METADATA_FORMATS;
 import static org.openarchives.oai._2.VerbType.LIST_RECORDS;
 import static org.openarchives.oai._2.VerbType.LIST_SETS;
 
-import java.io.InputStream;
-import java.net.URI;
-
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -36,7 +32,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
 
@@ -69,13 +64,13 @@ public class OAIWebResource {
      * @return the response
      * @throws RepositoryException the repository exception
      */
-    @POST
-    @Path("/sets")
-    @Consumes(MediaType.TEXT_XML)
-    public Response createSet(@Context final UriInfo uriInfo, final InputStream src) throws RepositoryException {
-        final String path = this.providerService.createSet(session, uriInfo, src);
-        return Response.created(URI.create(path)).build();
-    }
+    // @POST
+    // @Path("/sets")
+    // @Consumes(MediaType.TEXT_XML)
+    // public Response createSet(@Context final UriInfo uriInfo, final InputStream src) throws RepositoryException {
+    // final String path = this.providerService.createSet(session, uriInfo, src);
+    // return Response.created(URI.create(path)).build();
+    // }
 
     /**
      * Gets OAI response.
