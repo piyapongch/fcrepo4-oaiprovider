@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -114,7 +113,7 @@ public class OAIWebResource {
      * @return the oAI response
      * @throws RepositoryException the repository exception
      */
-    @POST
+    // @POST // remove post method supported
     @Path("/")
     @Produces(MediaType.TEXT_XML)
     public Object postOAIResponse(final @QueryParam("verb") String verbParam,
@@ -142,7 +141,6 @@ public class OAIWebResource {
      * @return the oAI response
      * @throws RepositoryException the repository exception
      */
-    // @GET
     @Produces(MediaType.TEXT_XML)
     public Object createOAIResponse(final @QueryParam("verb") String verbParam,
         final @QueryParam("identifier") String identifierParam,
