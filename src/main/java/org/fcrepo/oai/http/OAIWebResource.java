@@ -143,8 +143,8 @@ public class OAIWebResource {
      * @return the oAI response
      * @throws RepositoryException the repository exception
      */
-    @Produces(MediaType.TEXT_XML)
-    public Object createOAIResponse(final @QueryParam("verb") String verbParam,
+    // @Produces(MediaType.TEXT_XML)
+    private Object createOAIResponse(final @QueryParam("verb") String verbParam,
         final @QueryParam("identifier") String identifierParam,
         final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
