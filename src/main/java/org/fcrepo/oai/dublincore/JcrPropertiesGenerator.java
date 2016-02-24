@@ -71,6 +71,7 @@ public class JcrPropertiesGenerator {
         // using stream api to find dcterms:type Thesis
         final List<Value> vl = Arrays.asList(values);
         isThesis = vl.stream().anyMatch(v -> {
+
             // getString() throws exceptions need to catch them
             try {
                 return v.getString().equalsIgnoreCase("Thesis");
