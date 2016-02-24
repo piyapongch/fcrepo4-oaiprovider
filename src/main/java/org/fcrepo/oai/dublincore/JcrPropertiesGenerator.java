@@ -15,6 +15,9 @@
  */
 package org.fcrepo.oai.dublincore;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -59,12 +62,22 @@ public class JcrPropertiesGenerator {
         values = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
-                isThesis = values[i].getString().equalsIgnoreCase("Thesis") && !isThesis ? true : false;
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
                 simple.getContent().add(values[i].getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
             }
         }
+
+        // using stream api to find dcterms:type Thesis
+        final List<Value> vl = Arrays.asList(values);
+        isThesis = vl.stream().anyMatch(v -> {
+            // getString() throws exceptions need to catch them
+            try {
+                return v.getString().equalsIgnoreCase("Thesis");
+            } catch (final Exception e) {
+                return false;
+            }
+        });
 
         if (isThesis) {
 
