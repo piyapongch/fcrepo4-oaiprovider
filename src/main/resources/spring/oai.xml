@@ -32,6 +32,7 @@
                 <entry key="oai" value="http://www.openarchives.org/OAI/2.0/"/>
                 <entry key="dcterms" value="http://purl.org/dc/terms/"/>
                 <entry key="ualterms" value="http://terms.library.ualberta.ca/"/>
+                <entry key="uatermsid" value="http://terms.library.library.ca/identifiers/"/>
                 <entry key="marcrel" value="http://id.loc.gov/vocabulary/relators/"/>
                 <entry key="vivo" value="http://vivoweb.org/ontology/core#"/>
                 <entry key="bibo" value="http://purl.org/ontology/bibo/"/>

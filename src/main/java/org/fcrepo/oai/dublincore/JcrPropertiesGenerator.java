@@ -142,9 +142,8 @@ public class JcrPropertiesGenerator {
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
             }
         }
-        values =
-            obj.hasProperty("ualterms:thesiscommitteemember")
-                ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
+        values = obj.hasProperty("ualterms:thesiscommitteemember")
+            ? obj.getProperty("ualterms:thesiscommitteemember").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
@@ -201,8 +200,8 @@ public class JcrPropertiesGenerator {
         }
 
         // dc:description (add prefix in content: "Specialization: ")
-        values =
-            obj.hasProperty("ualterms:specialization") ? obj.getProperty("ualterms:specialization").getValues() : null;
+        values = obj.hasProperty("uatermsid:specialization") ? obj.getProperty("uatermsid:specialization").getValues()
+            : null;
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
