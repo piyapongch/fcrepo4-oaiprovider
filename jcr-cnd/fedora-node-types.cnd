@@ -1,5 +1,6 @@
 /*
  * JCR node types for use with Fedora
+ * (fcrepo-kernel-impl/src/main/resources/fedora-node-types.cnd)
  */
 <jcr = 'http://www.jcp.org/jcr/1.0'>
 <nt = 'http://www.jcp.org/jcr/nt/1.0'>
@@ -12,6 +13,7 @@
 <oai = 'http://www.openarchives.org/OAI/2.0/'>
 <dcterms = 'http://purl.org/dc/terms/'>
 <ualterms = 'http://terms.library.ualberta.ca/'>
+<uatermsid = 'http://terms.library.library.ca/identifiers/'>
 <hydragroup = 'http://projecthydra.org/ns/auth/group#'>
 <marcrel = 'http://id.loc.gov/vocabulary/relators/'>
 <vivo = 'http://vivoweb.org/ontology/core#'>
@@ -21,7 +23,6 @@
 <relsext = 'info:fedora/fedora-system:def/relations-external#'>
 <webacl = 'http://www.w3.org/ns/auth/acl#'>
 <hydraacl = 'http://projecthydra.org/ns/auth/acl#'>
-<uatermsid = 'http://terms.library.library.ca/identifiers/'>
 <scholarsphere = 'http://scholarsphere.psu.edu/ns#'>
 
 /*
