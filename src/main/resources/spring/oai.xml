@@ -17,8 +17,8 @@
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
         <property name="maxListSize" value="500"/>
         <property name="setsEnabled" value="true"/>
-        <property name="setsRootPath" value="/oai/setspec"/>
-        <property name="propertyIsPartOfSet" value="http://terms.library.library.ca/identifiers/hasCollectionId"/>
+        <property name="rootPath" value="/oai/setspec"/>
+        <property name="propertyHasCollectionId" value="http://terms.library.library.ca/identifiers/hasCollectionId"/>
         <property name="propertyHasSets" value="http://fedora.info/definitions/v4/config#hasOAISet"/>
         <property name="propertySetName" value="http://fedora.info/definitions/v4/config#hasOAISetName"/>
         <property name="propertyHasSetSpec" value="http://fedora.info/definitions/v4/config#hasOAISetSpec"/>
