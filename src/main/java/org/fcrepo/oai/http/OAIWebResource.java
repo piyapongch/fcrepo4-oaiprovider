@@ -126,7 +126,6 @@ public class OAIWebResource {
      * @return the oAI response
      * @throws RepositoryException the repository exception
      */
-    // @Produces(MediaType.TEXT_XML)
     private Object createOAIResponse(final @QueryParam("verb") String verbParam,
         final @QueryParam("identifier") String identifierParam,
         final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
@@ -267,4 +266,16 @@ public class OAIWebResource {
         }
     }
 
+    /**
+     * The delete method.
+     * @param path
+     * @return
+     * @throws RepositoryException
+     */
+    @GET
+    @Path("/delete")
+    @Produces(MediaType.TEXT_XML)
+    public Object delete(final @QueryParam("path") String path) throws RepositoryException {
+        return providerService.delete(path);
+    }
 }

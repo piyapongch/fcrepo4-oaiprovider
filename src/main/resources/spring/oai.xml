@@ -18,7 +18,7 @@
         <property name="maxListSize" value="500"/>
         <property name="setsEnabled" value="true"/>
         <property name="searchEnabled" value="true"/>
-        <property name="rootPath" value="/oai/setspec"/>
+        <property name="rootPath" value="/oai"/>
         <property name="propertyHasCollectionId" value="http://terms.library.library.ca/identifiers/hasCollectionId"/>
         <property name="propertyHasModel" value="info:fedora/fedora-system:def/model#hasModel"/>
         <property name="propertyOaiRepositoryName" value="http://www.openarchives.org/OAI/2.0/repositoryName"/>
@@ -54,7 +54,7 @@
                 <entry key="adminEmail" value="eraadmi@ualberta.ca"/>
                 <entry key="baseUrl" value="https://era.library.ualberta.ca/oai"/>
                 <!-- eprints descriptions -->
-                <entry key="description" value="An example repository description"/>
+                <entry key="description" value="OAI Provider is developed by Piyapong Charoenwattana."/>
                 <entry key="metadataPolicy"
                     value="CCSD metadata are freely accessible to all, under the following conditions:
                     (1) The full name of the author and (2) the full bibliographic reference information for the thesis

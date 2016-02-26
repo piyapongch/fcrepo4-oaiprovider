@@ -352,7 +352,6 @@ public class OAIProviderService {
         if (!nodeService.exists(session, rootPath)) {
             log.info("Initializing OAI root {} ...", rootPath);
             root = containerService.findOrCreate(session, rootPath);
-            session.save();
         } else {
             log.info("Updating OAI root {} ...", rootPath);
             root = containerService.findOrCreate(session, rootPath);
@@ -1209,6 +1208,28 @@ public class OAIProviderService {
         } catch (final Exception e) {
             e.printStackTrace();
             throw new RepositoryException(e);
+        }
+    }
+
+    /**
+     * The delete method.
+     * @param path
+     * @return
+     * @throws RepositoryException
+     */
+    public Object delete(final String path) throws RepositoryException {
+        final Session session = sessionFactory.getInternalSession();
+        Container con;
+        if (nodeService.exists(session, path)) {
+            log.debug("Deleting resource ...", path);
+            con = containerService.findOrCreate(session, path);
+            con.delete();
+            session.save();
+            return error(VerbType.IDENTIFY, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
+                "Resource has been deleted.");
+        } else {
+            return error(VerbType.IDENTIFY, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
+                "Resource does not existed.");
         }
     }
 }
