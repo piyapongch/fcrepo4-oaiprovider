@@ -187,6 +187,8 @@ public class OAIProviderService {
     @Autowired
     private JcrPropertiesGenerator jcrDcGenerator;
 
+    private boolean searchEnabled;
+
     // @Autowired
     // private org.fcrepo.oai.etdms.JcrPropertiesGenerator jcrEtdmsGenerator;
 
@@ -332,6 +334,14 @@ public class OAIProviderService {
      */
     public void setPropertyOaiBaseUrl(final String propertyOaiBaseUrl) {
         this.propertyOaiBaseUrl = propertyOaiBaseUrl;
+    }
+
+    /**
+     * The setSearchEnabled setter method.
+     * @param searchEnabled the searchEnabled to set
+     */
+    public void setSearchEnabled(final boolean searchEnabled) {
+        this.searchEnabled = searchEnabled;
     }
 
     /**
@@ -1043,7 +1053,7 @@ public class OAIProviderService {
         jql.append(" AND");
         jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
 
-        // public or ccid protected item, cast to binary and compare with xs:base64binary string property
+        // public item, cast to binary and compare with xs:base64binary string property
         jql.append(" AND");
         jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
 
@@ -1125,10 +1135,9 @@ public class OAIProviderService {
         jql.append(" AND");
         jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
 
-        // public or ccid protected item, cast to binary and compare with xs:base64binary string property
+        // public item, cast to binary and compare with xs:base64binary string property
         jql.append(" AND");
-        jql.append(" (per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
-        jql.append(" OR per.[" + propAgent + "] = CAST('" + ccidProtectedAgent + "' AS BINARY))");
+        jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
 
         // search criteria
         jql.append(" AND");
@@ -1146,16 +1155,23 @@ public class OAIProviderService {
     }
 
     /**
-     * List records.
+     * Search records.
      *
      * @param session the session
      * @param uriInfo the uri info
      * @param metadataPrefix the metadata prefix
+     * @param property
+     * @param value
+     * @param offset
      * @return the jAXB element
      * @throws RepositoryException the repository exception
      */
     public JAXBElement<OAIPMHtype> search(final Session session, final UriInfo uriInfo, final String metadataPrefix,
         final String property, final String value, final int offset) throws RepositoryException {
+        if (!searchEnabled) {
+            return error(VerbType.LIST_RECORDS, null, null, OAIPMHerrorcodeType.NO_SET_HIERARCHY,
+                "Search is not enabled");
+        }
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
