@@ -44,7 +44,6 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.namespace.QName;
@@ -125,15 +124,7 @@ public class OAIProviderService {
 
     private final DatatypeFactory dataFactory;
 
-    private final Unmarshaller unmarshaller;
-
     private String rootPath;
-
-    private String propertyHasSets;
-
-    private String propertySetName;
-
-    private String propertyHasSetSpec;
 
     private String propertyHasModel;
 
@@ -167,11 +158,6 @@ public class OAIProviderService {
     private final String publicAgent =
         new String(Base64.decodeBase64("aHR0cDovL3Byb2plY3RoeWRyYS5vcmcvbnMvYXV0aC9ncm91cCNwdWJsaWMYXl4YVVJJ"));
 
-    // ccid protected item, webacl:agent "http://projecthydra.org/ns/auth/person#ualbertacs@hydranorth.ca^^URI"
-    private final String ccidProtectedAgent =
-        new String(Base64.decodeBase64(
-            "aHR0cDovL3Byb2plY3RoeWRyYS5vcmcvbnMvYXV0aC9wZXJzb24jdWFsYmVydGFjc0BoeWRyYW5vcnRoLmNhGF5eGFVSSQ=="));
-
     @Autowired
     private BinaryService binaryService;
 
@@ -198,7 +184,6 @@ public class OAIProviderService {
      * @param propertyHasSetSpec the property has set spec
      */
     public void setPropertyHasSetSpec(final String propertyHasSetSpec) {
-        this.propertyHasSetSpec = propertyHasSetSpec;
     }
 
     /**
@@ -207,7 +192,6 @@ public class OAIProviderService {
      * @param propertySetName the property set name
      */
     public void setPropertySetName(final String propertySetName) {
-        this.propertySetName = propertySetName;
     }
 
     /**
@@ -216,7 +200,6 @@ public class OAIProviderService {
      * @param propertyHasSets the property has sets
      */
     public void setPropertyHasSets(final String propertyHasSets) {
-        this.propertyHasSets = propertyHasSets;
     }
 
     /**
@@ -397,7 +380,7 @@ public class OAIProviderService {
     public OAIProviderService() throws DatatypeConfigurationException, JAXBException {
         dataFactory = DatatypeFactory.newInstance();
         final JAXBContext ctx = JAXBContext.newInstance(OAIPMHtype.class, IdentifyType.class, SetType.class);
-        unmarshaller = ctx.createUnmarshaller();
+        ctx.createUnmarshaller();
     }
 
     /**
