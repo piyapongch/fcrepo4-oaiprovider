@@ -48,7 +48,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.namespace.QName;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
@@ -887,74 +886,6 @@ public class OAIProviderService {
             e.printStackTrace();
             throw new RepositoryException(e);
         }
-    }
-
-    /**
-     * Create set.
-     *
-     * @param session the session
-     * @param uriInfo the uri info
-     * @param src the src
-     * @return the string
-     * @throws RepositoryException the repository exception
-     * @deprecated
-     */
-    @Deprecated
-    public String createSet(final Session session, final UriInfo uriInfo, final InputStream src)
-        throws RepositoryException {
-        final HttpResourceConverter converter =
-            new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraLdp.class));
-        try {
-            final SetType set = unmarshaller.unmarshal(new StreamSource(src), SetType.class).getValue();
-            final String setId = getSetId(set);
-            if (!nodeService.exists(session, rootPath)) {
-                throw new RepositoryException("The root set object does not exist");
-            }
-            final Container setRoot = containerService.findOrCreate(session, rootPath);
-            if (set.getSetSpec() != null) {
-                /* validate that the hierarchy of sets exists */
-            }
-
-            if (nodeService.exists(session, rootPath + "/" + setId)) {
-                throw new RepositoryException("The OAI Set with the id already exists");
-            }
-            final Container setObject = containerService.findOrCreate(session, rootPath + "/" + setId);
-
-            final StringBuilder sparql =
-                new StringBuilder("INSERT DATA {<" + converter.toDomain(setRoot.getPath()) + "> <" + propertyHasSets
-                    + "> <" + converter.toDomain(setObject.getPath()) + ">}");
-            setRoot.updateProperties(converter, sparql.toString(), new RdfStream());
-
-            sparql.setLength(0);
-            sparql.append("INSERT DATA {")
-                .append("<" + converter.toDomain(setObject.getPath()) + "> <" + propertySetName + "> '"
-                    + set.getSetName() + "' .")
-                .append("<" + converter.toDomain(setObject.getPath()) + "> <" + propertyHasSetSpec + "> '"
-                    + set.getSetSpec() + "' .");
-            for (final DescriptionType desc : set.getSetDescription()) {
-                // TODO: save description
-            }
-            sparql.append("}");
-            setObject.updateProperties(converter, sparql.toString(), new RdfStream());
-            session.save();
-            return setObject.getPath();
-        } catch (final JAXBException e) {
-            e.printStackTrace();
-            throw new RepositoryException(e);
-        }
-    }
-
-    @Deprecated
-    private String getSetId(final SetType set) throws RepositoryException {
-        if (set.getSetSpec() == null) {
-            throw new RepositoryException("SetSpec can not be empty");
-        }
-        String id = set.getSetSpec();
-        final int colonPos = id.indexOf(':');
-        while (colonPos > 0) {
-            id = id.substring(colonPos + 1);
-        }
-        return id;
     }
 
     /**

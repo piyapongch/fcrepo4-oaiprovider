@@ -56,23 +56,6 @@ public class OAIWebResource {
     private OAIProviderService providerService;
 
     /**
-     * Create set.
-     *
-     * @param uriInfo the uri info
-     * @param src the src
-     * @return the response
-     * @throws RepositoryException the repository exception
-     */
-    // FIXME: to be removed
-    // @POST
-    // @Path("/sets")
-    // @Consumes(MediaType.TEXT_XML)
-    // public Response createSet(@Context final UriInfo uriInfo, final InputStream src) throws RepositoryException {
-    // final String path = this.providerService.createSet(session, uriInfo, src);
-    // return Response.created(URI.create(path)).build();
-    // }
-
-    /**
      * Gets OAI response.
      *
      * @param verbParam the verb
