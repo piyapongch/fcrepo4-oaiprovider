@@ -169,8 +169,9 @@ public class OAIProviderService {
         new String(Base64.decodeBase64("aHR0cDovL3Byb2plY3RoeWRyYS5vcmcvbnMvYXV0aC9ncm91cCNwdWJsaWMYXl4YVVJJ"));
 
     // ccid protected item, webacl:agent "http://projecthydra.org/ns/auth/person#ualbertacs@hydranorth.ca^^URI"
-    private final String ccidProtectedAgent = new String(Base64.decodeBase64(
-        "aHR0cDovL3Byb2plY3RoeWRyYS5vcmcvbnMvYXV0aC9wZXJzb24jdWFsYmVydGFjc0BoeWRyYW5vcnRoLmNhGF5eGFVSSQ=="));
+    private final String ccidProtectedAgent =
+        new String(Base64.decodeBase64(
+            "aHR0cDovL3Byb2plY3RoeWRyYS5vcmcvbnMvYXV0aC9wZXJzb24jdWFsYmVydGFjc0BoeWRyYW5vcnRoLmNhGF5eGFVSSQ=="));
 
     @Autowired
     private BinaryService binaryService;
@@ -411,8 +412,9 @@ public class OAIProviderService {
         id.setProtocolVersion("2.0");
 
         // repository name, project version
-        RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyOaiRepositoryName));
+        RdfStream triples =
+            root.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(propertyOaiRepositoryName));
         id.setRepositoryName(triples.next().getObject().getLiteralValue().toString());
 
         // base url
@@ -435,8 +437,9 @@ public class OAIProviderService {
         if (descEnabled) {
 
             // description
-            triples = root.getTriples(converter, PropertiesRdfContext.class)
-                .filter(new PropertyPredicate(propertyOaiDescription));
+            triples =
+                root.getTriples(converter, PropertiesRdfContext.class)
+                    .filter(new PropertyPredicate(propertyOaiDescription));
             final String description = triples.next().getObject().getLiteralValue().toString();
             final String metadataPolicy = descriptiveContent.get("metadataPolicy");
             final String dataPolicy = descriptiveContent.get("dataPolicy");
@@ -514,8 +517,9 @@ public class OAIProviderService {
                     if (mdf.getPrefix().equals("oai_dc")) {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else {
-                        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                            .filter(new PropertyPredicate(mdf.getPropertyName()));
+                        final RdfStream triples =
+                            obj.getTriples(converter, PropertiesRdfContext.class)
+                                .filter(new PropertyPredicate(mdf.getPropertyName()));
                         if (triples.hasNext()) {
                             listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                         }
@@ -619,8 +623,9 @@ public class OAIProviderService {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(format.getPropertyName()));
+        final RdfStream triples =
+            obj.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(format.getPropertyName()));
 
         if (!triples.hasNext()) {
             log.error("There is no OAI record of type " + format.getPrefix() + " associated with the object "
@@ -731,15 +736,17 @@ public class OAIProviderService {
 
                 // get base url
                 final FedoraResource root = nodeService.find(session, rootPath);
-                RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-                    .filter(new PropertyPredicate(propertyOaiBaseUrl));
+                RdfStream triples =
+                    root.getTriples(converter, PropertiesRdfContext.class)
+                        .filter(new PropertyPredicate(propertyOaiBaseUrl));
                 final String baseUrl = triples.next().getObject().getLiteralValue().toString();
                 h.setIdentifier(baseUrl + path);
 
                 final Container obj = containerService.findOrCreate(session, path);
                 h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
-                triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                    .filter(new PropertyPredicate(propertyHasCollectionId));
+                triples =
+                    obj.getTriples(converter, PropertiesRdfContext.class)
+                        .filter(new PropertyPredicate(propertyHasCollectionId));
                 while (triples.hasNext()) {
                     h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
                 }
@@ -783,9 +790,10 @@ public class OAIProviderService {
     public static String encodeResumptionToken(final String verb, final String metadataPrefix, final String from,
         final String until, final String set, final int offset) throws UnsupportedEncodingException {
 
-        final String[] data = new String[] { urlEncode(verb), urlEncode(metadataPrefix),
-            urlEncode(from != null ? from : ""), urlEncode(until != null ? until : ""),
-            urlEncode(set != null ? set : ""), urlEncode(String.valueOf(offset)) };
+        final String[] data =
+            new String[] { urlEncode(verb), urlEncode(metadataPrefix), urlEncode(from != null ? from : ""),
+                urlEncode(until != null ? until : ""), urlEncode(set != null ? set : ""),
+                urlEncode(String.valueOf(offset)) };
         return Base64.encodeBase64URLSafeString(StringUtils.join(data, ':').getBytes("UTF-8"));
     }
 
@@ -912,8 +920,9 @@ public class OAIProviderService {
             }
             final Container setObject = containerService.findOrCreate(session, rootPath + "/" + setId);
 
-            final StringBuilder sparql = new StringBuilder("INSERT DATA {<" + converter.toDomain(setRoot.getPath())
-                + "> <" + propertyHasSets + "> <" + converter.toDomain(setObject.getPath()) + ">}");
+            final StringBuilder sparql =
+                new StringBuilder("INSERT DATA {<" + converter.toDomain(setRoot.getPath()) + "> <" + propertyHasSets
+                    + "> <" + converter.toDomain(setObject.getPath()) + ">}");
             setRoot.updateProperties(converter, sparql.toString(), new RdfStream());
 
             sparql.setLength(0);
@@ -1052,8 +1061,9 @@ public class OAIProviderService {
         h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
 
         // set setSpecs
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyHasCollectionId));
+        final RdfStream triples =
+            obj.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(propertyHasCollectionId));
         while (triples.hasNext()) {
             h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
         }
@@ -1104,8 +1114,7 @@ public class OAIProviderService {
 
         // public or ccid protected item, cast to binary and compare with xs:base64binary string property
         jql.append(" AND");
-        jql.append(" (per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
-        jql.append(" OR per.[" + propAgent + "] = CAST('" + ccidProtectedAgent + "' AS BINARY))");
+        jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
 
         // start datetime constraint
         if (StringUtils.isNotBlank(from)) {
