@@ -153,25 +153,39 @@ public class JcrPropertiesGenerator {
         }
 
         // dc:publisher (concatenate grantor and discipline/department contents)
-        final Value[] vals =
+        final Value[] depts =
             obj.hasProperty("vivo:AcademicDepartment") ? obj.getProperty("vivo:AcademicDepartment").getValues() : null;
-        values = obj.hasProperty("marcrel:dgg") ? obj.getProperty("marcrel:dgg").getValues() : null;
-        if (values == null) {
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add("University of Alberta");
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(simple));
-        } else if (StringUtils.isNotEmpty(values[0].getString())) {
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            final StringBuilder value = new StringBuilder(values[0].getString());
-            if (vals != null) {
-                for (int i = 0; i < vals.length; i++) {
-                    value.append(i == 0 ? "; " : ", ").append(vals[i].getString());
-                }
+        final Value[] ddgs = obj.hasProperty("marcrel:dgg") ? obj.getProperty("marcrel:dgg").getValues() : null;
+        final StringBuilder pub = new StringBuilder();
+
+        // If both marcrel:dgg and vivo:AcademicDepartment are present
+        if ((ddgs != null) && (depts != null)) {
+            pub.append(ddgs[0].getString());
+            for (int i = 0; i < depts.length; i++) {
+                pub.append(i == 0 ? "; " : ", ").append(depts[i].getString());
             }
-            value.append(vals == null ? "." : "");
-            simple.getContent().add(value.toString());
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(simple));
+            pub.append(depts.length == 1 ? "." : "");
+
+            // If only vivo:AcademicDepartment is present
+        } else if ((ddgs == null) && (depts != null)) {
+            pub.append("University of Alberta");
+            for (int i = 0; i < depts.length; i++) {
+                pub.append(i == 0 ? "; " : ", ").append(depts[i].getString());
+            }
+            pub.append(depts.length == 1 ? "." : "");
+
+            // If none of marcrel:dgg and vivo:AcademicDepartment are present
+        } else if ((ddgs == null) && (depts == null)) {
+            pub.append("University of Alberta");
+
+            // Otherwise, print only marcrel:dgg (no punctuation)
+        } else if (ddgs != null) {
+            pub.append(ddgs[0].getString());
         }
+        pub.append(pub.toString().trim().length() == 0 ? "University of Alberta" : "");
+        final SimpleLiteral sim = dcFactory.createSimpleLiteral();
+        sim.getContent().add(pub.toString());
+        oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(sim));
 
         // dc:subject
         values = obj.hasProperty("dcterms:subject") ? obj.getProperty("dcterms:subject").getValues() : null;
@@ -334,7 +348,8 @@ public class JcrPropertiesGenerator {
         }
         values = obj.hasProperty("dcterms:license") ? obj.getProperty("dcterms:license").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
-            if (!StringUtils.isEmpty(values[i].getString())) {
+            if (!StringUtils.isEmpty(values[i].getString())
+                && !values[i].getString().equals("I am required to use/link to a publisher's license")) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
                 simple.getContent().add(values[i].getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
