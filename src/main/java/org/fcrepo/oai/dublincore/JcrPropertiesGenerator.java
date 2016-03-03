@@ -253,7 +253,7 @@ public class JcrPropertiesGenerator {
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
             }
         }
-        values = obj.hasProperty("ualterms:trid") ? obj.getProperty("ualterms:trid").getValues() : null;
+        values = obj.hasProperty("uatermsid:trid") ? obj.getProperty("uatermsid:trid").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
@@ -261,7 +261,7 @@ public class JcrPropertiesGenerator {
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
             }
         }
-        values = obj.hasProperty("ualterms:ser") ? obj.getProperty("ualterms:ser").getValues() : null;
+        values = obj.hasProperty("uatermsid:ser") ? obj.getProperty("uatermsid:ser").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
@@ -270,7 +270,7 @@ public class JcrPropertiesGenerator {
             }
         }
         values =
-            obj.hasProperty("ualterms:fedora3handle") ? obj.getProperty("ualterms:fedora3handle").getValues() : null;
+            obj.hasProperty("uatermsid:fedora3handle") ? obj.getProperty("uatermsid:fedora3handle").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
