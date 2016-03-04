@@ -53,7 +53,7 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
                 put("http://www.openarchives.org/OAI/2.0/", "");
                 put("http://www.openarchives.org/OAI/2.0/oai_dc/", "oai_dc");
                 put("http://purl.org/dc/elements/1.1/", "dc");
-                put("http://www.ndltd.org/standards/metadata/etdms/1.0/", "etdms");
+                put("http://www.ndltd.org/standards/metadata/etdms/1.0/", "thesis");
             }
         });
     }
