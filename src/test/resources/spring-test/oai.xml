@@ -12,7 +12,7 @@
     <!-- Mints PIDs-->
     <bean class="org.fcrepo.mint.UUIDPidMinter"/>
 
-    <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
+    <bean name="jcrDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator"/>
 
 <!--    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>-->
 

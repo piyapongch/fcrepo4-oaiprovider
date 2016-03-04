@@ -66,7 +66,8 @@ import org.fcrepo.kernel.services.BinaryService;
 import org.fcrepo.kernel.services.ContainerService;
 import org.fcrepo.kernel.services.NodeService;
 import org.fcrepo.kernel.utils.iterators.RdfStream;
-import org.fcrepo.oai.dublincore.JcrPropertiesGenerator;
+import org.fcrepo.oai.generator.JcrOaiDcGenerator;
+import org.fcrepo.oai.generator.JcrOaiEtdmsGenerator;
 import org.fcrepo.oai.http.ResumptionToken;
 import org.fcrepo.oai.jersey.XmlDeclarationStrippingInputStream;
 import org.fcrepo.oai.rdf.PropertyPredicate;
@@ -74,6 +75,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.modeshape.jcr.api.NamespaceRegistry;
+import org.ndltd.standards.metadata.etdms._1.Thesis;
 import org.openarchives.oai._1_1.eprints.EprintsDescriptionType;
 import org.openarchives.oai._1_1.eprints.TextURLType;
 import org.openarchives.oai._2.DeletedRecordType;
@@ -144,6 +146,8 @@ public class OAIProviderService {
 
     private boolean descEnabled;
 
+    private boolean searchEnabled;
+
     private Map<String, String> descriptiveContent;
 
     private Map<String, MetadataFormat> metadataFormats;
@@ -171,12 +175,10 @@ public class OAIProviderService {
     private ContainerService containerService;
 
     @Autowired
-    private JcrPropertiesGenerator jcrDcGenerator;
+    private JcrOaiDcGenerator jcrOaiDcGenerator;
 
-    private boolean searchEnabled;
-
-    // @Autowired
-    // private org.fcrepo.oai.etdms.JcrPropertiesGenerator jcrEtdmsGenerator;
+    @Autowired
+    private JcrOaiEtdmsGenerator jcrOaiEtdmsGenerator;
 
     /**
      * Sets property has set spec.
@@ -507,6 +509,8 @@ public class OAIProviderService {
                 for (final MetadataFormat mdf : metadataFormats.values()) {
                     if (mdf.getPrefix().equals("oai_dc")) {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
+                    } else if (mdf.getPrefix().equals("oai_etdms")) {
+                        listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else {
                         final RdfStream triples =
                             obj.getTriples(converter, PropertiesRdfContext.class)
@@ -599,15 +603,14 @@ public class OAIProviderService {
     private JAXBElement<OaiDcType> generateOaiDc(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
 
-        return jcrDcGenerator.generateDc(session, obj, uriInfo);
+        return jcrOaiDcGenerator.generate(session, obj, uriInfo);
     }
 
-    // private JAXBElement<OaiDcType> generateOaiEtdms(final Session session, final Container obj, final UriInfo
-    // uriInfo)
-    // throws RepositoryException {
-    //
-    // return jcrEtdmsGenerator.generateEtdms(session, obj, uriInfo);
-    // }
+    private Thesis generateOaiEtdms(final Session session, final Container obj, final UriInfo uriInfo)
+        throws RepositoryException {
+
+        return jcrOaiEtdmsGenerator.generate(session, obj, uriInfo);
+    }
 
     private JAXBElement<String> fetchOaiResponse(final Container obj, final Session session,
         final MetadataFormat format, final UriInfo uriInfo) throws RepositoryException, IOException {
@@ -998,7 +1001,7 @@ public class OAIProviderService {
             md.setAny(generateOaiDc(session, obj, uriInfo));
         } else if (mdf.getPrefix().equals("oai_etdms")) {
             /* generate a OAI DC reponse using the DC Generator from fcrepo4 */
-            // md.setAny(generateOaiEtdms(session, obj, uriInfo));
+            md.setAny(generateOaiEtdms(session, obj, uriInfo));
         } else {
             /* generate a OAI response from the linked Binary */
             md.setAny(fetchOaiResponse(obj, session, mdf, uriInfo));

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.fcrepo.oai.dublincore;
+package org.fcrepo.oai.generator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +36,7 @@ import org.purl.dc.elements._1.SimpleLiteral;
  * @author Frank Asseg
  * @author Piyapong Charoenwattana
  */
-public class JcrPropertiesGenerator {
+public class JcrOaiDcGenerator {
     private static final ObjectFactory dcFactory = new ObjectFactory();
     private static final org.openarchives.oai._2_0.oai_dc.ObjectFactory oaiDcFactory =
         new org.openarchives.oai._2_0.oai_dc.ObjectFactory();
@@ -51,7 +51,7 @@ public class JcrPropertiesGenerator {
      * @throws RepositoryException if repository exception occurred
      * @throws IllegalStateException
      */
-    public JAXBElement<OaiDcType> generateDc(final Session session, final Container obj, final UriInfo uriInfo)
+    public JAXBElement<OaiDcType> generate(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException, IllegalStateException {
 
         final OaiDcType oaidc = oaiDcFactory.createOaiDcType();

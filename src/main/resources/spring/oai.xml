@@ -8,11 +8,11 @@
 
     <context:component-scan base-package="org.fcrepo"/>
 
-    <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
+    <bean name="jcrOaiDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator"/>
 
-    <!--    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>-->
+    <bean name="jcrOaiEtdmsGenerator" class="org.fcrepo.oai.generator.JcrOaiEtdmsGenerator"/>
 
-    <!--    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>-->
+    <!--    <bean name="jcrOaiQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>-->
 
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
         <property name="maxListSize" value="500"/>
@@ -38,12 +38,10 @@
         </property>
         <property name="metadataFormats">
             <map>
-                <entry key="oai_dc" value-ref="dcOaiFormat"/>
+                <entry key="oai_dc" value-ref="oaiDcFormat"/>
+                <entry key="oai_etdms" value-ref="oaiEtdmsFormat"/>
                 <!--
                 <entry key="oai_qdc" value-ref="qdcOaiFormat"/>
-                <entry key="oai_etdms" value-ref="etdmsOaiFormat"/>
-                <entry key="marc21" value-ref="marc21OaiFormat"/>
-                <entry key="premis" value-ref="premisOaiFormat"/>
                 -->
             </map>
         </property>
@@ -64,43 +62,30 @@
                     value="CCSD full-text thesis are freely accessible to all under the following
                     conditions: (1) The full name of the author and (2) the full bibliographic reference information for
                     the thesis must always co-appear prominently with redisplay of the text, in any medium. The text may
-                    not be offered for sale."/>
+                    not be offered for sale."
+                />
             </map>
         </property>
     </bean>
 
-    <bean name="dcOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
+    <bean name="oaiDcFormat" class="org.fcrepo.oai.service.MetadataFormat">
         <property name="prefix" value="oai_dc"/>
         <property name="schemaUrl" value="http://www.openarchives.org/OAI/2.0/oai_dc.xsd"/>
         <property name="namespace" value="http://www.openarchives.org/OAI/2.0/oai_dc/"/>
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiDCRecord"/>
     </bean>
 
-    <bean name="qdcOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
+    <bean name="oaiQdcFormat" class="org.fcrepo.oai.service.MetadataFormat">
         <property name="prefix" value="oai_qdc"/>
         <property name="schemaUrl" value="http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcterms.xsd"/>
         <property name="namespace" value="http://purl.org/dc/terms/"/>
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiQDCRecord"/>
     </bean>
 
-    <bean name="etdmsOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
+    <bean name="oaiEtdmsFormat" class="org.fcrepo.oai.service.MetadataFormat">
         <property name="prefix" value="oai_etdms"/>
         <property name="schemaUrl" value="http://www.ndltd.org/standards/metadata/etdms/1.0/xml.xsd"/>
         <property name="namespace" value="http://www.ndltd.org/standards/metadata/etdms/1.0/"/>
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiETDMSRecord"/>
-    </bean>
-
-    <bean name="marc21OaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
-        <property name="prefix" value="marc21"/>
-        <property name="schemaUrl" value="http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"/>
-        <property name="namespace" value="http://www.loc.gov/MARC21/slim"/>
-        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiMarc21Record"/>
-    </bean>
-
-    <bean name="premisOaiFormat" class="org.fcrepo.oai.service.MetadataFormat">
-        <property name="prefix" value="premis"/>
-        <property name="schemaUrl" value="http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd"/>
-        <property name="namespace" value="info:lc/xmlns/premis-v2"/>
-        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiPremisRecord"/>
     </bean>
 </beans>
