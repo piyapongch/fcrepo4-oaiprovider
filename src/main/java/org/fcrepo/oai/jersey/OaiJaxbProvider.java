@@ -28,6 +28,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.ndltd.standards.metadata.etdms._1.Thesis;
 import org.openarchives.oai._1_1.eprints.EprintsDescriptionType;
 import org.openarchives.oai._2.OAIPMHtype;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
@@ -72,7 +73,8 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
      */
     public OaiJaxbProvider() throws JAXBException {
         this.marshaller =
-            JAXBContext.newInstance(OaiDcType.class, OAIPMHtype.class, EprintsDescriptionType.class).createMarshaller();
+            JAXBContext.newInstance(OaiDcType.class, OAIPMHtype.class, Thesis.class, EprintsDescriptionType.class)
+                .createMarshaller();
 
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
 

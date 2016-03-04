@@ -32,6 +32,7 @@ import org.ndltd.standards.metadata.etdms._1.Thesis;
 public class JcrOaiEtdmsGenerator {
 
     private static final ObjectFactory etdmsFactory = new ObjectFactory();
+    // private final static QName _Etdms_QNAME = new QName("http://www.openarchives.org/OAI/2.0/oai_etdms/", "etdms");
 
     /**
      * The JcrOaiEtdmsGenerator class constructor.
@@ -42,6 +43,7 @@ public class JcrOaiEtdmsGenerator {
 
     /**
      * The generate method.
+     * 
      * @param session
      * @param obj
      * @param uriInfo
@@ -52,6 +54,7 @@ public class JcrOaiEtdmsGenerator {
         final FreeTextType title = etdmsFactory.createFreeTextType();
         title.setValue("test");
         thesis.getTitle().add(title);
+        // return new JAXBElement<Thesis>(_Etdms_QNAME, Thesis.class, null, thesis);
         return thesis;
     }
 

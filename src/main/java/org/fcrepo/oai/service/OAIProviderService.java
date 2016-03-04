@@ -993,7 +993,7 @@ public class OAIProviderService {
             /* generate a OAI DC reponse using the DC Generator from fcrepo4 */
             md.setAny(generateOaiDc(session, obj, uriInfo));
         } else if (mdf.getPrefix().equals("oai_etdms")) {
-            /* generate a OAI DC reponse using the DC Generator from fcrepo4 */
+            /* generate a OAI ETDMS reponse using the DC Generator from fcrepo4 */
             md.setAny(generateOaiEtdms(session, obj, uriInfo));
         } else {
             /* generate a OAI response from the linked Binary */
