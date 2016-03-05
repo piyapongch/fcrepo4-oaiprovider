@@ -2,5 +2,4 @@
 target/
 fcrepo-oaiprovider.iml
 fcrepo4-data/
-schema/
 src/main/xjb-ext/
