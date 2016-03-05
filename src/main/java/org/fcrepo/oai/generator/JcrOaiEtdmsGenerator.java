@@ -48,6 +48,8 @@ public class JcrOaiEtdmsGenerator {
      * @param uriInfo
      * @return
      */
+
+    // TODO: use obj.getNode().getProperties() and switch case String instead of obj.getProperty($name)
     public Thesis generate(final Session session, final Container obj, final UriInfo uriInfo) {
         final Thesis thesis = etdmsFactory.createThesis();
         final FreeTextType title = etdmsFactory.createFreeTextType();
