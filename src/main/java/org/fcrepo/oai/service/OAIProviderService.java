@@ -26,7 +26,7 @@ import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -415,7 +415,7 @@ public class OAIProviderService {
 
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
         oai.setIdentify(id);
-        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
         oai.setRequest(req);
         return oaiFactory.createOAIPMH(oai);
     }
@@ -470,7 +470,7 @@ public class OAIProviderService {
         req.setValue(uriInfo.getRequestUri().toASCIIString());
 
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
-        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
         oai.setListMetadataFormats(listMetadataFormats);
         oai.setRequest(req);
         return oaiFactory.createOAIPMH(oai);
@@ -517,7 +517,7 @@ public class OAIProviderService {
         final Container obj = containerService.findOrCreate(session, path);
 
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
-        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
 
         final RequestType req = oaiFactory.createRequestType();
         req.setVerb(VerbType.GET_RECORD);
@@ -657,7 +657,7 @@ public class OAIProviderService {
             }
 
             final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
-            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
             final ListIdentifiersType ids = oaiFactory.createListIdentifiersType();
 
             while (result.hasNext()) {
@@ -790,7 +790,7 @@ public class OAIProviderService {
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
-            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
             final ListSetsType sets = oaiFactory.createListSetsType();
 
             // query from collection object model
@@ -876,7 +876,8 @@ public class OAIProviderService {
             }
 
             final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
-            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
+
             final ListRecordsType records = oaiFactory.createListRecordsType();
             while (result.hasNext()) {
                 // check if the records exists
@@ -1127,7 +1128,7 @@ public class OAIProviderService {
             }
 
             final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
-            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
             final ListRecordsType records = oaiFactory.createListRecordsType();
             while (result.hasNext()) {
                 // check if the records exists
