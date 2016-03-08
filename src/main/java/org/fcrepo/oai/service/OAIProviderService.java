@@ -76,10 +76,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.modeshape.jcr.api.NamespaceRegistry;
 import org.ndltd.standards.metadata.etdms._1.Thesis;
-import org.openarchives.oai._1_1.eprints.EprintsDescriptionType;
-import org.openarchives.oai._1_1.eprints.TextURLType;
 import org.openarchives.oai._2.DeletedRecordType;
-import org.openarchives.oai._2.DescriptionType;
 import org.openarchives.oai._2.GetRecordType;
 import org.openarchives.oai._2.GranularityType;
 import org.openarchives.oai._2.HeaderType;
@@ -120,9 +117,9 @@ public class OAIProviderService {
 
     private static final ObjectFactory oaiFactory = new ObjectFactory();
 
-    private static final String eprintsNs = "http://www.openarchives.org/OAI/1.1/eprints";
+    // private static final String eprintsNs = "http://www.openarchives.org/OAI/1.1/eprints";
 
-    private static final String eprintsPrefix = "eprints";
+    // private static final String eprintsPrefix = "eprints";
 
     private final DatatypeFactory dataFactory;
 
@@ -143,8 +140,6 @@ public class OAIProviderService {
     private Map<String, String> namespaces;
 
     private boolean setsEnabled;
-
-    private boolean descEnabled;
 
     private boolean searchEnabled;
 
@@ -304,15 +299,6 @@ public class OAIProviderService {
     }
 
     /**
-     * The setDescEnabled setter method.
-     * 
-     * @param descEnabled the descEnabled to set
-     */
-    public void setDescEnabled(final boolean descEnabled) {
-        this.descEnabled = descEnabled;
-    }
-
-    /**
      * The setPropertyOaiBaseUrl setter method.
      * 
      * @param propertyOaiBaseUrl the propertyOaiBaseUrl to set
@@ -406,8 +392,9 @@ public class OAIProviderService {
         id.setProtocolVersion("2.0");
 
         // repository name, project version
-        RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyOaiRepositoryName));
+        RdfStream triples =
+            root.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(propertyOaiRepositoryName));
         id.setRepositoryName(triples.next().getObject().getLiteralValue().toString());
 
         // base url
@@ -427,46 +414,48 @@ public class OAIProviderService {
         // deleteRecord
         id.setDeletedRecord(DeletedRecordType.NO);
 
-        if (descEnabled) {
+        // TODO: remove eprints description and descEnabled bean property
+        // if (descEnabled) {
 
-            // description
-            triples = root.getTriples(converter, PropertiesRdfContext.class)
-                .filter(new PropertyPredicate(propertyOaiDescription));
-            final String description = triples.next().getObject().getLiteralValue().toString();
-            final String metadataPolicy = descriptiveContent.get("metadataPolicy");
-            final String dataPolicy = descriptiveContent.get("dataPolicy");
-            final DescriptionType desc = oaiFactory.createDescriptionType();
+        // description
+        // triples =
+        // root.getTriples(converter, PropertiesRdfContext.class)
+        // .filter(new PropertyPredicate(propertyOaiDescription));
+        // final String description = triples.next().getObject().getLiteralValue().toString();
+        // final String metadataPolicy = descriptiveContent.get("metadataPolicy");
+        // final String dataPolicy = descriptiveContent.get("dataPolicy");
+        // final DescriptionType desc = oaiFactory.createDescriptionType();
 
-            // eprints
-            final org.openarchives.oai._1_1.eprints.ObjectFactory idFactory =
-                new org.openarchives.oai._1_1.eprints.ObjectFactory();
-            final EprintsDescriptionType eprintsType = idFactory.createEprintsDescriptionType();
+        // eprints
+        // final org.openarchives.oai._1_1.eprints.ObjectFactory idFactory =
+        // new org.openarchives.oai._1_1.eprints.ObjectFactory();
+        // final EprintsDescriptionType eprintsType = idFactory.createEprintsDescriptionType();
 
-            // content
-            final TextURLType content = idFactory.createTextURLType();
-            content.getURLOrText()
-                .add(new JAXBElement<String>(new QName(eprintsNs, "URL", eprintsPrefix), String.class, baseUrl));
-            content.getURLOrText()
-                .add(new JAXBElement<String>(new QName(eprintsNs, "text", eprintsPrefix), String.class, description));
-            eprintsType.setContent(content);
+        // content
+        // final TextURLType content = idFactory.createTextURLType();
+        // content.getURLOrText()
+        // .add(new JAXBElement<String>(new QName(eprintsNs, "URL", eprintsPrefix), String.class, baseUrl));
+        // content.getURLOrText()
+        // .add(new JAXBElement<String>(new QName(eprintsNs, "text", eprintsPrefix), String.class, description));
+        // eprintsType.setContent(content);
 
-            // metadataPolicy
-            final TextURLType mpolicy = idFactory.createTextURLType();
-            mpolicy.getURLOrText().add(
-                new JAXBElement<String>(new QName(eprintsNs, "text", eprintsPrefix), String.class, metadataPolicy));
-            eprintsType.setMetadataPolicy(mpolicy);
+        // metadataPolicy
+        // final TextURLType mpolicy = idFactory.createTextURLType();
+        // mpolicy.getURLOrText().add(
+        // new JAXBElement<String>(new QName(eprintsNs, "text", eprintsPrefix), String.class, metadataPolicy));
+        // eprintsType.setMetadataPolicy(mpolicy);
 
-            // metadataPolicy
-            final TextURLType dpolicy = idFactory.createTextURLType();
-            dpolicy.getURLOrText()
-                .add(new JAXBElement<String>(new QName(eprintsNs, "text", eprintsPrefix), String.class, dataPolicy));
-            eprintsType.setDataPolicy(dpolicy);
+        // metadataPolicy
+        // final TextURLType dpolicy = idFactory.createTextURLType();
+        // dpolicy.getURLOrText()
+        // .add(new JAXBElement<String>(new QName(eprintsNs, "text", eprintsPrefix), String.class, dataPolicy));
+        // eprintsType.setDataPolicy(dpolicy);
 
-            final JAXBElement<EprintsDescriptionType> eprints = idFactory.createEprints(eprintsType);
-            desc.setAny(eprints);
+        // final JAXBElement<EprintsDescriptionType> eprints = idFactory.createEprints(eprintsType);
+        // desc.setAny(eprints);
 
-            id.getDescription().add(0, desc);
-        }
+        // id.getDescription().add(0, desc);
+        // }
 
         final RequestType req = oaiFactory.createRequestType();
         req.setVerb(VerbType.IDENTIFY);
@@ -511,8 +500,9 @@ public class OAIProviderService {
                     } else if (mdf.getPrefix().equals("oai_etdms")) {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else {
-                        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                            .filter(new PropertyPredicate(mdf.getPropertyName()));
+                        final RdfStream triples =
+                            obj.getTriples(converter, PropertiesRdfContext.class)
+                                .filter(new PropertyPredicate(mdf.getPropertyName()));
                         if (triples.hasNext()) {
                             listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                         }
@@ -615,8 +605,9 @@ public class OAIProviderService {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(format.getPropertyName()));
+        final RdfStream triples =
+            obj.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(format.getPropertyName()));
 
         if (!triples.hasNext()) {
             log.error("There is no OAI record of type " + format.getPrefix() + " associated with the object "
@@ -705,7 +696,8 @@ public class OAIProviderService {
         final ValueConverter valueConverter = new ValueConverter(session, converter);
 
         final String jql =
-            listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, from, until, set, maxListSize, offset);
+            listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, metadataPrefix, from, until, set, maxListSize,
+                offset);
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final RowIterator result = executeQuery(queryManager, jql);
@@ -727,15 +719,17 @@ public class OAIProviderService {
 
                 // get base url
                 final FedoraResource root = nodeService.find(session, rootPath);
-                RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-                    .filter(new PropertyPredicate(propertyOaiBaseUrl));
+                RdfStream triples =
+                    root.getTriples(converter, PropertiesRdfContext.class)
+                        .filter(new PropertyPredicate(propertyOaiBaseUrl));
                 final String baseUrl = triples.next().getObject().getLiteralValue().toString();
                 h.setIdentifier(baseUrl + path);
 
                 final Container obj = containerService.findOrCreate(session, path);
                 h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
-                triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                    .filter(new PropertyPredicate(propertyHasCollectionId));
+                triples =
+                    obj.getTriples(converter, PropertiesRdfContext.class)
+                        .filter(new PropertyPredicate(propertyHasCollectionId));
                 while (triples.hasNext()) {
                     h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
                 }
@@ -779,9 +773,10 @@ public class OAIProviderService {
     public static String encodeResumptionToken(final String verb, final String metadataPrefix, final String from,
         final String until, final String set, final int offset) throws UnsupportedEncodingException {
 
-        final String[] data = new String[] { urlEncode(verb), urlEncode(metadataPrefix),
-            urlEncode(from != null ? from : ""), urlEncode(until != null ? until : ""),
-            urlEncode(set != null ? set : ""), urlEncode(String.valueOf(offset)) };
+        final String[] data =
+            new String[] { urlEncode(verb), urlEncode(metadataPrefix), urlEncode(from != null ? from : ""),
+                urlEncode(until != null ? until : ""), urlEncode(set != null ? set : ""),
+                urlEncode(String.valueOf(offset)) };
         return Base64.encodeBase64URLSafeString(StringUtils.join(data, ':').getBytes("UTF-8"));
     }
 
@@ -923,7 +918,8 @@ public class OAIProviderService {
         }
 
         final String jql =
-            listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, from, until, set, maxListSize, offset);
+            listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, metadataPrefix, from, until, set, maxListSize,
+                offset);
         try {
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -981,8 +977,9 @@ public class OAIProviderService {
         h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
 
         // set setSpecs
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyHasCollectionId));
+        final RdfStream triples =
+            obj.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(propertyHasCollectionId));
         while (triples.hasNext()) {
             h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
         }
@@ -1006,8 +1003,9 @@ public class OAIProviderService {
         return record;
     }
 
-    private String listResourceQuery(final Session session, final String mixinTypes, final String from,
-        final String until, final String set, final int limit, final int offset) throws RepositoryException {
+    private String listResourceQuery(final Session session, final String mixinTypes, final String metadataPrefix,
+        final String from, final String until, final String set, final int limit, final int offset)
+            throws RepositoryException {
 
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
         final String propJcrUuid = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "uuid"));
@@ -1040,10 +1038,17 @@ public class OAIProviderService {
             jql.append(" AND");
             jql.append(" res.[" + propJcrLastModifiedDate + "] >= CAST('" + from + "' AS DATE)");
         }
+
         // end datetime constraint
         if (StringUtils.isNotBlank(until)) {
             jql.append(" AND");
             jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST('" + until + "' AS DATE)");
+        }
+
+        // etdms constraint
+        if (metadataPrefix.equals("oai_etdms")) {
+            jql.append(" AND");
+            jql.append(" res.[dcterms:type] = 'Thesis'");
         }
 
         // set constraint

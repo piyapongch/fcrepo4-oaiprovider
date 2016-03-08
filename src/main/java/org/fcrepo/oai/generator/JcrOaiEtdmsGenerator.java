@@ -15,9 +15,14 @@
  */
 package org.fcrepo.oai.generator;
 
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fcrepo.kernel.models.Container;
 import org.ndltd.standards.metadata.etdms._1.FreeTextType;
 import org.ndltd.standards.metadata.etdms._1.ObjectFactory;
@@ -34,27 +39,52 @@ public class JcrOaiEtdmsGenerator {
     private static final ObjectFactory etdmsFactory = new ObjectFactory();
 
     /**
-     * The JcrOaiEtdmsGenerator class constructor.
-     */
-    public JcrOaiEtdmsGenerator() {
-        // TODO: Implement this constructor.
-    }
-
-    /**
      * The generate method.
      * 
      * @param session
      * @param obj
      * @param uriInfo
      * @return
+     * @throws RepositoryException
      */
-
-    // TODO: use obj.getNode().getProperties() and switch case String instead of obj.getProperty($name)
-    public Thesis generate(final Session session, final Container obj, final UriInfo uriInfo) {
+    public Thesis generate(final Session session, final Container obj, final UriInfo uriInfo)
+        throws RepositoryException {
         final Thesis thesis = etdmsFactory.createThesis();
-        final FreeTextType title = etdmsFactory.createFreeTextType();
-        title.setValue("test");
-        thesis.getTitle().add(title);
+
+        final PropertyIterator props = obj.getNode().getProperties();
+        while (props.hasNext()) {
+            final Value[] values;
+            final Property prop = (Property) props.next();
+            final String name = prop.getName();
+
+            switch (name) {
+            case "dcterms:title":
+                values = prop.getValues();
+                for (final Value value : values) {
+                    if (StringUtils.isNotEmpty(value.getString())) {
+                        final FreeTextType text = etdmsFactory.createFreeTextType();
+                        text.setValue(value.getString());
+                        thesis.getTitle().add(text);
+                    }
+                }
+                break;
+
+            case "dcterms:type":
+                values = prop.getValues();
+                for (final Value value : values) {
+                    if (StringUtils.isNotEmpty(value.getString())) {
+                        final FreeTextType text = etdmsFactory.createFreeTextType();
+                        text.setValue(value.getString());
+                        thesis.getType().add(text);
+                    }
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+
         return thesis;
     }
 

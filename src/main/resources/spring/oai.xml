@@ -45,25 +45,25 @@
                 -->
             </map>
         </property>
-        <property name="descEnabled" value="false"/>
+<!--         <property name="descEnabled" value="false"/> -->
         <property name="descriptiveContent">
             <map>
                 <entry key="repositoryName" value="ERA: Education and Research Archive"/>
                 <entry key="adminEmail" value="eraadmi@ualberta.ca"/>
                 <entry key="baseUrl" value="https://era.library.ualberta.ca/oai"/>
                 <!-- eprints descriptions -->
-                <entry key="description" value="OAI Provider is developed by Piyapong Charoenwattana."/>
-                <entry key="metadataPolicy"
-                    value="CCSD metadata are freely accessible to all, under the following conditions:
-                    (1) The full name of the author and (2) the full bibliographic reference information for the thesis
-                    must always co-appear prominently with any redisplay of the metadata, in any medium. The metadata
-                    may not be offered for sale."/>
-                <entry key="dataPolicy"
-                    value="CCSD full-text thesis are freely accessible to all under the following
-                    conditions: (1) The full name of the author and (2) the full bibliographic reference information for
-                    the thesis must always co-appear prominently with redisplay of the text, in any medium. The text may
-                    not be offered for sale."
-                />
+<!--                 <entry key="description" value="OAI Provider is developed by Piyapong Charoenwattana."/> -->
+<!--                 <entry key="metadataPolicy" -->
+<!--                     value="CCSD metadata are freely accessible to all, under the following conditions: -->
+<!--                     (1) The full name of the author and (2) the full bibliographic reference information for the thesis -->
+<!--                     must always co-appear prominently with any redisplay of the metadata, in any medium. The metadata -->
+<!--                     may not be offered for sale."/> -->
+<!--                 <entry key="dataPolicy" -->
+<!--                     value="CCSD full-text thesis are freely accessible to all under the following -->
+<!--                     conditions: (1) The full name of the author and (2) the full bibliographic reference information for -->
+<!--                     the thesis must always co-appear prominently with redisplay of the text, in any medium. The text may -->
+<!--                     not be offered for sale." -->
+<!--                 /> -->
             </map>
         </property>
     </bean>
