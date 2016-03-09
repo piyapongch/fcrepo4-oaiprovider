@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.ndltd.standards.metadata.etdms._1.Thesis;
 import org.openarchives.oai._2.OAIPMHtype;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
+import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
 
 import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
@@ -71,7 +72,9 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
      * @throws JAXBException the jAXB exception
      */
     public OaiJaxbProvider() throws JAXBException {
-        this.marshaller = JAXBContext.newInstance(OaiDcType.class, OAIPMHtype.class, Thesis.class).createMarshaller();
+        this.marshaller =
+            JAXBContext.newInstance(OaiDcType.class, OaiIdentifierType.class, OAIPMHtype.class, Thesis.class)
+                .createMarshaller();
 
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
 
