@@ -53,11 +53,12 @@ public class JcrOaiEtdmsGenerator {
         final PropertyIterator props = obj.getNode().getProperties();
         while (props.hasNext()) {
             final Property prop = (Property) props.next();
-            final Value[] values = prop.getValues();
+            final Value[] values;
             FreeTextType text;
             switch (prop.getName()) {
 
             case "dcterms:title":
+                values = prop.getValues();
                 for (final Value value : values) {
                     if (StringUtils.isNotEmpty(value.getString())) {
                         text = etdmsFactory.createFreeTextType();
@@ -68,6 +69,7 @@ public class JcrOaiEtdmsGenerator {
                 break;
 
             case "dcterms:type":
+                values = prop.getValues();
                 for (final Value value : values) {
                     if (StringUtils.isNotEmpty(value.getString())) {
                         text = etdmsFactory.createFreeTextType();
