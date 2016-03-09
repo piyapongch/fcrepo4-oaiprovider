@@ -50,19 +50,17 @@ public class JcrOaiEtdmsGenerator {
     public Thesis generate(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
         final Thesis thesis = etdmsFactory.createThesis();
-
         final PropertyIterator props = obj.getNode().getProperties();
         while (props.hasNext()) {
-            final Value[] values;
             final Property prop = (Property) props.next();
-            final String name = prop.getName();
+            final Value[] values = prop.getValues();
+            FreeTextType text;
+            switch (prop.getName()) {
 
-            switch (name) {
             case "dcterms:title":
-                values = prop.getValues();
                 for (final Value value : values) {
                     if (StringUtils.isNotEmpty(value.getString())) {
-                        final FreeTextType text = etdmsFactory.createFreeTextType();
+                        text = etdmsFactory.createFreeTextType();
                         text.setValue(value.getString());
                         thesis.getTitle().add(text);
                     }
@@ -70,10 +68,9 @@ public class JcrOaiEtdmsGenerator {
                 break;
 
             case "dcterms:type":
-                values = prop.getValues();
                 for (final Value value : values) {
                     if (StringUtils.isNotEmpty(value.getString())) {
-                        final FreeTextType text = etdmsFactory.createFreeTextType();
+                        text = etdmsFactory.createFreeTextType();
                         text.setValue(value.getString());
                         thesis.getType().add(text);
                     }
@@ -84,7 +81,6 @@ public class JcrOaiEtdmsGenerator {
                 break;
             }
         }
-
         return thesis;
     }
 
