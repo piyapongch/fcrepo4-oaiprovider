@@ -32,6 +32,7 @@ import org.ndltd.standards.metadata.etdms._1.FreeTextType;
 import org.ndltd.standards.metadata.etdms._1.ObjectFactory;
 import org.ndltd.standards.metadata.etdms._1.Thesis;
 import org.ndltd.standards.metadata.etdms._1.Thesis.Contributor;
+import org.ndltd.standards.metadata.etdms._1.Thesis.Degree;
 
 /**
  * The JcrOaiEtdmsGenerator class.
@@ -57,13 +58,14 @@ public class JcrOaiEtdmsGenerator {
         final Thesis thesis = etdmsFactory.createThesis();
 
         // LAC identifier
-        thesis.getIdentifier().add("TC-AEU - " + obj.getNode().getName());
+        thesis.getIdentifier().add("TC-AEU-" + obj.getNode().getName());
+
+        // degree element
+        final Degree degree = etdmsFactory.createThesisDegree();
 
         final PropertyIterator props = obj.getNode().getProperties();
         while (props.hasNext()) {
             final Property prop = (Property) props.next();
-            final Value[] values;
-            final FreeTextType text;
             switch (prop.getName()) {
 
             case "dcterms:type":
@@ -90,16 +92,22 @@ public class JcrOaiEtdmsGenerator {
                 }
                 break;
 
-            case "ualterms:thesiscommitteemember":
+            case "uatermsid:thesiscommitteemember":
                 for (final Value v : prop.getValues()) {
                     addContributor(v, thesis.getContributor(), "committeemember");
                 }
                 break;
 
             case "marcrel:dgg":
+                for (final Value v : prop.getValues()) {
+                    addAuthorityType(v, degree.getGrantor());
+                }
                 break;
 
             case "vivo:AcademicDepartment":
+                for (final Value v : prop.getValues()) {
+                    addFreeTextType(v, degree.getDiscipline());
+                }
                 break;
 
             case "dcterms:subject":
@@ -111,7 +119,7 @@ public class JcrOaiEtdmsGenerator {
             case "dcterms:spatial":
                 break;
 
-            case "ualterms:specialization":
+            case "uatermsid:specialization":
                 break;
 
             case "dcterms:dateAccepted":
@@ -127,15 +135,21 @@ public class JcrOaiEtdmsGenerator {
                 break;
 
             case "bibo:ThesisDegree":
+                for (final Value v : prop.getValues()) {
+                    addFreeTextType(v, degree.getName());
+                }
                 break;
 
-            case "ualterms:thesislevel":
+            case "uatermsid:thesislevel":
+                for (final Value v : prop.getValues()) {
+                    addString(v, degree.getLevel());
+                }
                 break;
 
             case "dcterms:identifier":
                 break;
 
-            case "ualterms:fedora3handle":
+            case "uatermsid:fedora3handle":
                 break;
 
             case "dcterms:description":
@@ -160,7 +174,24 @@ public class JcrOaiEtdmsGenerator {
                 break;
             }
         }
+        thesis.setDegree(degree);
         return thesis;
+    }
+
+    /**
+     * The addString method.
+     * 
+     * @param v
+     * @param level
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addString(final Value v, final List<String> level)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        if (StringUtils.isNotEmpty(v.getString())) {
+            level.add(v.getString());
+        }
     }
 
     /**

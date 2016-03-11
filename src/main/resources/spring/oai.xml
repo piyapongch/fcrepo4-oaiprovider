@@ -28,6 +28,7 @@
         <property name="namespaces">
             <map>
                 <entry key="oai" value="http://www.openarchives.org/OAI/2.0/"/>
+                <entry key="oai-id" value="http://www.openarchives.org/OAI/2.0/oai-identifier/"/>
                 <entry key="dcterms" value="http://purl.org/dc/terms/"/>
                 <entry key="ualterms" value="http://terms.library.ualberta.ca/"/>
                 <entry key="uatermsid" value="http://terms.library.library.ca/identifiers/"/>
