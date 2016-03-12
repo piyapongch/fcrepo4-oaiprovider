@@ -51,6 +51,7 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
             {
                 put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
                 put("http://www.openarchives.org/OAI/2.0/", "");
+                put("http://www.openarchives.org/OAI/2.0/oai-identifier", "oai-id");
                 put("http://www.openarchives.org/OAI/2.0/oai_dc/", "oai_dc");
                 put("http://purl.org/dc/elements/1.1/", "dc");
                 put("http://www.ndltd.org/standards/metadata/etdms/1.0/", "etd_ms");
@@ -60,6 +61,7 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
 
     private static final String schemaLocation =
         "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\n"
+            + "    http://www.openarchives.org/OAI/2.0/oai-identifier.xsd\n"
             + "    http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\n"
             + "    http://www.ndltd.org/standards/metadata/etdms/1.0/ "
             + "http://www.ndltd.org/standards/metadata/etdms/1-0/etdms.xsd";
