@@ -28,11 +28,13 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.fcrepo.kernel.models.Container;
 import org.ndltd.standards.metadata.etdms._1.AuthorityType;
+import org.ndltd.standards.metadata.etdms._1.ControlledTextType;
 import org.ndltd.standards.metadata.etdms._1.FreeTextType;
 import org.ndltd.standards.metadata.etdms._1.ObjectFactory;
 import org.ndltd.standards.metadata.etdms._1.Thesis;
 import org.ndltd.standards.metadata.etdms._1.Thesis.Contributor;
 import org.ndltd.standards.metadata.etdms._1.Thesis.Degree;
+import org.ndltd.standards.metadata.etdms._1.Thesis.Description;
 
 /**
  * The JcrOaiEtdmsGenerator class.
@@ -111,18 +113,33 @@ public class JcrOaiEtdmsGenerator {
                 break;
 
             case "dcterms:subject":
+                for (final Value v : prop.getValues()) {
+                    addControlledTextType(v, thesis.getSubject());
+                }
                 break;
 
             case "dcterms:temporal":
+                for (final Value v : prop.getValues()) {
+                    addControlledTextType(v, thesis.getSubject());
+                }
                 break;
 
             case "dcterms:spatial":
+                for (final Value v : prop.getValues()) {
+                    addControlledTextType(v, thesis.getSubject());
+                }
                 break;
 
             case "uatermsid:specialization":
+                for (final Value v : prop.getValues()) {
+                    addDescription(v, thesis.getDescription(), "Specialization: ");
+                }
                 break;
 
             case "dcterms:dateAccepted":
+                for (final Value v : prop.getValues()) {
+                    thesis.setDate(StringUtils.isEmpty(v.getString()) ? null : v.getString());
+                }
                 break;
 
             case "dcterms:title":
@@ -132,6 +149,9 @@ public class JcrOaiEtdmsGenerator {
                 break;
 
             case "dcterms:alternative":
+                for (final Value v : prop.getValues()) {
+                    addFreeTextType(v, thesis.getAlternativeTitle());
+                }
                 break;
 
             case "bibo:ThesisDegree":
@@ -147,27 +167,53 @@ public class JcrOaiEtdmsGenerator {
                 break;
 
             case "dcterms:identifier":
+                for (final Value v : prop.getValues()) {
+                    addString(v, thesis.getIdentifier());
+                }
                 break;
 
             case "uatermsid:fedora3handle":
+                for (final Value v : prop.getValues()) {
+                    addString(v, thesis.getIdentifier());
+                }
                 break;
 
             case "dcterms:description":
+                for (final Value v : prop.getValues()) {
+                    addDescription(v, thesis.getDescription(), null);
+                }
                 break;
 
             case "dcterms:abstract":
+                for (final Value v : prop.getValues()) {
+                    addDescription(v, thesis.getDescription(), "Abstract: ");
+                }
                 break;
 
             case "dcterms:language":
+                for (final Value v : prop.getValues()) {
+                    addString(v, thesis.getLanguage());
+                }
                 break;
 
             case "dcterms:rights":
+                for (final Value v : prop.getValues()) {
+                    addFreeTextType(v, thesis.getRights());
+                }
                 break;
 
             case "dcterms:license":
+                for (final Value v : prop.getValues()) {
+                    if (!v.getString().equals("I am required to use/link to a publisher's license")) {
+                        addFreeTextType(v, thesis.getRights());
+                    }
+                }
                 break;
 
             case "dcterms:format":
+                for (final Value v : prop.getValues()) {
+                    addFreeTextType(v, thesis.getFormat());
+                }
                 break;
 
             default:
@@ -176,6 +222,40 @@ public class JcrOaiEtdmsGenerator {
         }
         thesis.setDegree(degree);
         return thesis;
+    }
+
+    /**
+     * The addDescription method.
+     * @param v
+     * @param description
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addDescription(final Value v, final List<Description> description, final String prefix)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        if (StringUtils.isNotEmpty(v.getString())) {
+            final Description desc = etdmsFactory.createThesisDescription();
+            desc.setValue(prefix == null ? v.getString() : prefix + v.getString());
+            description.add(desc);
+        }
+    }
+
+    /**
+     * The addControlledTextType method.
+     * @param v
+     * @param subject
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addControlledTextType(final Value v, final List<ControlledTextType> subject)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        if (StringUtils.isNotEmpty(v.getString())) {
+            final ControlledTextType text = etdmsFactory.createControlledTextType();
+            text.setValue(v.getString());
+            subject.add(text);
+        }
     }
 
     /**
@@ -211,6 +291,7 @@ public class JcrOaiEtdmsGenerator {
             if (role != null) {
                 cont.setRole(role);
             }
+            conts.add(cont);
         }
     }
 
