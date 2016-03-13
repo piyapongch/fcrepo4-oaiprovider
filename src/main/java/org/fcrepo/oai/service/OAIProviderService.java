@@ -162,6 +162,7 @@ public class OAIProviderService {
 
     private String sampleIdentifier;
 
+    // TODO: change to bean property instead
     private static final String idFormat = "oai:era.library.ualberta.ca:ark:/99999/%1$s";
 
     // public item, webacl:agent "http://projecthydra.org/ns/auth/group#public^^URI"
@@ -996,6 +997,7 @@ public class OAIProviderService {
      * @return
      */
     private String createId(final String s) {
+        // TODO: use precopile pattern to split string
         final String noid = s.split("\\/")[6];
         final String id = String.format(idFormat, noid);
         return id;

@@ -59,6 +59,7 @@ public class JcrOaiEtdmsGenerator {
         throws RepositoryException {
         final Thesis thesis = etdmsFactory.createThesis();
 
+        // TODO: change to bean property instead
         // LAC identifier
         thesis.getIdentifier().add("TC-AEU-" + obj.getNode().getName());
 

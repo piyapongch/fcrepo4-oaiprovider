@@ -58,6 +58,7 @@ public class JcrOaiDcGenerator {
         Value[] values;
         boolean isThesis = false;
 
+        // TODO: change to switch block instead, see etdms
         // dc:type
         values = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type").getValues() : null;
         for (int i = 0; values != null && i < values.length; i++) {
