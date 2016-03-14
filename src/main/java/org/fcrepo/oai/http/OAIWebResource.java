@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -70,7 +71,6 @@ public class OAIWebResource {
      * @throws RepositoryException the repository exception
      */
     @GET
-    @Path("/")
     @Produces(MediaType.TEXT_XML)
     public Object getOAIResponse(final @QueryParam("verb") String verbParam,
         final @QueryParam("identifier") String identifierParam,
@@ -97,9 +97,7 @@ public class OAIWebResource {
      * @return the oAI response
      * @throws RepositoryException the repository exception
      */
-    // FIXME: post method supported
-    // @POST // remove post method supported
-    @Path("/")
+    @POST
     @Produces(MediaType.TEXT_XML)
     public Object postOAIResponse(final @QueryParam("verb") String verbParam,
         final @QueryParam("identifier") String identifierParam,
@@ -268,6 +266,7 @@ public class OAIWebResource {
 
     /**
      * The delete method.
+     * 
      * @param path
      * @return
      * @throws RepositoryException
