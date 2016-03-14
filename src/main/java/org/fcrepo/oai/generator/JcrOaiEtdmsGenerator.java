@@ -46,6 +46,8 @@ public class JcrOaiEtdmsGenerator {
 
     private static final ObjectFactory etdmsFactory = new ObjectFactory();
 
+    private String lacIdFormat;
+
     /**
      * The generate method.
      * 
@@ -59,9 +61,8 @@ public class JcrOaiEtdmsGenerator {
         throws RepositoryException {
         final Thesis thesis = etdmsFactory.createThesis();
 
-        // TODO: change to bean property instead
         // LAC identifier
-        thesis.getIdentifier().add("TC-AEU-" + obj.getNode().getName());
+        thesis.getIdentifier().add(String.format(lacIdFormat, obj.getNode().getName()));
 
         // degree element
         final Degree degree = etdmsFactory.createThesisDegree();
@@ -227,6 +228,7 @@ public class JcrOaiEtdmsGenerator {
 
     /**
      * The addDescription method.
+     * 
      * @param v
      * @param description
      * @throws RepositoryException
@@ -244,6 +246,7 @@ public class JcrOaiEtdmsGenerator {
 
     /**
      * The addControlledTextType method.
+     * 
      * @param v
      * @param subject
      * @throws RepositoryException
@@ -330,6 +333,15 @@ public class JcrOaiEtdmsGenerator {
             text.setValue(v.getString());
             texts.add(text);
         }
+    }
+
+    /**
+     * The setLacIdFormat setter method.
+     * 
+     * @param lacIdFormat the lacIdFormat to set
+     */
+    public final void setLacIdFormat(final String lacIdFormat) {
+        this.lacIdFormat = lacIdFormat;
     }
 
 }

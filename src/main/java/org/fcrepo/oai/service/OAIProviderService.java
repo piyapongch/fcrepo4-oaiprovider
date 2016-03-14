@@ -564,7 +564,7 @@ public class OAIProviderService {
         }
 
         // get object path from identifier
-        final String noid = slashPattern.split(identifier)[2];
+        final String noid = slashPattern.split(identifier)[2].substring(2);
         final String[] d = pathPattern.split(noid);
         final String path = String.format("%1$s/%2$s/%3$s/%4$s/%5$s/%6$s", dataPath, d[0], d[1], d[2], d[3], noid);
         if (!nodeService.exists(session, path)) {
