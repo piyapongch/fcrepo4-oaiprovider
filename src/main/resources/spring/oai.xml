@@ -21,14 +21,14 @@
 		<property name="setsEnabled" value="true" />
 		<property name="searchEnabled" value="true" />
 		<property name="rootPath" value="/oai" />
+		<property name="dataPath" value="/prod" />
+		<property name="idFormat" value="oai:era.library.ualberta.ca:ark:/54379/t7%1$s" />
 		<property name="propertyHasCollectionId" value="http://terms.library.library.ca/identifiers/hasCollectionId" />
 		<property name="propertyHasModel" value="info:fedora/fedora-system:def/model#hasModel" />
 		<property name="propertyOaiRepositoryName" value="http://www.openarchives.org/OAI/2.0/repositoryName" />
 		<property name="propertyOaiDescription" value="http://www.openarchives.org/OAI/2.0/description" />
 		<property name="propertyOaiAdminEmail" value="http://www.openarchives.org/OAI/2.0/adminEmail" />
 		<property name="propertyOaiBaseUrl" value="http://www.openarchives.org/OAI/2.0/baseUrl" />
-		<property name="idFormat" value="oai:era.library.ualberta.ca:ark:/54379/t7%1$s" />
-		<property name="dataPath" value="/prod" />
 		<property name="namespaces">
 			<map>
 				<entry key="oai" value="http://www.openarchives.org/OAI/2.0/" />
