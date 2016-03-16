@@ -1074,7 +1074,7 @@ public class OAIProviderService {
         }
 
         // order by lastmodified
-        jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
+        // jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
 
         if (limit > 0) {
             jql.append(" LIMIT ").append(maxListSize).append(" OFFSET ").append(offset);
