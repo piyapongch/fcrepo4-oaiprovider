@@ -21,7 +21,7 @@
 		<property name="setsEnabled" value="true" />
 		<property name="searchEnabled" value="true" />
 		<property name="rootPath" value="/oai" />
-		<property name="dataPath" value="/prod" />
+		<property name="dataPath" value="${fcrepo.data.container}" />
 		<property name="idFormat" value="oai:era.library.ualberta.ca:ark:/54379/t7%1$s" />
 		<property name="propertyHasCollectionId" value="http://terms.library.library.ca/identifiers/hasCollectionId" />
 		<property name="propertyHasModel" value="info:fedora/fedora-system:def/model#hasModel" />
