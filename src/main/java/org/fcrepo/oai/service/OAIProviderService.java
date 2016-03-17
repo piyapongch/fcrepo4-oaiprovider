@@ -1247,7 +1247,7 @@ public class OAIProviderService {
      * @return
      * @throws RepositoryException
      */
-    public Object delete(final String path) throws RepositoryException {
+    public JAXBElement<OAIPMHtype> delete(final String path) throws RepositoryException {
         final Session session = sessionFactory.getInternalSession();
         if (nodeService.exists(session, path)) {
             try {

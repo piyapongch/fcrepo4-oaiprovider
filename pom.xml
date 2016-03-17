@@ -280,15 +280,12 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>2.17</version><!--$NO-MVN-MAN-VER$ -->
 				<configuration>
-					<excludes>**/integration/**,
+					<excludes>
+						**/integration/**,
 						**/purl/**/**/**/*,
 						**/openarchives/**/**/*,
 						**/ndltd/standards/metadata/etdms/**,
 						**/ualberta/library/terms/oai_qdc/**,
-						**/oai/identify/**,
-						**/oai/rights/**,
-						**/oai/servlet/**,
-						**/oai/generator/**
 					</excludes>
 					<systemPropertyVariables>
 						<project.version>${project.version}</project.version>
@@ -301,6 +298,38 @@
 						<version>${project.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<header>fcrepo-license/LICENSE_HEADER.txt</header>
+							<includes>
+								<include>**/src/main/java/**</include>
+								<include>**/src/test/java/**</include>
+							</includes>
+							<excludes>
+								<exclude>target/**</exclude>
+								<exclude>**/src/test/resources/**</exclude>
+								<exclude>**/src/main/resources/**</exclude>
+								<exclude>**/*.properties</exclude>
+								<exclude>**/oai/**</exclude>
+							</excludes>
+							<properties>
+								<name>fcrepo-oaiprovider</name>
+								<year>2015</year>
+								<holder>DuraSpace, Inc.</holder>
+							</properties>
+							<encoding>UTF-8</encoding>
+							<strictCheck>true</strictCheck>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
