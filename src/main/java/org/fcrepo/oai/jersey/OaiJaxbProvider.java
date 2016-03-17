@@ -74,15 +74,15 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
      * @throws JAXBException the jAXB exception
      */
     public OaiJaxbProvider() throws JAXBException {
-        this.marshaller = JAXBContext
-            .newInstance(OaiDcType.class, OaiIdentifierType.class, OAIPMHtype.class, Thesis.class).createMarshaller();
+        this.marshaller =
+            JAXBContext.newInstance(OaiDcType.class, OaiIdentifierType.class, OAIPMHtype.class, Thesis.class)
+                .createMarshaller();
 
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
 
             @Override
             public void escape(final char[] chars, final int start, final int len, final boolean isAttr,
                 final Writer writer) throws IOException {
-                // writer.write(StringEscapeUtils.escapeXml(new String(chars)).toCharArray());
                 writer.write(XmlEscapers.xmlContentEscaper().escape(new String(chars)));
             }
         });
