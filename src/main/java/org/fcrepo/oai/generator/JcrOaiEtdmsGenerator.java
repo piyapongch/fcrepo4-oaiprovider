@@ -16,6 +16,7 @@
 package org.fcrepo.oai.generator;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -46,6 +47,8 @@ public class JcrOaiEtdmsGenerator {
 
     private static final ObjectFactory etdmsFactory = new ObjectFactory();
 
+    private static final Pattern slashPattern = Pattern.compile("\\/");
+
     private String lacIdFormat;
 
     /**
@@ -59,10 +62,8 @@ public class JcrOaiEtdmsGenerator {
      */
     public Thesis generate(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
+        String handle = null;
         final Thesis thesis = etdmsFactory.createThesis();
-
-        // LAC identifier
-        thesis.getIdentifier().add(String.format(lacIdFormat, obj.getNode().getName()));
 
         // degree element
         final Degree degree = etdmsFactory.createThesisDegree();
@@ -177,6 +178,7 @@ public class JcrOaiEtdmsGenerator {
             case "uatermsid:fedora3handle":
                 for (final Value v : prop.getValues()) {
                     addString(v, thesis.getIdentifier());
+                    handle = StringUtils.isEmpty(v.getString()) ? null : v.getString();
                 }
                 break;
 
@@ -223,6 +225,13 @@ public class JcrOaiEtdmsGenerator {
             }
         }
         thesis.setDegree(degree);
+
+        // LAC identifier
+        if (handle != null) {
+            final String[] h = slashPattern.split(handle);
+            thesis.getIdentifier().add(String.format(lacIdFormat, h[3] + "/" + h[4]));
+
+        }
         return thesis;
     }
 
