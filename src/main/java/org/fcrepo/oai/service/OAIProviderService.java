@@ -1256,13 +1256,13 @@ public class OAIProviderService {
                 con.delete();
                 session.save();
                 return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
-                    "Resource has been deleted.");
+                    "Resource has been deleted");
             } catch (final Exception e) {
                 return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, e.getMessage());
             }
         } else {
             return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
-                "Resource does not exist.");
+                "Resource does not exist");
         }
     }
 }
