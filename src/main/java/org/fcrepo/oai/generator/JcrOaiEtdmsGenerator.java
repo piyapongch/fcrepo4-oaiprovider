@@ -182,6 +182,12 @@ public class JcrOaiEtdmsGenerator {
                 }
                 break;
 
+            case "ualid:thesescanada":
+                for (final Value v : prop.getValues()) {
+                    addString(v, thesis.getIdentifier());
+                }
+                break;
+
             case "dcterms:description":
                 for (final Value v : prop.getValues()) {
                     addDescription(v, thesis.getDescription(), null);
@@ -229,7 +235,7 @@ public class JcrOaiEtdmsGenerator {
         // LAC identifier
         if (handle != null) {
             final String[] h = slashPattern.split(handle);
-            thesis.getIdentifier().add(String.format(lacIdFormat, h[3] + "/" + h[4]));
+            thesis.getIdentifier().add(String.format(lacIdFormat, h[4]));
 
         }
         return thesis;

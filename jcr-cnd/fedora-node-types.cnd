@@ -14,6 +14,7 @@
 <dcterms = 'http://purl.org/dc/terms/'>
 <ualterms = 'http://terms.library.ualberta.ca/'>
 <uatermsid = 'http://terms.library.library.ca/identifiers/'>
+<ualid = 'http://ualberta.library.ca/identifiers/'>
 <hydragroup = 'http://projecthydra.org/ns/auth/group#'>
 <marcrel = 'http://id.loc.gov/vocabulary/relators/'>
 <vivo = 'http://vivoweb.org/ontology/core#'>
