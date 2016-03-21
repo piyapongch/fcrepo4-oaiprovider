@@ -12,9 +12,6 @@
  */
 <oai = 'http://www.openarchives.org/OAI/2.0/'>
 <dcterms = 'http://purl.org/dc/terms/'>
-<ualterms = 'http://terms.library.ualberta.ca/'>
-<uatermsid = 'http://terms.library.library.ca/identifiers/'>
-<ualid = 'http://ualberta.library.ca/identifiers/'>
 <hydragroup = 'http://projecthydra.org/ns/auth/group#'>
 <marcrel = 'http://id.loc.gov/vocabulary/relators/'>
 <vivo = 'http://vivoweb.org/ontology/core#'>
@@ -25,6 +22,19 @@
 <webacl = 'http://www.w3.org/ns/auth/acl#'>
 <hydraacl = 'http://projecthydra.org/ns/auth/acl#'>
 <scholarsphere = 'http://scholarsphere.psu.edu/ns#'>
+
+/*
+ * UALIB namspaces
+ */
+<ualterms = 'http://terms.library.ualberta.ca/'>
+<uatermsid = 'http://terms.library.library.ca/identifiers/'>
+<ualrole = 'http://terms.library.ualberta.ca/role/'>
+<ualsubj = 'http://terms.library.ualberta.ca/subject/'>
+<ualdate = 'http://terms.library.ualberta.ca/date/'>
+<ualtitle = 'http://terms.library.ualberta.ca/title/'>
+<ualname = 'http://terms.library.ualberta.ca/name/'>
+<ualplace = 'http://terms.library.ualberta.ca/place/'>
+<ualthesis = 'http://terms.library.ualberta.ca/thesis/'>
 
 /*
  * Friend-of-a-Friend
