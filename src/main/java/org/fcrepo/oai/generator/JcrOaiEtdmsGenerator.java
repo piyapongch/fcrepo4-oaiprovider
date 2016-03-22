@@ -235,7 +235,8 @@ public class JcrOaiEtdmsGenerator {
         // LAC identifier
         if (handle != null) {
             final String[] h = slashPattern.split(handle);
-            thesis.getIdentifier().add(String.format(lacIdFormat, h[4]));
+            thesis.getIdentifier()
+                .add(String.format(lacIdFormat, h[4].indexOf(".") < 0 ? h[4] : h[4].substring(h[4].indexOf(".") + 1)));
 
         }
         return thesis;
