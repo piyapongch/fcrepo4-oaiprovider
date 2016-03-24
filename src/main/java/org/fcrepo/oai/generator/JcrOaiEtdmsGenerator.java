@@ -182,12 +182,6 @@ public class JcrOaiEtdmsGenerator {
                 }
                 break;
 
-            case "ualid:thesescanada":
-                for (final Value v : prop.getValues()) {
-                    addString(v, thesis.getIdentifier());
-                }
-                break;
-
             case "dcterms:description":
                 for (final Value v : prop.getValues()) {
                     addDescription(v, thesis.getDescription(), null);
