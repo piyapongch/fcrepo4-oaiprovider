@@ -1,0 +1,55 @@
+{
+    "name" : "repo",
+    "jndiName" : "",
+    "workspaces" : {
+        "predefined" : ["default"],
+        "default" : "default",
+        "allowCreation" : true
+    },
+    "storage" : {
+        "cacheName" : "FedoraRepository",
+        "cacheConfiguration" : "${fcrepo.ispn.configuration:config/infinispan/leveldb-default/infinispan.xml}",
+        "binaryStorage" : {
+            "type" : "file",
+            "directory" : "${fcrepo.binary.directory:target/binaries}",
+            "minimumBinarySizeInBytes" : 4096
+        }
+    },
+    "security" : {
+        "anonymous" : {
+            "roles" : ["readonly","readwrite","admin"],
+            "useOnFailedLogin" : false
+        },
+        "providers" : [
+            { "classname" : "org.fcrepo.auth.common.BypassSecurityServletAuthenticationProvider" }
+        ]
+    },
+    "node-types" : ["fedora-node-types.cnd"],
+    
+
+    "indexProviders" : {
+        "local" : {
+            "classname" : "local",
+            "directory" : "target/indexes",
+            "cacheLRUEnable" : true,
+            "mmapFileEnable" : true,
+            "commitFileSyncDisable" : true,
+            "transactionDisable" : true,
+            "asyncWrite" : true,
+            "cacheSize" : 10000
+        }
+    },
+
+    "indexes" : {
+        "hasModel" : {
+            "kind" : "value",
+            "provider" : "local",
+            "columns" : "model:hasModel(STRING)"
+        },
+        "isCommunity" : {
+            "kind" : "value",
+            "provider" : "local",
+            "columns" : "uatermsid:is_community(STRING)"
+        }
+    }
+}

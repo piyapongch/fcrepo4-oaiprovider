@@ -71,6 +71,14 @@
   - rdf:type (URI) multiple
   - * (undefined) multiple
   - * (undefined)
+  - jcr:uuid (STRING)
+  - model:hasModel (STRING) multiple
+  - webacl:accessTo_ref (STRING) 
+  - webacl:agent (BINARY) multiple
+  - jcr:lastModified (DATE)
+  - dcterms:type (STRING) multiple
+  - uatermsid:hasCollectionId (STRING) multiple
+  - uatermsid:is_community (STRING) multiple
 
 /*
  * A Fedora object.
