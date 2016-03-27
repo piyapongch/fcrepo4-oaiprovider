@@ -71,6 +71,8 @@
   - rdf:type (URI) multiple
   - * (undefined) multiple
   - * (undefined)
+  
+  /*--- error overwrite mix:referenceable node type
   - jcr:uuid (STRING)
   - model:hasModel (STRING) multiple
   - webacl:accessTo_ref (STRING) 
@@ -79,6 +81,7 @@
   - dcterms:type (STRING) multiple
   - uatermsid:hasCollectionId (STRING) multiple
   - uatermsid:is_community (STRING) multiple
+  ---*/
 
 /*
  * A Fedora object.
