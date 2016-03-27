@@ -29,14 +29,14 @@
 
     "indexProviders" : {
         "local" : {
-            "classname" : "local",
-            "directory" : "target/indexes",
+            "classname" : "org.modeshape.jcr.index.local.LocalIndexProvider",
+            "directory" : "/usr/local/fcrepo4-data-plano/indexes",
             "cacheLRUEnable" : true,
             "mmapFileEnable" : true,
             "commitFileSyncDisable" : true,
             "transactionDisable" : true,
             "asyncWrite" : true,
-            "cacheSize" : 10000
+            "cacheSize" : 100
         }
     },
 
@@ -45,6 +45,31 @@
             "kind" : "value",
             "provider" : "local",
             "columns" : "model:hasModel(STRING)"
+        },
+        "agent" : {
+            "kind" : "value",
+            "provider" : "local",
+            "columns" : "webacl:agent(BINARY)"
+        },
+        "lastModified" : {
+            "kind" : "value",
+            "provider" : "local",
+            "columns" : "jcr:lastModified(DATE)"
+        },
+        "type" : {
+            "kind" : "value",
+            "provider" : "local",
+            "columns" : "dcterms:type(STRING)"
+        },
+        "hasCollectionId" : {
+            "kind" : "value",
+            "provider" : "local",
+            "columns" : "uatermsid:hasCollectionId(STRING)"
+        },
+        "accessTo" : {
+            "kind" : "value",
+            "provider" : "local",
+            "columns" : "webacl:accessTo_ref(STRING)"
         },
         "isCommunity" : {
             "kind" : "value",
