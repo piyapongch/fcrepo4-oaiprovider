@@ -25,7 +25,6 @@
         ]
     },
     "node-types" : ["fedora-node-types.cnd"],
-    
 
     "indexProviders" : {
         "local" : {
@@ -39,7 +38,10 @@
             "cacheSize" : 100
         }
     },
-
+    "reindexing" : {
+       "async" : true,
+       "mode" : "if_missing"
+    },
     "indexes" : {
         "hasModel" : {
             "kind" : "value",
