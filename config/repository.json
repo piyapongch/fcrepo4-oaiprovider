@@ -29,7 +29,7 @@
     "indexProviders" : {
         "local" : {
             "classname" : "org.modeshape.jcr.index.local.LocalIndexProvider",
-            "directory" : "/usr/local/fcrepo4-data-plano/indexes}",
+            "directory" : "${fcrepo.modeshape.index.directory}",
             "cacheLRUEnable" : true,
             "mmapFileEnable" : true,
             "commitFileSyncDisable" : true,
@@ -39,6 +39,18 @@
         }
     },
     "indexes" : {
+        "uuid" : {
+            "kind" : "value",
+            "provider" : "local",
+            "nodeType" : "fedora:Container",
+            "columns" : "jcr:uuid(STRING)"
+        },
+        "accessTo" : {
+            "kind" : "value",
+            "provider" : "local",
+            "nodeType" : "fedora:Container",
+            "columns" : "webacl:accessTo_ref(STRING)"
+        },
         "hasModel" : {
             "kind" : "value",
             "provider" : "local",
@@ -68,12 +80,6 @@
             "provider" : "local",
             "nodeType" : "fedora:Container",
             "columns" : "uatermsid:hasCollectionId(STRING)"
-        },
-        "accessTo" : {
-            "kind" : "value",
-            "provider" : "local",
-            "nodeType" : "fedora:Container",
-            "columns" : "webacl:accessTo_ref(STRING)"
         },
         "isCommunity" : {
             "kind" : "value",
