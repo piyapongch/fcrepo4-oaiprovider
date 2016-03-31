@@ -24,7 +24,7 @@
             { "classname" : "org.fcrepo.auth.common.BypassSecurityServletAuthenticationProvider" }
         ]
     },
-    "node-types" : ["fedora-node-types.cnd"],
+    "node-types" : ["${fcrepo.ispn.configuration:config/minimal-default/fedora-node-types.cnd}"],
 
     "indexProviders" : {
         "local" : {

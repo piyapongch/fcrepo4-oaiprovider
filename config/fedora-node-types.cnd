@@ -71,17 +71,12 @@
   - rdf:type (URI) multiple
   - * (undefined) multiple
   - * (undefined)
-  
-  /*--- error overwrite mix:referenceable node type
-  - jcr:uuid (STRING)
+  - webacl:accessTo_ref (STRING)
   - model:hasModel (STRING) multiple
-  - webacl:accessTo_ref (STRING) 
-  - webacl:agent (BINARY) multiple
-  - jcr:lastModified (DATE)
+  - webacl:agent (STRING)
   - dcterms:type (STRING) multiple
   - uatermsid:hasCollectionId (STRING) multiple
-  - uatermsid:is_community (STRING) multiple
-  ---*/
+  - uatermsid:is_community (STRING)
 
 /*
  * A Fedora object.
@@ -91,6 +86,16 @@
   - ldp:hasMemberRelation (URI)
   - ldp:isMemberOfRelation (URI)
   - ldp:insertedContentRelation (URI)
+  /*
+  - jcr:uuid (STRING)
+  - model:hasModel (STRING) multiple
+  - webacl:accessTo_ref (STRING) 
+  - webacl:agent (BINARY) multiple
+  - jcr:lastModified (DATE)
+  - dcterms:type (STRING) multiple
+  - uatermsid:hasCollectionId (STRING) multiple
+  - uatermsid:is_community (STRING) multiple
+  */
 
 [ldp:BasicContainer] > fedora:Container mixin
 
