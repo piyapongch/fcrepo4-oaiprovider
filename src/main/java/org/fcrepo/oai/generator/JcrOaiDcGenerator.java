@@ -39,6 +39,8 @@ import org.purl.dc.elements._1.SimpleLiteral;
  * @author Piyapong Charoenwattana
  */
 public class JcrOaiDcGenerator {
+    public static final String LICENSE_PROMPT = "I am required to use/link to a publisher's license";
+
     private static final ObjectFactory dcFactory = new ObjectFactory();
     private static final org.openarchives.oai._2_0.oai_dc.ObjectFactory oaiDcFactory =
         new org.openarchives.oai._2_0.oai_dc.ObjectFactory();
@@ -252,8 +254,7 @@ public class JcrOaiDcGenerator {
     private void addRights(final OaiDcType oaidc, final Property prop)
         throws ValueFormatException, IllegalStateException, RepositoryException {
         for (final Value v : prop.getValues()) {
-            if (StringUtils.isNotEmpty(v.getString())
-                && !v.getString().equals("I am required to use/link to a publisher's license")) {
+            if (StringUtils.isNotEmpty(v.getString()) && !v.getString().equals(LICENSE_PROMPT)) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
                 simple.getContent().add(v.getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));

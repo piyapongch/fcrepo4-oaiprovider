@@ -38,7 +38,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 import javax.ws.rs.core.UriInfo;
@@ -76,6 +75,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.modeshape.jcr.api.NamespaceRegistry;
+import org.modeshape.jcr.api.query.QueryResult;
 import org.ndltd.standards.metadata.etdms._1.Thesis;
 import org.openarchives.oai._2.DeletedRecordType;
 import org.openarchives.oai._2.DescriptionType;
@@ -1023,6 +1023,7 @@ public class OAIProviderService {
             throws RepositoryException {
 
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
+        final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
         final String propJcrUuid = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "uuid"));
         final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
@@ -1037,7 +1038,11 @@ public class OAIProviderService {
         jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
         jql.append("WHERE ");
 
+        // mixin type constraint
+        jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
+
         // items
+        jql.append(" AND");
         jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
 
         // permission
@@ -1078,12 +1083,16 @@ public class OAIProviderService {
         if (limit > 0) {
             jql.append(" LIMIT ").append(maxListSize).append(" OFFSET ").append(offset);
         }
+
+        log.debug(jql.toString());
         return jql.toString();
     }
 
     private RowIterator executeQuery(final QueryManager queryManager, final String jql) throws RepositoryException {
         final Query query = queryManager.createQuery(jql, Query.JCR_SQL2);
-        final QueryResult results = query.execute();
+        // final String plan = ((org.modeshape.jcr.api.query.Query) query).explain().getPlan();
+        final QueryResult results = (QueryResult) query.execute();
+        log.debug(results.getPlan());
         return results.getRows();
     }
 
@@ -1112,6 +1121,7 @@ public class OAIProviderService {
     private String searchResourceQuery(final Session session, final String mixinTypes, final String property,
         final String value, final int limit, final int offset) throws RepositoryException {
 
+        final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
         final String propJcrUuid = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "uuid"));
         final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
@@ -1126,7 +1136,11 @@ public class OAIProviderService {
         jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
         jql.append("WHERE ");
 
+        // mixin type constraint
+        jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
+
         // items
+        jql.append(" AND");
         jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
 
         // permission
@@ -1149,6 +1163,7 @@ public class OAIProviderService {
             jql.append(" LIMIT ").append(maxListSize).append(" OFFSET ").append(offset);
         }
 
+        log.debug(jql.toString());
         return jql.toString();
     }
 

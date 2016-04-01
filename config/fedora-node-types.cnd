@@ -71,12 +71,16 @@
   - rdf:type (URI) multiple
   - * (undefined) multiple
   - * (undefined)
-  - webacl:accessTo_ref (STRING)
+  - jcr:mixinTypes (NAME) multiple
+  - mode:localName (STRING)
+  - webacl:accessTo_ref (WEAKREFERENCE) multiple
   - model:hasModel (STRING) multiple
-  - webacl:agent (STRING)
+  - webacl:agent (STRING) multiple
   - dcterms:type (STRING) multiple
   - uatermsid:hasCollectionId (STRING) multiple
-  - uatermsid:is_community (STRING)
+  - uatermsid:is_community (STRING) multiple
+  - dcterms:title (STRING) multiple
+  - dcterms:description (STRING) multiple
 
 /*
  * A Fedora object.
@@ -86,16 +90,6 @@
   - ldp:hasMemberRelation (URI)
   - ldp:isMemberOfRelation (URI)
   - ldp:insertedContentRelation (URI)
-  /*
-  - jcr:uuid (STRING)
-  - model:hasModel (STRING) multiple
-  - webacl:accessTo_ref (STRING) 
-  - webacl:agent (BINARY) multiple
-  - jcr:lastModified (DATE)
-  - dcterms:type (STRING) multiple
-  - uatermsid:hasCollectionId (STRING) multiple
-  - uatermsid:is_community (STRING) multiple
-  */
 
 [ldp:BasicContainer] > fedora:Container mixin
 

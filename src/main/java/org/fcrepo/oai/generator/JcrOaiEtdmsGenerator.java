@@ -15,6 +15,8 @@
  */
 package org.fcrepo.oai.generator;
 
+import static org.fcrepo.oai.generator.JcrOaiDcGenerator.LICENSE_PROMPT;
+
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,7 @@ import javax.jcr.ValueFormatException;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.fcrepo.kernel.models.Container;
 import org.ndltd.standards.metadata.etdms._1.AuthorityType;
 import org.ndltd.standards.metadata.etdms._1.ControlledTextType;
@@ -50,6 +53,8 @@ public class JcrOaiEtdmsGenerator {
     private static final Pattern slashPattern = Pattern.compile("\\/");
 
     private String lacIdFormat;
+
+    private String pdfUrlFormat;
 
     /**
      * The generate method.
@@ -208,7 +213,7 @@ public class JcrOaiEtdmsGenerator {
 
             case "dcterms:license":
                 for (final Value v : prop.getValues()) {
-                    if (!v.getString().equals("I am required to use/link to a publisher's license")) {
+                    if (!v.getString().equals(LICENSE_PROMPT)) {
                         addFreeTextType(v, thesis.getRights());
                     }
                 }
@@ -226,13 +231,22 @@ public class JcrOaiEtdmsGenerator {
         }
         thesis.setDegree(degree);
 
-        // LAC identifier
-        if (handle != null) {
-            final String[] h = slashPattern.split(handle);
-            thesis.getIdentifier()
-                .add(String.format(lacIdFormat, h[4].indexOf(".") < 0 ? h[4] : h[4].substring(h[4].indexOf(".") + 1)));
+        // LAC unique identifier
+        try {
+            if (handle != null) {
+                final String[] h = slashPattern.split(handle);
 
+                // add 2000 if it is thesisdeposit handle
+                thesis.getIdentifier().add(String.format(lacIdFormat,
+                    h[4].indexOf("era.") < 0 ? h[4] : NumberUtils.toInt(h[4].substring(4)) + 2000));
+            }
+        } catch (final Exception e) {
+            // could not generate the identifier
         }
+
+        // add 2000 if it is thesisdeposit handle
+        thesis.getIdentifier().add(String.format(pdfUrlFormat, obj.getProperty("mode:localName").getString()));
+
         return thesis;
     }
 
@@ -352,6 +366,15 @@ public class JcrOaiEtdmsGenerator {
      */
     public final void setLacIdFormat(final String lacIdFormat) {
         this.lacIdFormat = lacIdFormat;
+    }
+
+    /**
+     * The setPdfUrlFormat setter method.
+     * 
+     * @param pdfUrlFormat the pdfUrlFormat to set
+     */
+    public final void setPdfUrlFormat(final String pdfUrlFormat) {
+        this.pdfUrlFormat = pdfUrlFormat;
     }
 
 }
