@@ -713,6 +713,7 @@ public class OAIProviderService {
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final RowIterator result = executeQuery(queryManager, jql);
+            final long size = result.getSize();
 
             if (!result.hasNext()) {
                 return error(VerbType.LIST_IDENTIFIERS, null, metadataPrefix, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
@@ -724,27 +725,32 @@ public class OAIProviderService {
             final ListIdentifiersType ids = oaiFactory.createListIdentifiersType();
 
             while (result.hasNext()) {
-                final HeaderType h = oaiFactory.createHeaderType();
-                final Row sol = result.nextRow();
-                final Resource sub = valueConverter.convert(sol.getValue("sub")).asResource();
-                final String path = converter.convert(sub).getPath();
+                // fix JCR-SQL2 LIMIT bug in 4.2.0
+                if (result.getPosition() < maxListSize) {
+                    final HeaderType h = oaiFactory.createHeaderType();
+                    final Row sol = result.nextRow();
+                    final Resource sub = valueConverter.convert(sol.getValue("sub")).asResource();
+                    final String path = converter.convert(sub).getPath();
 
-                // get base url
-                final FedoraResource root = nodeService.find(session, rootPath);
-                RdfStream triples =
-                    root.getTriples(converter, PropertiesRdfContext.class)
-                        .filter(new PropertyPredicate(propertyOaiBaseUrl));
-                h.setIdentifier(createId(converter.asString(sub)));
+                    // get base url
+                    final FedoraResource root = nodeService.find(session, rootPath);
+                    RdfStream triples =
+                        root.getTriples(converter, PropertiesRdfContext.class)
+                            .filter(new PropertyPredicate(propertyOaiBaseUrl));
+                    h.setIdentifier(createId(converter.asString(sub)));
 
-                final Container obj = containerService.find(session, path);
-                h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
-                triples =
-                    obj.getTriples(converter, PropertiesRdfContext.class)
-                        .filter(new PropertyPredicate(propertyHasCollectionId));
-                while (triples.hasNext()) {
-                    h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
+                    final Container obj = containerService.find(session, path);
+                    h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
+                    triples =
+                        obj.getTriples(converter, PropertiesRdfContext.class)
+                            .filter(new PropertyPredicate(propertyHasCollectionId));
+                    while (triples.hasNext()) {
+                        h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
+                    }
+                    ids.getHeader().add(h);
+                } else {
+                    break;
                 }
-                ids.getHeader().add(h);
             }
 
             final RequestType req = oaiFactory.createRequestType();
@@ -753,6 +759,7 @@ public class OAIProviderService {
                 token.setValue(encodeResumptionToken(VerbType.LIST_IDENTIFIERS.value(), metadataPrefix, from, until,
                     set, offset + maxListSize));
                 token.setCursor(new BigInteger(String.valueOf(offset)));
+                token.setCompleteListSize(new BigInteger(String.valueOf(offset + size)));
                 ids.setResumptionToken(token);
             }
             req.setVerb(VerbType.LIST_IDENTIFIERS);
@@ -859,11 +866,12 @@ public class OAIProviderService {
             final ListSetsType sets = oaiFactory.createListSetsType();
 
             // query from collection object model
-            final String setJql =
-                "SELECT [mode:localName] AS spec, [dcterms:title] AS name, [dcterms:description] AS desc FROM ["
-                    + FedoraJcrTypes.FEDORA_RESOURCE
-                    + "] WHERE [model:hasModel] = 'Collection' AND [uatermsid:is_community] IS NULL";
-            final RowIterator setResult = executeQuery(queryManager, setJql);
+            final StringBuilder jql = new StringBuilder();
+            jql.append("SELECT [mode:localName] AS spec, [dcterms:title] AS name, [dcterms:description] AS desc FROM [")
+                .append(FedoraJcrTypes.FEDORA_RESOURCE)
+                .append("] WHERE [model:hasModel] = 'Collection' AND [uatermsid:is_community] IS NULL ")
+                .append("ORDER BY [dcterms:title]");
+            final RowIterator setResult = executeQuery(queryManager, jql.toString());
             if (!setResult.hasNext()) {
                 return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
             }
@@ -935,6 +943,7 @@ public class OAIProviderService {
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final RowIterator result = executeQuery(queryManager, jql);
+            final long size = result.getSize();
 
             if (!result.hasNext()) {
                 return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
@@ -946,12 +955,16 @@ public class OAIProviderService {
 
             final ListRecordsType records = oaiFactory.createListRecordsType();
             while (result.hasNext()) {
-                // check if the records exists
-                final Row solution = result.nextRow();
-                final Resource subjectUri = valueConverter.convert(solution.getValue("sub")).asResource();
-                final String name = valueConverter.convert(solution.getValue("name")).asLiteral().getString();
-                final RecordType record = createRecord(session, mdf, converter.asString(subjectUri), name, uriInfo);
-                records.getRecord().add(record);
+                // fix JCR-SQL2 LIMIT bug in 4.2.0
+                if (result.getPosition() < maxListSize) {
+                    final Row solution = result.nextRow();
+                    final Resource subjectUri = valueConverter.convert(solution.getValue("sub")).asResource();
+                    final String name = valueConverter.convert(solution.getValue("name")).asLiteral().getString();
+                    final RecordType record = createRecord(session, mdf, converter.asString(subjectUri), name, uriInfo);
+                    records.getRecord().add(record);
+                } else {
+                    break;
+                }
             }
 
             final RequestType req = oaiFactory.createRequestType();
@@ -960,6 +973,7 @@ public class OAIProviderService {
                 token.setValue(encodeResumptionToken(VerbType.LIST_RECORDS.value(), metadataPrefix, from, until, set,
                     offset + maxListSize));
                 token.setCursor(new BigInteger(String.valueOf(offset)));
+                token.setCompleteListSize(new BigInteger(String.valueOf(offset + size)));
                 records.setResumptionToken(token);
             }
             req.setVerb(VerbType.LIST_RECORDS);
@@ -1093,10 +1107,12 @@ public class OAIProviderService {
         }
 
         // order by lastmodified
-        // jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
+        jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
 
         if (limit > 0) {
-            jql.append(" LIMIT ").append(maxListSize).append(" OFFSET ").append(offset);
+            // bug in 4.2.0 fixed in 4.5.0
+            // jql.append(" LIMIT ").append(maxListSize);
+            jql.append(" OFFSET ").append(offset);
         }
 
         log.debug(jql.toString());
@@ -1105,7 +1121,6 @@ public class OAIProviderService {
 
     private RowIterator executeQuery(final QueryManager queryManager, final String jql) throws RepositoryException {
         final Query query = queryManager.createQuery(jql, Query.JCR_SQL2);
-        // final String plan = ((org.modeshape.jcr.api.query.Query) query).explain().getPlan();
         final QueryResult results = (QueryResult) query.execute();
         log.debug(results.getPlan());
         return results.getRows();

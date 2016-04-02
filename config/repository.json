@@ -35,7 +35,7 @@
             "commitFileSyncDisable" : true,
             "transactionDisable" : true,
             "asyncWrite" : true,
-            "cacheSize" : 100
+            "cacheSize" : 1000000
         }
     },
     "indexes" : {
@@ -102,12 +102,5 @@
             "nodeType" : "fedora:Resource",
             "columns" : "uatermsid:hasCollectionId(STRING)"
         },
-        "isCommunity" : {
-            "kind" : "value",
-            "provider" : "local",
-            "synchronous" : "false",
-            "nodeType" : "fedora:Resource",
-            "columns" : "uatermsid:is_community(STRING)"
-        }
     }
 }
