@@ -65,7 +65,7 @@ public class JcrOaiEtdmsGenerator {
      * @return
      * @throws RepositoryException
      */
-    public Thesis generate(final Session session, final Container obj, final UriInfo uriInfo)
+    public Thesis generate(final Session session, final Container obj, final String name, final UriInfo uriInfo)
         throws RepositoryException {
         String handle = null;
         final Thesis thesis = etdmsFactory.createThesis();
@@ -245,7 +245,7 @@ public class JcrOaiEtdmsGenerator {
         }
 
         // add 2000 if it is thesisdeposit handle
-        thesis.getIdentifier().add(String.format(pdfUrlFormat, obj.getProperty("mode:localName").getString()));
+        thesis.getIdentifier().add(String.format(pdfUrlFormat, name));
 
         return thesis;
     }

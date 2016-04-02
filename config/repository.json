@@ -43,70 +43,70 @@
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "jcr:mixinTypes(NAME)"
         },
         "uuid" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "jcr:uuid(STRING)"
         },
         "localName" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "mode:localName(STRING)"
         },
         "accessTo" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "webacl:accessTo_ref(STRING)"
         },
         "hasModel" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "model:hasModel(STRING)"
         },
         "agent" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "webacl:agent(STRING)"
         },
         "lastModified" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "jcr:lastModified(DATE)"
         },
         "type" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "dcterms:type(STRING)"
         },
         "hasCollectionId" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "uatermsid:hasCollectionId(STRING)"
         },
         "isCommunity" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
-            "nodeType" : "fedora:Container",
+            "nodeType" : "fedora:Resource",
             "columns" : "uatermsid:is_community(STRING)"
         }
     }
