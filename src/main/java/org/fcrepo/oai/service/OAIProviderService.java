@@ -713,7 +713,6 @@ public class OAIProviderService {
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final RowIterator result = executeQuery(queryManager, jql);
-            final long size = result.getSize();
 
             if (!result.hasNext()) {
                 return error(VerbType.LIST_IDENTIFIERS, null, metadataPrefix, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
@@ -759,7 +758,7 @@ public class OAIProviderService {
                 token.setValue(encodeResumptionToken(VerbType.LIST_IDENTIFIERS.value(), metadataPrefix, from, until,
                     set, offset + maxListSize));
                 token.setCursor(new BigInteger(String.valueOf(offset)));
-                token.setCompleteListSize(new BigInteger(String.valueOf(offset + size)));
+                token.setCompleteListSize(new BigInteger(String.valueOf(result.getSize())));
                 ids.setResumptionToken(token);
             }
             req.setVerb(VerbType.LIST_IDENTIFIERS);
@@ -943,7 +942,6 @@ public class OAIProviderService {
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final RowIterator result = executeQuery(queryManager, jql);
-            final long size = result.getSize();
 
             if (!result.hasNext()) {
                 return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
@@ -973,7 +971,7 @@ public class OAIProviderService {
                 token.setValue(encodeResumptionToken(VerbType.LIST_RECORDS.value(), metadataPrefix, from, until, set,
                     offset + maxListSize));
                 token.setCursor(new BigInteger(String.valueOf(offset)));
-                token.setCompleteListSize(new BigInteger(String.valueOf(offset + size)));
+                token.setCompleteListSize(new BigInteger(String.valueOf(result.getSize() + offset)));
                 records.setResumptionToken(token);
             }
             req.setVerb(VerbType.LIST_RECORDS);
@@ -1105,9 +1103,6 @@ public class OAIProviderService {
             jql.append(" AND");
             jql.append(" res.[" + propHasCollectionId + "] = '" + set + "'");
         }
-
-        // order by lastmodified
-        jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
 
         if (limit > 0) {
             // bug in 4.2.0 fixed in 4.5.0

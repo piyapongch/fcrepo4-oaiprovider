@@ -39,34 +39,6 @@
         }
     },
     "indexes" : {
-        "jcrMixinTypes" : {
-            "kind" : "value",
-            "provider" : "local",
-            "synchronous" : "false",
-            "nodeType" : "fedora:Resource",
-            "columns" : "jcr:mixinTypes(NAME)"
-        },
-        "uuid" : {
-            "kind" : "value",
-            "provider" : "local",
-            "synchronous" : "false",
-            "nodeType" : "fedora:Resource",
-            "columns" : "jcr:uuid(STRING)"
-        },
-        "localName" : {
-            "kind" : "value",
-            "provider" : "local",
-            "synchronous" : "false",
-            "nodeType" : "fedora:Resource",
-            "columns" : "mode:localName(STRING)"
-        },
-        "accessTo" : {
-            "kind" : "value",
-            "provider" : "local",
-            "synchronous" : "false",
-            "nodeType" : "fedora:Resource",
-            "columns" : "webacl:accessTo_ref(STRING)"
-        },
         "hasModel" : {
             "kind" : "value",
             "provider" : "local",
@@ -101,6 +73,6 @@
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
             "columns" : "uatermsid:hasCollectionId(STRING)"
-        },
+        }
     }
 }
