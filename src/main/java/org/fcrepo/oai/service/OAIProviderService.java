@@ -565,21 +565,31 @@ public class OAIProviderService {
                 "The metadata format is not available");
         }
 
-        // get object path from identifier
-        final String noid = slashPattern.split(identifier)[2].substring(2);
-        final String[] d = pathPattern.split(noid);
-        final String path = String.format("%1$s/%2$s/%3$s/%4$s/%5$s/%6$s", dataPath, d[0], d[1], d[2], d[3], noid);
-        if (!nodeService.exists(session, path)) {
+        final String noid;
+        try {
+            noid = slashPattern.split(identifier)[2].substring(2);
+        } catch (final Exception e) {
             return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
                 "The requested identifier does not exist");
         }
+        final StringBuilder jql = new StringBuilder();
+        jql.append("SELECT res.[jcr:path] AS path FROM [fedora:Resource] AS res");
+        jql.append("  JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
+        jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
+        jql.append("  AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
+        jql.append("  AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
 
-        /* Prepare the OAI response objects */
+        final QueryManager queryManager = session.getWorkspace().getQueryManager();
+        final RowIterator result = executeQuery(queryManager, jql.toString());
+        if (!result.hasNext()) {
+            return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
+                "The requested identifier does not exist");
+        }
+        final String path = result.nextRow().getValue("path").getString();
         final Container obj = containerService.find(session, path);
 
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
         oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
-
         final RequestType req = oaiFactory.createRequestType();
         req.setVerb(VerbType.GET_RECORD);
         req.setValue(uriInfo.getRequestUri().toASCIIString());
@@ -589,7 +599,7 @@ public class OAIProviderService {
         final GetRecordType getRecord = oaiFactory.createGetRecordType();
         final RecordType record;
         try {
-            record = createRecord(session, format, obj.getPath(), uriInfo);
+            record = createRecord(session, format, obj.getPath(), noid, uriInfo);
             getRecord.setRecord(record);
             oai.setGetRecord(getRecord);
             return oaiFactory.createOAIPMH(oai);
@@ -602,13 +612,11 @@ public class OAIProviderService {
 
     private JAXBElement<OaiDcType> generateOaiDc(final Session session, final Container obj, final UriInfo uriInfo)
         throws RepositoryException {
-
         return jcrOaiDcGenerator.generate(session, obj, uriInfo);
     }
 
     private Thesis generateOaiEtdms(final Session session, final Container obj, final String name,
         final UriInfo uriInfo) throws RepositoryException {
-
         return jcrOaiEtdmsGenerator.generate(session, obj, name, uriInfo);
     }
 
@@ -1058,6 +1066,7 @@ public class OAIProviderService {
             getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo_ref"));
         final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
         final String propHasCollectionId = getPropertyName(session, createProperty(propertyHasCollectionId));
+
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub, res.[mode:localName] AS name ");
         jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
@@ -1149,11 +1158,11 @@ public class OAIProviderService {
         final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
         final String propJcrUuid = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "uuid"));
-        final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
+        // final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
         final String propAccessTo =
             getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo_ref"));
-        final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
+        // final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub ");
         jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
@@ -1173,21 +1182,20 @@ public class OAIProviderService {
         jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
 
         // public item, cast to binary and compare with xs:base64binary string property
-        jql.append(" AND");
-        jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
+        // jql.append(" AND");
+        // jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
 
         // search criteria
         jql.append(" AND");
         jql.append(" res.[").append(property).append("] LIKE '%").append(value).append("%'");
 
-        // order by lastmodified
-        jql.append(" ORDER BY res.[" + propJcrLastModifiedDate + "]");
-
         // limit and offset
         if (limit > 0) {
-            jql.append(" LIMIT ").append(maxListSize).append(" OFFSET ").append(offset);
+            jql.append(" LIMIT ").append(maxListSize);
+            jql.append(" OFFSET ").append(offset);
         }
 
+        log.debug(jql.toString());
         log.debug(jql.toString());
         return jql.toString();
     }
@@ -1241,10 +1249,10 @@ public class OAIProviderService {
             oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
             final ListRecordsType records = oaiFactory.createListRecordsType();
             while (result.hasNext()) {
-                // check if the records exists
                 final Row solution = result.nextRow();
                 final Resource subjectUri = valueConverter.convert(solution.getValue("sub")).asResource();
-                final RecordType record = createRecord(session, mdf, converter.asString(subjectUri), uriInfo);
+                final String name = valueConverter.convert(solution.getValue("name")).asLiteral().getString();
+                final RecordType record = createRecord(session, mdf, converter.asString(subjectUri), name, uriInfo);
                 records.getRecord().add(record);
             }
 
@@ -1254,6 +1262,7 @@ public class OAIProviderService {
                 token.setValue(encodeResumptionToken(VerbType.LIST_RECORDS.value(), metadataPrefix, null, null, null,
                     offset + maxListSize));
                 token.setCursor(new BigInteger(String.valueOf(offset)));
+                token.setCompleteListSize(new BigInteger(String.valueOf(result.getSize() + offset)));
                 records.setResumptionToken(token);
             }
             req.setVerb(VerbType.LIST_RECORDS);

@@ -73,6 +73,13 @@
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
             "columns" : "uatermsid:hasCollectionId(STRING)"
+        },
+        "localName" : {
+            "kind" : "value",
+            "provider" : "local",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "mode:localName(STRING)"
         }
     }
 }
