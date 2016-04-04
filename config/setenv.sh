@@ -21,7 +21,6 @@ export JAVA_OPTS="$JAVA_OPTS -Dapp.name=Fedora4 -Djava.awt.headless=true -Dfile-
 # fedora 4 properties
 export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/fedora_data2"
 export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/usr/share/fedora_data2/indexes"
-export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.data.container=/prod"
 export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.directory=/usr/share/tomcat7/logs"
 export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.jcr=TRACE"
 

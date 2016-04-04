@@ -102,7 +102,6 @@ JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/data/fedora_data2/inde
 #JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/usr/local/fcrepo4-data-sample"
 #JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/usr/local/fcrepo4-data-sample/indexes"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.audit.container=/audit"
-JAVA_OPTS="$JAVA_OPTS -Dfcrepo.data.container=/dev"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.directory=/usr/local/tomcat7/logs"
 #JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.auth=DEBUG"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.jcr=TRACE"

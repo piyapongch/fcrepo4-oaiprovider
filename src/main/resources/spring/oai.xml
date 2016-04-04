@@ -7,10 +7,15 @@
 	<context:annotation-config />
 
 	<context:component-scan base-package="org.fcrepo" />
+ 
+    <bean name="jcrOaiGenerator" class="org.fcrepo.oai.generator.JcrOaiGenerator">
+        <property name="eraIdFormat" value="https://era.library.ualberta.ca/files/%1$s" />
+    </bean>
 
-	<bean name="jcrOaiDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator" />
+	<bean name="jcrOaiDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator" parent="jcrOaiGenerator">
+    </bean>
 
-	<bean name="jcrOaiEtdmsGenerator" class="org.fcrepo.oai.generator.JcrOaiEtdmsGenerator">
+	<bean name="jcrOaiEtdmsGenerator" class="org.fcrepo.oai.generator.JcrOaiEtdmsGenerator" parent="jcrOaiGenerator">
         <property name="lacIdFormat" value="TC-AEU-%1$s" />
         <property name="pdfUrlFormat" value="https://era.library.ualberta.ca/downloads/%1$s.pdf" />
 	</bean>
@@ -22,7 +27,6 @@
 		<property name="setsEnabled" value="true" />
 		<property name="searchEnabled" value="true" />
 		<property name="rootPath" value="/oai" />
-		<property name="dataPath" value="${fcrepo.data.container}" />
 		<property name="idFormat" value="oai:era.library.ualberta.ca:ark:/54379/t7%1$s" />
 		<property name="propertyHasCollectionId" value="http://terms.library.library.ca/identifiers/hasCollectionId" />
 		<property name="propertyHasModel" value="info:fedora/fedora-system:def/model#hasModel" />

@@ -38,7 +38,8 @@ import org.purl.dc.elements._1.SimpleLiteral;
  *
  * @author Piyapong Charoenwattana
  */
-public class JcrOaiDcGenerator {
+public class JcrOaiDcGenerator extends JcrOaiGenerator {
+
     public static final String LICENSE_PROMPT = "I am required to use/link to a publisher's license";
 
     private static final ObjectFactory dcFactory = new ObjectFactory();
@@ -56,8 +57,8 @@ public class JcrOaiDcGenerator {
      * @throws RepositoryException if repository exception occurred
      * @throws IllegalStateException
      */
-    public JAXBElement<OaiDcType> generate(final Session session, final Container obj, final UriInfo uriInfo)
-        throws RepositoryException, IllegalStateException {
+    public JAXBElement<OaiDcType> generate(final Session session, final Container obj, final String name,
+        final UriInfo uriInfo) throws RepositoryException, IllegalStateException {
 
         final OaiDcType oaidc = oaiDcFactory.createOaiDcType();
         Value[] values;
@@ -95,9 +96,9 @@ public class JcrOaiDcGenerator {
 
         // If both marcrel:dgg and vivo:AcademicDepartment are present
         if ((ddgs != null) && (depts != null)) {
-            pub.append(ddgs[0].getString());
+            pub.append(ddgs[0].getString() + ". ");
             for (int i = 0; i < depts.length; i++) {
-                pub.append(i == 0 ? "; " : ", ").append(depts[i].getString());
+                pub.append(i == 0 ? "" : "; ").append(depts[i].getString());
             }
             pub.append(depts.length == 1 ? "." : "");
 
@@ -110,17 +111,23 @@ public class JcrOaiDcGenerator {
             pub.append(depts.length == 1 ? "." : "");
 
             // If none of marcrel:dgg and vivo:AcademicDepartment are present
-        } else if ((ddgs == null) && (depts == null)) {
-            pub.append(uofa);
+            // } else if ((ddgs == null) && (depts == null)) {
+            // pub.append(uofa);
 
             // Otherwise, print only marcrel:dgg (no punctuation)
         } else if (ddgs != null) {
             pub.append(ddgs[0].getString());
         }
         pub.append(pub.toString().trim().length() == 0 ? uofa : "");
+
         final SimpleLiteral sim = dcFactory.createSimpleLiteral();
         sim.getContent().add(pub.toString());
         oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(sim));
+
+        // era identifier
+        final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+        simple.getContent().add(String.format(eraIdFormat, name));
+        oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
 
         final PropertyIterator props = obj.getNode().getProperties();
         while (props.hasNext()) {

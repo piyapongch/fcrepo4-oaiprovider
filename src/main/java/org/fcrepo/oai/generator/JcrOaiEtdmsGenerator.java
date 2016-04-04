@@ -46,7 +46,7 @@ import org.ndltd.standards.metadata.etdms._1.Thesis.Description;
  * @author <a href="mailto:piyapong.charoenwattana@gmail.com">Piyapong Charoenwattana</a>
  * @version $Revision$ $Date$
  */
-public class JcrOaiEtdmsGenerator {
+public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
 
     private static final ObjectFactory etdmsFactory = new ObjectFactory();
 
@@ -246,6 +246,9 @@ public class JcrOaiEtdmsGenerator {
 
         // add 2000 if it is thesisdeposit handle
         thesis.getIdentifier().add(String.format(pdfUrlFormat, name));
+
+        // era identifier
+        thesis.getIdentifier().add(String.format(eraIdFormat, name));
 
         return thesis;
     }
