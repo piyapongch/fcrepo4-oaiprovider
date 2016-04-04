@@ -574,10 +574,10 @@ public class OAIProviderService {
         }
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[jcr:path] AS path FROM [fedora:Resource] AS res");
-        jql.append("  JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
+        jql.append(" JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
         jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
-        jql.append("  AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
-        jql.append("  AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
+        jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
+        jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
 
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final RowIterator result = executeQuery(queryManager, jql.toString());
