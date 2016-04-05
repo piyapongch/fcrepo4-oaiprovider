@@ -96,7 +96,11 @@
 # -----------------------------------------------------------------------------
 
 # pc: set java options for fedora4
-JAVA_OPTS="-Djava.awt.headless=true -Dfile.encoding=UTF-8 -server -Xms8192m -Xmx8192m -XX:NewSize=512m -XX:MaxNewSize=512m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m -XX:+DisableExplicitGC"
+JAVA_OPTS="-Djava.awt.headless=true -Dfile.encoding=UTF-8"
+JAVA_OPTS="$JAVA_OPTS -server -XX:NewSize=2048m -XX:MaxNewSize=4096m -XX:InitialHeapSize=8092m -XX:MaxHeapSize=8092m"
+JAVA_OPTS="$JAVA_OPTS -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m"
+JAVA_OPTS="$JAVA_OPTS -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC"
+
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/data/fedora_data2"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/data/fedora_data2/indexes"
 #JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/usr/local/fcrepo4-data-sample"
@@ -104,7 +108,7 @@ JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/data/fedora_data2/inde
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.audit.container=/audit"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.directory=/usr/local/tomcat7/logs"
 #JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.auth=DEBUG"
-JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.jcr=TRACE"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.jcr=DEBUG"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log=DEBUG"
 
 # pc: hawto.io agent
