@@ -39,11 +39,19 @@
 				<entry key="oai" value="http://www.openarchives.org/OAI/2.0/" />
 				<entry key="oai-id" value="http://www.openarchives.org/OAI/2.0/oai-identifier" />
 				<entry key="dcterms" value="http://purl.org/dc/terms/" />
-				<entry key="ualterms" value="http://terms.library.ualberta.ca/" />
-				<entry key="uatermsid" value="http://terms.library.library.ca/identifiers/" />
 				<entry key="marcrel" value="http://id.loc.gov/vocabulary/relators/" />
 				<entry key="vivo" value="http://vivoweb.org/ontology/core#" />
 				<entry key="bibo" value="http://purl.org/ontology/bibo/" />
+                <entry key="ualrole" value="http://terms.library.ualberta.ca/role/" />
+                <entry key="ualid" value="http://terms.library.ualberta.ca/id/" />
+                <entry key="ualsubj" value="http://terms.library.ualberta.ca/subject/" />
+                <entry key="ualdate" value="http://terms.library.ualberta.ca/date/" />
+                <entry key="ualtitle" value="http://terms.library.ualberta.ca/title/" />
+                <entry key="ualname" value="http://terms.library.ualberta.ca/name/" />
+                <entry key="ualplace" value="http://terms.library.ualberta.ca/place/" />
+                <entry key="ualthesis" value="http://terms.library.ualberta.ca/thesis/" />
+                <entry key="ualterms" value="http://terms.library.ualberta.ca/" />
+                <entry key="uatermsid" value="http://terms.library.library.ca/identifiers/" />
 			</map>
 		</property>
 		<property name="metadataFormats">

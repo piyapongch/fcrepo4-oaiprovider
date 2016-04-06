@@ -11,6 +11,7 @@
  * ERA & OAI Provider namespaces
  */
 <oai = 'http://www.openarchives.org/OAI/2.0/'>
+<oaiid = 'http://www.openarchives.org/OAI/2.0/oai-identifier'>
 <dcterms = 'http://purl.org/dc/terms/'>
 <hydragroup = 'http://projecthydra.org/ns/auth/group#'>
 <marcrel = 'http://id.loc.gov/vocabulary/relators/'>
@@ -24,17 +25,20 @@
 <scholarsphere = 'http://scholarsphere.psu.edu/ns#'>
 
 /*
- * UALIB namspaces
+ * UAL namspaces
  */
-<ualterms = 'http://terms.library.ualberta.ca/'>
-<uatermsid = 'http://terms.library.library.ca/identifiers/'>
 <ualrole = 'http://terms.library.ualberta.ca/role/'>
+<ualid = 'http://terms.library.ualberta.ca/id/'>
 <ualsubj = 'http://terms.library.ualberta.ca/subject/'>
 <ualdate = 'http://terms.library.ualberta.ca/date/'>
 <ualtitle = 'http://terms.library.ualberta.ca/title/'>
 <ualname = 'http://terms.library.ualberta.ca/name/'>
 <ualplace = 'http://terms.library.ualberta.ca/place/'>
 <ualthesis = 'http://terms.library.ualberta.ca/thesis/'>
+<ualterms = 'http://terms.library.ualberta.ca/'>
+
+/* incorrect namespace */
+<uatermsid = 'http://terms.library.library.ca/identifiers/'>
 
 /*
  * Friend-of-a-Friend

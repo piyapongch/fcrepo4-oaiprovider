@@ -354,12 +354,14 @@ public class OAIProviderService {
         final NamespaceRegistry namespaceRegistry =
             (org.modeshape.jcr.api.NamespaceRegistry) session.getWorkspace().getNamespaceRegistry();
 
-        // Register the namespaces if it's not found
+        // Register namespaces
+        log.info("Registering namespaces...");
         final Set<Entry<String, String>> entries = namespaces.entrySet();
         for (final Entry<String, String> entry : entries) {
-            if (!namespaceRegistry.isRegisteredPrefix(entry.getKey())) {
-                namespaceRegistry.registerNamespace(entry.getKey(), entry.getValue());
+            if (namespaceRegistry.isRegisteredPrefix(entry.getKey())) {
+                namespaceRegistry.unregisterNamespace(entry.getKey());
             }
+            namespaceRegistry.registerNamespace(entry.getKey(), entry.getValue());
         }
 
         final Container root;
