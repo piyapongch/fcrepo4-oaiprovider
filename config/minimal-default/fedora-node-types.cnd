@@ -8,7 +8,7 @@
 <image='http://www.modeshape.org/images/1.0'>
 
 /*
- * ERA & OAI Provider namespaces
+ * ERA & OAI Provider Namespaces
  */
 <oai = 'http://www.openarchives.org/OAI/2.0/'>
 <oaiid = 'http://www.openarchives.org/OAI/2.0/oai-identifier'>
@@ -25,7 +25,7 @@
 <scholarsphere = 'http://scholarsphere.psu.edu/ns#'>
 
 /*
- * UAL namspaces
+ * UAL Namspaces
  */
 <ualrole = 'http://terms.library.ualberta.ca/role/'>
 <ualid = 'http://terms.library.ualberta.ca/id/'>
@@ -36,6 +36,9 @@
 <ualplace = 'http://terms.library.ualberta.ca/place/'>
 <ualthesis = 'http://terms.library.ualberta.ca/thesis/'>
 <ualterms = 'http://terms.library.ualberta.ca/'>
+
+/* development */
+<ualidentifiers = 'http://terms.library.ualberta.ca/identifiers/'>
 
 /* incorrect namespace */
 <uatermsid = 'http://terms.library.library.ca/identifiers/'>

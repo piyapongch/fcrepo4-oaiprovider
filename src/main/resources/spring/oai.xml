@@ -51,6 +51,7 @@
                 <entry key="ualplace" value="http://terms.library.ualberta.ca/place/" />
                 <entry key="ualthesis" value="http://terms.library.ualberta.ca/thesis/" />
                 <entry key="ualterms" value="http://terms.library.ualberta.ca/" />
+                <entry key="ualidentifier" value="http://terms.library.ualberta.ca/identifiers/" />
                 <entry key="uatermsid" value="http://terms.library.library.ca/identifiers/" />
 			</map>
 		</property>
