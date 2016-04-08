@@ -23,7 +23,6 @@ import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.openarchives.oai._2.OAIPMHerrorcodeType;
 import org.openarchives.oai._2.OAIPMHtype;
@@ -34,10 +33,10 @@ public class GetRecordIT extends AbstractOAIProviderIT {
     @Test
     public void testGetNonExistingObjectRecord() throws Exception {
         HttpResponse resp =
-                getOAIPMHResponse(VerbType.GET_RECORD.value(), "non-existing-id", "oai_dc", null, null, null);
+            getOAIPMHResponse(VerbType.GET_RECORD.value(), "/non-existing-id", "oai_dc", null, null, null);
         assertEquals(200, resp.getStatusLine().getStatusCode());
         OAIPMHtype oai =
-                ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
         assertEquals(1, oai.getError().size());
         assertEquals(OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, oai.getError().get(0).getCode());
     }
@@ -46,10 +45,10 @@ public class GetRecordIT extends AbstractOAIProviderIT {
     public void testGetOAIDCRecord() throws Exception {
         String objId = "oai-test-" + RandomStringUtils.randomAlphabetic(8);
         createFedoraObject(objId);
-        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), objId, "oai_dc", null, null, null);
+        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), "/" + objId, "oai_dc", null, null, null);
         assertEquals(200, resp.getStatusLine().getStatusCode());
         OAIPMHtype oai =
-                ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
         assertEquals(0, oai.getError().size());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata().getAny());
@@ -64,10 +63,10 @@ public class GetRecordIT extends AbstractOAIProviderIT {
         createBinaryObject(binaryPath, this.getClass().getClassLoader().getResourceAsStream("test-data/premis.xml"));
         createFedoraObjectWithOaiLink(objId, binaryPath, "http://fedora.info/definitions/v4/config#hasOaiPremisRecord");
 
-        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), objId, "premis", null, null, null);
+        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), "/" + objId, "premis", null, null, null);
         assertEquals(200, resp.getStatusLine().getStatusCode());
         OAIPMHtype oai =
-                ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
         assertEquals(0, oai.getError().size());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata().getAny());
@@ -82,10 +81,10 @@ public class GetRecordIT extends AbstractOAIProviderIT {
         createBinaryObject(binaryPath, this.getClass().getClassLoader().getResourceAsStream("test-data/premis.xml"));
         createFedoraObjectWithOaiLink(objId, binaryPath, "http://fedora.info/definitions/v4/config#hasOaiPremisRecord");
 
-        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), objId, "premis", null, null, null);
+        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), "/" + objId, "premis", null, null, null);
         assertEquals(200, resp.getStatusLine().getStatusCode());
         OAIPMHtype oai =
-                ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
         assertEquals(0, oai.getError().size());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata().getAny());
@@ -100,10 +99,10 @@ public class GetRecordIT extends AbstractOAIProviderIT {
         createBinaryObject(binaryPath, this.getClass().getClassLoader().getResourceAsStream("test-data/marc21.xml"));
         createFedoraObjectWithOaiLink(objId, binaryPath, "http://fedora.info/definitions/v4/config#hasOaiMarc21Record");
 
-        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), objId, "marc21", null, null, null);
+        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), "/" + objId, "marc21", null, null, null);
         assertEquals(200, resp.getStatusLine().getStatusCode());
         OAIPMHtype oai =
-                ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
         assertEquals(0, oai.getError().size());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata().getAny());
@@ -112,16 +111,16 @@ public class GetRecordIT extends AbstractOAIProviderIT {
 
     @Test
     public void testGetOAIMarc21RecordWithObjectPath() throws Exception {
-        String objId = "foo/oai-test-" + RandomStringUtils.randomAlphabetic(8);
+        String objId = "/foo/oai-test-" + RandomStringUtils.randomAlphabetic(8);
         String binaryPath = "oai-data/marc21-binary-" + RandomStringUtils.randomAlphabetic(8);
 
         createBinaryObject(binaryPath, this.getClass().getClassLoader().getResourceAsStream("test-data/marc21.xml"));
         createFedoraObjectWithOaiLink(objId, binaryPath, "http://fedora.info/definitions/v4/config#hasOaiMarc21Record");
 
-        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), objId, "marc21", null, null, null);
+        HttpResponse resp = getOAIPMHResponse(VerbType.GET_RECORD.value(), "/" + objId, "marc21", null, null, null);
         assertEquals(200, resp.getStatusLine().getStatusCode());
         OAIPMHtype oai =
-                ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
+            ((JAXBElement<OAIPMHtype>) this.unmarshaller.unmarshal(resp.getEntity().getContent())).getValue();
         assertEquals(0, oai.getError().size());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata());
         assertNotNull(oai.getGetRecord().getRecord().getMetadata().getAny());
