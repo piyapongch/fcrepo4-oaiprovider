@@ -12,14 +12,13 @@
     <!-- Mints PIDs-->
     <bean class="org.fcrepo.mint.UUIDPidMinter"/>
 
-    <bean name="jcrDcGenerator" class="org.fcrepo.oai.dublincore.JcrPropertiesGenerator"/>
+    <bean name="jcrDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator"/>
 
 <!--    <bean name="jcrQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/>-->
 
 <!--    <bean name="jcrEtdmsGenerator" class="org.fcrepo.oai.etdms.JcrPropertiesGenerator"/>-->
     
     <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
-        <property name="autoGenerateOaiDc" value="true"/>
         <property name="maxListSize" value="5"/>
         <property name="setsEnabled" value="true"/>
         <property name="setsRootPath" value="/oai-cache/setspec"/>
@@ -27,6 +26,7 @@
         <property name="propertyHasSets" value="http://fedora.info/definitions/v4/config#hasOAISet"/>
         <property name="propertySetName" value="http://fedora.info/definitions/v4/config#hasOAISetName"/>
         <property name="propertyHasSetSpec" value="http://fedora.info/definitions/v4/config#hasOAISetSpec"/>
+        <property name="propertyHasModel" value="info:fedora/fedora-system:def/model#hasModel"/>
         <property name="propertyOaiRepositoryName" value="http://www.openarchives.org/OAI/2.0/repositoryName"/>
         <property name="propertyOaiDescription" value="http://www.openarchives.org/OAI/2.0/description"/>
         <property name="propertyOaiAdminEmail" value="http://www.openarchives.org/OAI/2.0/adminEmail"/>
