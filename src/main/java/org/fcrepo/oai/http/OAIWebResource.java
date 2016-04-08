@@ -22,21 +22,15 @@ import static org.openarchives.oai._2.VerbType.LIST_METADATA_FORMATS;
 import static org.openarchives.oai._2.VerbType.LIST_RECORDS;
 import static org.openarchives.oai._2.VerbType.LIST_SETS;
 
-import java.io.InputStream;
-import java.net.URI;
-
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
 
@@ -62,19 +56,31 @@ public class OAIWebResource {
     private OAIProviderService providerService;
 
     /**
-     * Create set.
+     * Gets OAI response.
      *
+     * @param verbParam the verb
+     * @param identifierParam the identifier
+     * @param metadataPrefixParam the metadata prefix
+     * @param fromParam the from
+     * @param untilParam the until
+     * @param setParam the set
+     * @param resumptionToken the resumption token
      * @param uriInfo the uri info
-     * @param src the src
-     * @return the response
+     * @return the oAI response
      * @throws RepositoryException the repository exception
      */
-    @POST
-    @Path("/sets")
-    @Consumes(MediaType.TEXT_XML)
-    public Response createSet(@Context final UriInfo uriInfo, final InputStream src) throws RepositoryException {
-        final String path = this.providerService.createSet(session, uriInfo, src);
-        return Response.created(URI.create(path)).build();
+    @GET
+    @Path("/")
+    @Produces(MediaType.TEXT_XML)
+    public Object getOAIResponse(final @QueryParam("verb") String verbParam,
+        final @QueryParam("identifier") String identifierParam,
+        final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
+        final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
+        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
+        final @QueryParam("property") String propery, final @QueryParam("value") String value)
+        throws RepositoryException {
+        return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
+            resumptionToken, uriInfo, propery, value);
     }
 
     /**
@@ -91,14 +97,42 @@ public class OAIWebResource {
      * @return the oAI response
      * @throws RepositoryException the repository exception
      */
-    @GET
+    // FIXME: post method supported
+    // @POST // remove post method supported
+    @Path("/")
     @Produces(MediaType.TEXT_XML)
-    public Object getOAIResponse(final @QueryParam("verb") String verbParam,
+    public Object postOAIResponse(final @QueryParam("verb") String verbParam,
         final @QueryParam("identifier") String identifierParam,
         final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
-        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo)
-            throws RepositoryException {
+        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
+        final @QueryParam("property") String propery, final @QueryParam("value") String value)
+        throws RepositoryException {
+        return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
+            resumptionToken, uriInfo, propery, value);
+    }
+
+    /**
+     * Gets OAI response.
+     *
+     * @param verbParam the verb
+     * @param identifierParam the identifier
+     * @param metadataPrefixParam the metadata prefix
+     * @param fromParam the from
+     * @param untilParam the until
+     * @param setParam the set
+     * @param resumptionToken the resumption token
+     * @param uriInfo the uri info
+     * @return the oAI response
+     * @throws RepositoryException the repository exception
+     */
+    private Object createOAIResponse(final @QueryParam("verb") String verbParam,
+        final @QueryParam("identifier") String identifierParam,
+        final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
+        final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
+        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
+        final @QueryParam("property") String propery, final @QueryParam("value") String value)
+        throws RepositoryException {
 
         int offset = 0;
 
@@ -123,8 +157,8 @@ public class OAIWebResource {
                 set = token.getSet();
                 metadataPrefix = token.getMetadataPrefix();
                 offset = token.getOffset();
-            } catch (Exception e) {
-                return providerService.error(null, null, null, OAIPMHerrorcodeType.BAD_RESUMPTION_TOKEN,
+            } catch (final Exception e) {
+                return OAIProviderService.error(null, null, null, OAIPMHerrorcodeType.BAD_RESUMPTION_TOKEN,
                     "Resumption token is invalid");
             }
         } else {
@@ -139,7 +173,7 @@ public class OAIWebResource {
 
         /* decide what to do depending on the verb passed */
         if (verb == null) {
-            return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
+            return OAIProviderService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
                 "Verb is required");
         }
 
@@ -149,7 +183,7 @@ public class OAIWebResource {
                 verifyEmpty(identifier, metadataPrefix, from, until, set);
                 return providerService.identify(this.session, uriInfo);
             } catch (JAXBException | IllegalArgumentException e) {
-                return providerService.error(VerbType.IDENTIFY, identifier, metadataPrefix,
+                return OAIProviderService.error(VerbType.IDENTIFY, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -159,8 +193,8 @@ public class OAIWebResource {
             try {
                 verifyEmpty(from, until, set);
                 return providerService.listMetadataFormats(this.session, uriInfo, identifier);
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.LIST_METADATA_FORMATS, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_METADATA_FORMATS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -171,8 +205,8 @@ public class OAIWebResource {
                 verifyEmpty(from, until, set);
                 return providerService.getRecord(this.session, uriInfo, identifier, metadataPrefix);
 
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.GET_RECORD, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.GET_RECORD, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -182,8 +216,8 @@ public class OAIWebResource {
             try {
                 verifyEmpty(identifier);
                 return providerService.listIdentifiers(this.session, uriInfo, metadataPrefix, from, until, set, offset);
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.LIST_IDENTIFIERS, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_IDENTIFIERS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -192,8 +226,8 @@ public class OAIWebResource {
         if (verb.equals(LIST_SETS.value())) {
             try {
                 verifyEmpty(identifier);
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
             return providerService.listSets(session, uriInfo, offset);
@@ -204,21 +238,31 @@ public class OAIWebResource {
             try {
                 verifyEmpty(identifier);
                 return providerService.listRecords(this.session, uriInfo, metadataPrefix, from, until, set, offset);
-            } catch (IllegalArgumentException e) {
-                return providerService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_RECORDS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
-        return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_VERB,
+
+        /* search records response */
+        if (verb.equals("Search")) {
+            try {
+                verifyEmpty(identifier);
+                return providerService.search(this.session, uriInfo, metadataPrefix, propery, value, offset);
+            } catch (final IllegalArgumentException e) {
+                return OAIProviderService.error(VerbType.LIST_RECORDS, identifier, metadataPrefix,
+                    OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
+            }
+        }
+        return OAIProviderService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_VERB,
             "Unknown verb '" + verb + "'");
     }
 
     private void verifyEmpty(final String... data) throws IllegalArgumentException {
-        for (String s : data) {
+        for (final String s : data) {
             if (s != null && !s.isEmpty()) {
                 throw new IllegalArgumentException("Wrong argument for method");
             }
         }
     }
-
 }
