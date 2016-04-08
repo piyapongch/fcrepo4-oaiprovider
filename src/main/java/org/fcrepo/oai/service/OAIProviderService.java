@@ -169,6 +169,10 @@ public class OAIProviderService {
     private final String publicAgent =
         new String(Base64.decodeBase64("aHR0cDovL3Byb2plY3RoeWRyYS5vcmcvbnMvYXV0aC9ncm91cCNwdWJsaWMYXl4YVVJJ"));
 
+    // public collection, ualindentifier:is_official "true^^http://www.w3.org/2001/XMLSchema#boolean"
+    private final String isOfficial =
+        new String(Base64.decodeBase64("dHJ1ZRheXhhodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYSNib29sZWFu"));
+
     private static final Pattern slashPattern = Pattern.compile("\\/");
 
     private static final Pattern pathPattern = Pattern.compile("(?<=\\G..)");
@@ -858,10 +862,14 @@ public class OAIProviderService {
 
             // query from collection object model
             final StringBuilder jql = new StringBuilder();
-            jql.append("SELECT [mode:localName] AS spec, [dcterms:title] AS name, [dcterms:description] AS desc FROM [")
-                .append(FedoraJcrTypes.FEDORA_RESOURCE)
-                .append("] WHERE [model:hasModel] = 'Collection' AND [uatermsid:is_community] IS NULL ")
-                .append("ORDER BY [dcterms:title]");
+            jql.append("SELECT res.[mode:localName] AS spec, res.[dcterms:title] AS name,")
+                .append(" res.[dcterms:description] AS desc, com.[dcterms:title] as cname ");
+            jql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as res ").append("JOIN [")
+                .append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as com ")
+                .append(" ON res.[ualidentifier:belongsToCommunity] = com.[mode:localName] ")
+                .append("WHERE res.[model:hasModel] = 'Collection' AND res.[ualidentifier:is_community] IS NULL ")
+                .append(" AND res.[ualidentifier:is_official] = CAST('" + isOfficial + "' AS BINARY)")
+                .append(" ORDER BY res.[dcterms:title]");
             final RowIterator setResult = executeQuery(queryManager, jql.toString());
             if (!setResult.hasNext()) {
                 return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
@@ -869,8 +877,10 @@ public class OAIProviderService {
             while (setResult.hasNext()) {
                 final SetType set = oaiFactory.createSetType();
                 final Row sol = setResult.nextRow();
-                set.setSetName(valueConverter.convert(sol.getValue("name")).asLiteral().getString());
+                final String setName = valueConverter.convert(sol.getValue("cname")).asLiteral().getString() + "/"
+                    + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
                 set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
+                set.setSetName(setName);
                 sets.getSet().add(set);
             }
 

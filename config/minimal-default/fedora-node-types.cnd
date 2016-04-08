@@ -84,10 +84,12 @@
   - model:hasModel (STRING) multiple
   - webacl:agent (STRING) multiple
   - dcterms:type (STRING) multiple
-  - uatermsid:hasCollectionId (STRING) multiple
-  - uatermsid:is_community (STRING) multiple
   - dcterms:title (STRING) multiple
   - dcterms:description (STRING) multiple
+  - uatermsid:hasCollectionId (STRING) multiple
+  - uatermsid:is_community (STRING) multiple
+  - ualidentifier:belongsToCommunity (STRING) multiple
+  - ualidentifier:is_official (STRING) multiple
 
 /*
  * A Fedora object.
