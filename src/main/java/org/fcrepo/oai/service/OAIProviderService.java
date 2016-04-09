@@ -873,10 +873,9 @@ public class OAIProviderService {
                 .append(" col.[dcterms:description] AS desc, com.[dcterms:title] as cname ");
             jql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as col ").append("JOIN [")
                 .append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as com ")
-                .append(" ON col.[ualidentifier:belongsToCommunity] = com.[mode:localName] ")
+                .append(" ON col.[uatermsid:belongsToCommunity] = com.[mode:localName] ")
                 .append("WHERE col.[model:hasModel] = 'Collection' AND col.[uatermsid:is_community] IS NULL ")
-                .append(" AND col.[uatermsid:is_official] = CAST('" + isOfficial + "' AS BINARY)")
-                .append(" ORDER BY col.[dcterms:title]");
+                .append(" AND col.[uatermsid:is_official] = CAST('" + isOfficial + "' AS BINARY)");
             final RowIterator setResult = executeQuery(queryManager, jql.toString());
             if (!setResult.hasNext()) {
                 return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
@@ -885,7 +884,7 @@ public class OAIProviderService {
                 final SetType set = oaiFactory.createSetType();
                 final Row sol = setResult.nextRow();
                 final String setName =
-                    valueConverter.convert(sol.getValue("cname")).asLiteral().getString() + "/"
+                    valueConverter.convert(sol.getValue("cname")).asLiteral().getString() + " / "
                         + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
                 set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
                 set.setSetName(setName);
