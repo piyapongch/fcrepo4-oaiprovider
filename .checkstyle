@@ -8,18 +8,12 @@
   </local-check-config>
   <fileset name="java-sources-checkstyle" enabled="true" check-config-name="maven-checkstyle-plugin checkstyle" local="true">
     <file-match-pattern match-pattern="src/test/java/.*\.java" include-pattern="true"/>
-    <file-match-pattern match-pattern="target/generated-sources/.*\.java" include-pattern="true"/>
     <file-match-pattern match-pattern="src/main/java/.*\.java" include-pattern="true"/>
     <file-match-pattern match-pattern="src/test/java.*.*integration/.*" include-pattern="false"/>
     <file-match-pattern match-pattern="src/test/java.*.*purl/.*" include-pattern="false"/>
     <file-match-pattern match-pattern="src/test/java.*.*openarchives/.*" include-pattern="false"/>
     <file-match-pattern match-pattern="src/test/java.*.*ndltd/standards/metadata/etdms/.*" include-pattern="false"/>
     <file-match-pattern match-pattern="src/test/java.*.*ualberta/library/terms/oai_qdc/.*" include-pattern="false"/>
-    <file-match-pattern match-pattern="target/generated-sources.*.*integration/.*" include-pattern="false"/>
-    <file-match-pattern match-pattern="target/generated-sources.*.*purl/.*" include-pattern="false"/>
-    <file-match-pattern match-pattern="target/generated-sources.*.*openarchives/.*" include-pattern="false"/>
-    <file-match-pattern match-pattern="target/generated-sources.*.*ndltd/standards/metadata/etdms/.*" include-pattern="false"/>
-    <file-match-pattern match-pattern="target/generated-sources.*.*ualberta/library/terms/oai_qdc/.*" include-pattern="false"/>
     <file-match-pattern match-pattern="src/main/java.*.*integration/.*" include-pattern="false"/>
     <file-match-pattern match-pattern="src/main/java.*.*purl/.*" include-pattern="false"/>
     <file-match-pattern match-pattern="src/main/java.*.*openarchives/.*" include-pattern="false"/>
