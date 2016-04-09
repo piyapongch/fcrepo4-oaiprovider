@@ -79,14 +79,14 @@
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "ualidentifier:belongsToCommunity(STRING)"
+            "columns" : "uatermsid:belongsToCommunity(STRING)"
         },
         "isOfficial" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "ualidentifier:is_official(STRING)"
+            "columns" : "uatermsid:is_official(STRING)"
         },
         "localName" : {
             "kind" : "value",

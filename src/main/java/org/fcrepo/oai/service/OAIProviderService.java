@@ -429,8 +429,9 @@ public class OAIProviderService {
         id.setProtocolVersion("2.0");
 
         // repository name, project version
-        RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyOaiRepositoryName));
+        RdfStream triples =
+            root.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(propertyOaiRepositoryName));
         id.setRepositoryName(triples.next().getObject().getLiteralValue().toString());
 
         // base url
@@ -504,8 +505,9 @@ public class OAIProviderService {
                     } else if (mdf.getPrefix().equals("oai_etdms")) {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else {
-                        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                            .filter(new PropertyPredicate(mdf.getPropertyName()));
+                        final RdfStream triples =
+                            obj.getTriples(converter, PropertiesRdfContext.class)
+                                .filter(new PropertyPredicate(mdf.getPropertyName()));
                         if (triples.hasNext()) {
                             listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                         }
@@ -618,8 +620,9 @@ public class OAIProviderService {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(format.getPropertyName()));
+        final RdfStream triples =
+            obj.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(format.getPropertyName()));
 
         if (!triples.hasNext()) {
             log.error("There is no OAI record of type " + format.getPrefix() + " associated with the object "
@@ -676,7 +679,7 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> listIdentifiers(final Session session, final UriInfo uriInfo,
         final String metadataPrefix, final String from, final String until, final String set, final int offset)
-            throws RepositoryException {
+        throws RepositoryException {
 
         if (metadataPrefix == null) {
             return error(VerbType.LIST_IDENTIFIERS, null, null, OAIPMHerrorcodeType.BAD_ARGUMENT,
@@ -707,8 +710,9 @@ public class OAIProviderService {
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
         final ValueConverter valueConverter = new ValueConverter(session, converter);
 
-        final String jql = listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, metadataPrefix, from, until, set,
-            maxListSize, offset);
+        final String jql =
+            listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, metadataPrefix, from, until, set, maxListSize,
+                offset);
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final RowIterator result = executeQuery(queryManager, jql);
@@ -732,14 +736,16 @@ public class OAIProviderService {
 
                     // get base url
                     final FedoraResource root = nodeService.find(session, rootPath);
-                    RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-                        .filter(new PropertyPredicate(propertyOaiBaseUrl));
+                    RdfStream triples =
+                        root.getTriples(converter, PropertiesRdfContext.class)
+                            .filter(new PropertyPredicate(propertyOaiBaseUrl));
                     h.setIdentifier(createId(converter.asString(sub)));
 
                     final Container obj = containerService.find(session, path);
                     h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
-                    triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                        .filter(new PropertyPredicate(propertyHasCollectionId));
+                    triples =
+                        obj.getTriples(converter, PropertiesRdfContext.class)
+                            .filter(new PropertyPredicate(propertyHasCollectionId));
                     while (triples.hasNext()) {
                         h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
                     }
@@ -787,9 +793,10 @@ public class OAIProviderService {
     public static String encodeResumptionToken(final String verb, final String metadataPrefix, final String from,
         final String until, final String set, final int offset) throws UnsupportedEncodingException {
 
-        final String[] data = new String[] { urlEncode(verb), urlEncode(metadataPrefix),
-            urlEncode(from != null ? from : ""), urlEncode(until != null ? until : ""),
-            urlEncode(set != null ? set : ""), urlEncode(String.valueOf(offset)) };
+        final String[] data =
+            new String[] { urlEncode(verb), urlEncode(metadataPrefix), urlEncode(from != null ? from : ""),
+                urlEncode(until != null ? until : ""), urlEncode(set != null ? set : ""),
+                urlEncode(String.valueOf(offset)) };
         return Base64.encodeBase64URLSafeString(StringUtils.join(data, ':').getBytes("UTF-8"));
     }
 
@@ -862,14 +869,14 @@ public class OAIProviderService {
 
             // query from collection object model
             final StringBuilder jql = new StringBuilder();
-            jql.append("SELECT res.[mode:localName] AS spec, res.[dcterms:title] AS name,")
-                .append(" res.[dcterms:description] AS desc, com.[dcterms:title] as cname ");
-            jql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as res ").append("JOIN [")
+            jql.append("SELECT col.[mode:localName] AS spec, col.[dcterms:title] AS name,")
+                .append(" col.[dcterms:description] AS desc, com.[dcterms:title] as cname ");
+            jql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as col ").append("JOIN [")
                 .append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as com ")
-                .append(" ON res.[ualidentifier:belongsToCommunity] = com.[mode:localName] ")
-                .append("WHERE res.[model:hasModel] = 'Collection' AND res.[ualidentifier:is_community] IS NULL ")
-                .append(" AND res.[ualidentifier:is_official] = CAST('" + isOfficial + "' AS BINARY)")
-                .append(" ORDER BY res.[dcterms:title]");
+                .append(" ON col.[ualidentifier:belongsToCommunity] = com.[mode:localName] ")
+                .append("WHERE col.[model:hasModel] = 'Collection' AND col.[uatermsid:is_community] IS NULL ")
+                .append(" AND col.[uatermsid:is_official] = CAST('" + isOfficial + "' AS BINARY)")
+                .append(" ORDER BY col.[dcterms:title]");
             final RowIterator setResult = executeQuery(queryManager, jql.toString());
             if (!setResult.hasNext()) {
                 return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
@@ -877,8 +884,9 @@ public class OAIProviderService {
             while (setResult.hasNext()) {
                 final SetType set = oaiFactory.createSetType();
                 final Row sol = setResult.nextRow();
-                final String setName = valueConverter.convert(sol.getValue("cname")).asLiteral().getString() + "/"
-                    + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
+                final String setName =
+                    valueConverter.convert(sol.getValue("cname")).asLiteral().getString() + "/"
+                        + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
                 set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
                 set.setSetName(setName);
                 sets.getSet().add(set);
@@ -907,7 +915,7 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> listRecords(final Session session, final UriInfo uriInfo,
         final String metadataPrefix, final String from, final String until, final String set, final int offset)
-            throws RepositoryException {
+        throws RepositoryException {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
@@ -937,8 +945,9 @@ public class OAIProviderService {
                 "Sets are not enabled");
         }
 
-        final String jql = listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, metadataPrefix, from, until, set,
-            maxListSize, offset);
+        final String jql =
+            listResourceQuery(session, FedoraJcrTypes.FEDORA_CONTAINER, metadataPrefix, from, until, set, maxListSize,
+                offset);
         try {
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -1003,8 +1012,9 @@ public class OAIProviderService {
         h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
 
         // set setSpecs
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-            .filter(new PropertyPredicate(propertyHasCollectionId));
+        final RdfStream triples =
+            obj.getTriples(converter, PropertiesRdfContext.class)
+                .filter(new PropertyPredicate(propertyHasCollectionId));
         while (triples.hasNext()) {
             h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
         }
@@ -1042,7 +1052,7 @@ public class OAIProviderService {
 
     private String listResourceQuery(final Session session, final String mixinTypes, final String metadataPrefix,
         final String from, final String until, final String set, final int limit, final int offset)
-            throws RepositoryException {
+        throws RepositoryException {
 
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
         final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
