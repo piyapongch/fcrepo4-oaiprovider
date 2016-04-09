@@ -89,7 +89,7 @@
   - uatermsid:hasCollectionId (STRING) multiple
   - uatermsid:is_community (STRING) multiple
   - uatermsid:belongsToCommunity (STRING) multiple
-  - ualidentifier:is_official (STRING) multiple
+  - uatermsid:is_official (STRING) multiple
 
 /*
  * A Fedora object.

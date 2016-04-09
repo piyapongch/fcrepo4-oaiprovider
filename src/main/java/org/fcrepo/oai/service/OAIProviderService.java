@@ -170,7 +170,7 @@ public class OAIProviderService {
         new String(Base64.decodeBase64("aHR0cDovL3Byb2plY3RoeWRyYS5vcmcvbnMvYXV0aC9ncm91cCNwdWJsaWMYXl4YVVJJ"));
 
     // public collection, ualindentifier:is_official "true^^http://www.w3.org/2001/XMLSchema#boolean"
-    private final String isOfficial =
+    private final String booleanTrue =
         new String(Base64.decodeBase64("dHJ1ZRheXhhodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYSNib29sZWFu"));
 
     private static final Pattern slashPattern = Pattern.compile("\\/");
@@ -852,6 +852,7 @@ public class OAIProviderService {
     public JAXBElement<OAIPMHtype> listSets(final Session session, final UriInfo uriInfo, final int offset)
         throws RepositoryException {
 
+        // TODO: support offset
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraLdp.class));
         final ValueConverter valueConverter = new ValueConverter(session, converter);
@@ -875,7 +876,8 @@ public class OAIProviderService {
                 .append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as com ")
                 .append(" ON col.[uatermsid:belongsToCommunity] = com.[mode:localName] ")
                 .append("WHERE col.[model:hasModel] = 'Collection' AND col.[uatermsid:is_community] IS NULL ")
-                .append(" AND col.[uatermsid:is_official] = CAST('" + isOfficial + "' AS BINARY)");
+                .append(" AND col.[uatermsid:is_official] = CAST('" + booleanTrue + "' AS BINARY)")
+                .append(" AND com.[uatermsid:is_community] = CAST('" + booleanTrue + "' AS BINARY)");
             final RowIterator setResult = executeQuery(queryManager, jql.toString());
             if (!setResult.hasNext()) {
                 return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
