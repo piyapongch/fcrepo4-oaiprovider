@@ -142,7 +142,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addContributor(oaidc, prop);
                 break;
 
-            case "ualterms:thesiscommitteemember":
+            case "uatermsid:thesiscommitteemember":
                 addContributor(oaidc, prop);
                 break;
 
