@@ -78,7 +78,7 @@ public class OAIWebResource {
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
         final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
         final @QueryParam("property") String propery, final @QueryParam("value") String value)
-        throws RepositoryException {
+            throws RepositoryException {
         return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
             resumptionToken, uriInfo, propery, value);
     }
@@ -105,7 +105,7 @@ public class OAIWebResource {
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
         final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
         final @QueryParam("property") String propery, final @QueryParam("value") String value)
-        throws RepositoryException {
+            throws RepositoryException {
         return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
             resumptionToken, uriInfo, propery, value);
     }
@@ -130,7 +130,7 @@ public class OAIWebResource {
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
         final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
         final @QueryParam("property") String propery, final @QueryParam("value") String value)
-        throws RepositoryException {
+            throws RepositoryException {
 
         int offset = 0;
 
@@ -224,11 +224,11 @@ public class OAIWebResource {
         if (verb.equals(LIST_SETS.value())) {
             try {
                 verifyEmpty(identifier);
+                return providerService.listSets(session, uriInfo, offset);
             } catch (final IllegalArgumentException e) {
                 return OAIProviderService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
-            return providerService.listSets(session, uriInfo, offset);
         }
 
         /* list records response */

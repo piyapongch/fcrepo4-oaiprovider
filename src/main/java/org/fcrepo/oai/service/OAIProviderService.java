@@ -723,7 +723,7 @@ public class OAIProviderService {
             final ListIdentifiersType ids = oaiFactory.createListIdentifiersType();
 
             while (result.hasNext()) {
-                // fix JCR-SQL2 LIMIT bug in 4.2.0
+                // workaround JCR-SQL2 LIMIT bug in 4.2.0
                 if (result.getPosition() < maxListSize) {
                     final HeaderType h = oaiFactory.createHeaderType();
                     final Row sol = result.nextRow();
@@ -787,7 +787,7 @@ public class OAIProviderService {
     public static String encodeResumptionToken(final String verb, final String metadataPrefix, final String from,
         final String until, final String set, final int offset) throws UnsupportedEncodingException {
 
-        final String[] data = new String[] { urlEncode(verb), urlEncode(metadataPrefix),
+        final String[] data = new String[] { urlEncode(verb), urlEncode(metadataPrefix != null ? metadataPrefix : ""),
             urlEncode(from != null ? from : ""), urlEncode(until != null ? until : ""),
             urlEncode(set != null ? set : ""), urlEncode(String.valueOf(offset)) };
         return Base64.encodeBase64URLSafeString(StringUtils.join(data, ':').getBytes("UTF-8"));
@@ -845,7 +845,6 @@ public class OAIProviderService {
     public JAXBElement<OAIPMHtype> listSets(final Session session, final UriInfo uriInfo, final int offset)
         throws RepositoryException {
 
-        // TODO: support offset
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraLdp.class));
         final ValueConverter valueConverter = new ValueConverter(session, converter);
@@ -871,20 +870,40 @@ public class OAIProviderService {
                 .append("WHERE col.[model:hasModel] = 'Collection' AND col.[uatermsid:is_community] IS NULL ")
                 .append(" AND col.[uatermsid:is_official] = CAST('" + booleanTrue + "' AS BINARY)")
                 .append(" AND com.[uatermsid:is_community] = CAST('" + booleanTrue + "' AS BINARY)");
-            final RowIterator setResult = executeQuery(queryManager, jql.toString());
-            if (!setResult.hasNext()) {
-                return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
-            }
-            while (setResult.hasNext()) {
-                final SetType set = oaiFactory.createSetType();
-                final Row sol = setResult.nextRow();
-                final String setName = valueConverter.convert(sol.getValue("cname")).asLiteral().getString() + " / "
-                    + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
-                set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
-                set.setSetName(setName);
-                sets.getSet().add(set);
+            if (maxListSize > 0) {
+                // bug in 4.2.0 fixed in 4.5.0
+                // jql.append(" LIMIT ").append(maxListSize);
+                jql.append(" OFFSET ").append(offset);
             }
 
+            final RowIterator result = executeQuery(queryManager, jql.toString());
+            if (!result.hasNext()) {
+                return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
+            }
+            while (result.hasNext()) {
+                // workaround JCR-SQL2 LIMIT bug in 4.2.0
+                if (result.getPosition() < maxListSize) {
+                    final SetType set = oaiFactory.createSetType();
+                    final Row sol = result.nextRow();
+                    final String setName = valueConverter.convert(sol.getValue("cname")).asLiteral().getString() + " / "
+                        + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
+                    set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
+                    set.setSetName(setName);
+                    sets.getSet().add(set);
+                } else {
+                    break;
+                }
+            }
+
+            // resumptionToken
+            if (sets.getSet().size() == maxListSize) {
+                final ResumptionTokenType token = oaiFactory.createResumptionTokenType();
+                token.setValue(
+                    encodeResumptionToken(VerbType.LIST_SETS.value(), null, null, null, null, offset + maxListSize));
+                token.setCursor(new BigInteger(String.valueOf(offset)));
+                token.setCompleteListSize(new BigInteger(String.valueOf(result.getSize() + offset)));
+                sets.setResumptionToken(token);
+            }
             oai.setListSets(sets);
             return oaiFactory.createOAIPMH(oai);
         } catch (final Exception e) {
@@ -955,7 +974,7 @@ public class OAIProviderService {
 
             final ListRecordsType records = oaiFactory.createListRecordsType();
             while (result.hasNext()) {
-                // fix JCR-SQL2 LIMIT bug in 4.2.0
+                // workaround JCR-SQL2 LIMIT bug in 4.2.0
                 if (result.getPosition() < maxListSize) {
                     final Row solution = result.nextRow();
                     final Resource subjectUri = valueConverter.convert(solution.getValue("sub")).asResource();
@@ -1114,6 +1133,7 @@ public class OAIProviderService {
     private RowIterator executeQuery(final QueryManager queryManager, final String jql) throws RepositoryException {
         final Query query = queryManager.createQuery(jql, Query.JCR_SQL2);
         final QueryResult results = (QueryResult) query.execute();
+        log.debug(jql);
         log.debug(results.getPlan());
         return results.getRows();
     }
