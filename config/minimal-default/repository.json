@@ -81,6 +81,13 @@
             "nodeType" : "fedora:Resource",
             "columns" : "uatermsid:is_official(STRING)"
         },
+        "isCommunity" : {
+            "kind" : "value",
+            "provider" : "local",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "uatermsid:is_community(STRING)"
+        },
         "localName" : {
             "kind" : "value",
             "provider" : "local",
