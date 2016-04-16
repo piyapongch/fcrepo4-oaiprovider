@@ -74,13 +74,6 @@
             "nodeType" : "fedora:Resource",
             "columns" : "uatermsid:hasCollectionId(STRING)"
         },
-        "isOfficial" : {
-            "kind" : "value",
-            "provider" : "local",
-            "synchronous" : "false",
-            "nodeType" : "fedora:Resource",
-            "columns" : "uatermsid:is_official(STRING)"
-        },
         "isCommunity" : {
             "kind" : "value",
             "provider" : "local",

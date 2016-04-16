@@ -870,21 +870,21 @@ public class OAIProviderService {
 
             // store community names in cache
             final StringBuilder cjql = new StringBuilder();
-            cjql.append("SELECT com.[mode:localName] AS comid, com.[dcterms:title] as name ");
+            cjql.append("SELECT com.[mode:localName] AS id, com.[dcterms:title] as name ");
             cjql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as com ")
                 .append("WHERE com.[uatermsid:is_community] = CAST('" + booleanTrue + "' AS BINARY)");
             final RowIterator res = executeQuery(queryManager, cjql.toString());
             final HashMap<String, String> com = new HashMap<>();
             while (res.hasNext()) {
                 final Row sol = res.nextRow();
-                com.put(valueConverter.convert(sol.getValue("comid")).asLiteral().getString(),
+                com.put(valueConverter.convert(sol.getValue("id")).asLiteral().getString(),
                     valueConverter.convert(sol.getValue("name")).asLiteral().getString());
             }
 
             // query official collections
             final StringBuilder jql = new StringBuilder();
             jql.append("SELECT col.[mode:localName] AS spec, col.[dcterms:title] AS name, ")
-                .append("col.[uatermsid:belongsToCommunity] as comid ");
+                .append("col.[uatermsid:belongsToCommunity] as cid ");
             jql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as col ")
                 .append("WHERE col.[model:hasModel] = 'Collection' ")
                 .append(" AND col.[uatermsid:is_community] != CAST('" + booleanTrue + "' AS BINARY)")
@@ -907,7 +907,7 @@ public class OAIProviderService {
                     final Row sol = result.nextRow();
                     // create setName: comunity name / collection name
                     final String setName =
-                        com.get(valueConverter.convert(sol.getValue("comid")).asLiteral().getString()) + " / "
+                        com.get(valueConverter.convert(sol.getValue("cid")).asLiteral().getString()) + " / "
                             + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
                     set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
                     set.setSetName(setName);
