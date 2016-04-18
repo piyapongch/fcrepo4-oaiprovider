@@ -1,11 +1,16 @@
 export JAVA_HOME=/usr/java/default
 export PATH=$JAVA_HOME/bin:$PATH
 export CATALINA_HOME=/usr/share/tomcat7
-JAVA_OPTS="$JAVA_OPTS -server"
 
+# jvm options
 JAVA_OPTS="$JAVA_OPTS -server"
 JAVA_OPTS="$JAVA_OPTS -XX:NewSize=2560m -XX:MaxNewSize=5g -XX:InitialHeapSize=10g -XX:MaxHeapSize=10g"
-JAVA_OPTS="$JAVA_OPTS -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m -XX:+UseParallelGC -XX:+DisableExplicitGC -XX:SurvivorRatio=15 -XX:HeapDumpPath=/usr/share/tomcat7/logs/fedora_heap.hprof -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -Xloggc:/usr/share/tomcat7/logs/gc.log"
+JAVA_OPTS="$JAVA_OPTS -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m"
+JAVA_OPTS="$JAVA_OPTS -XX:+UseParallelGC -XX:+DisableExplicitGC -XX:SurvivorRatio=15"
+JAVA_OPTS="$JAVA_OPTS -XX:HeapDumpPath=/usr/share/tomcat7/logs/fedora_heap.hprof"
+JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime"
+JAVA_OPTS="$JAVA_OPTS -Xloggc:/usr/share/tomcat7/logs/gc.log"
+
 # Timezone and JVM file encoding
 JAVA_OPTS="$JAVA_OPTS -Duser.timezone=UTC -Dfile.encoding=UTF8 -Djava.awt.headless=true"
 export CATALINA_OPTS="-Dcom.sun.management.jmxremote \
