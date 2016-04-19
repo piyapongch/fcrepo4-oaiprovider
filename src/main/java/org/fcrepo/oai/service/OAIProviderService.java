@@ -894,7 +894,6 @@ public class OAIProviderService {
                 .append("col.[uatermsid:belongsToCommunity] as cid ");
             jql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as col ")
                 .append("WHERE col.[model:hasModel] = 'Collection' ")
-                .append(" AND col.[uatermsid:is_community] != CAST('" + booleanTrue + "' AS BINARY)")
                 .append(" AND col.[uatermsid:is_official] = CAST('" + booleanTrue + "' AS BINARY)")
                 .append(" AND col.[uatermsid:belongsToCommunity] IS NOT NULL");
 
