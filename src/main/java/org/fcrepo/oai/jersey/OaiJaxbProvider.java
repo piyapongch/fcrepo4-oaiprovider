@@ -61,7 +61,8 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
 
     private static final String schemaLocation =
         "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\n"
-            + "    http://www.openarchives.org/OAI/2.0/oai-identifier.xsd\n"
+            + "    http://www.openarchives.org/OAI/2.0/oai-identifier "
+            + "http://www.openarchives.org/OAI/2.0/oai-identifier.xsd\n"
             + "    http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\n"
             + "    http://www.ndltd.org/standards/metadata/etdms/1.0/ "
             + "http://www.ndltd.org/standards/metadata/etdms/1-0/etdms.xsd";
@@ -74,9 +75,8 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
      * @throws JAXBException the jAXB exception
      */
     public OaiJaxbProvider() throws JAXBException {
-        this.marshaller =
-            JAXBContext.newInstance(OaiDcType.class, OaiIdentifierType.class, OAIPMHtype.class, Thesis.class)
-                .createMarshaller();
+        this.marshaller = JAXBContext
+            .newInstance(OaiDcType.class, OaiIdentifierType.class, OAIPMHtype.class, Thesis.class).createMarshaller();
 
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
 

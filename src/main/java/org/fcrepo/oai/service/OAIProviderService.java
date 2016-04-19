@@ -517,15 +517,17 @@ public class OAIProviderService {
             /* generate a general metadata format response */
             listMetadataFormats.getMetadataFormat().addAll(listAvailableMetadataFormats());
         }
+        final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
 
+        // request
         final RequestType req = oaiFactory.createRequestType();
         req.setVerb(VerbType.LIST_METADATA_FORMATS);
         req.setValue(uriInfo.getRequestUri().toASCIIString());
+        oai.setRequest(req);
 
-        final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
+        // response
         oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
         oai.setListMetadataFormats(listMetadataFormats);
-        oai.setRequest(req);
         return oaiFactory.createOAIPMH(oai);
     }
 
@@ -750,6 +752,7 @@ public class OAIProviderService {
                 }
             }
 
+            // request
             final RequestType req = oaiFactory.createRequestType();
             if (ids.getHeader().size() == maxListSize) {
                 final ResumptionTokenType token = oaiFactory.createResumptionTokenType();
@@ -764,7 +767,10 @@ public class OAIProviderService {
             req.setFrom(StringUtils.isEmpty(from) ? null : from);
             req.setUntil(StringUtils.isEmpty(until) ? null : until);
             req.setSet(StringUtils.isEmpty(set) ? null : set);
+            req.setValue(uriInfo.getRequestUri().toASCIIString());
             oai.setRequest(req);
+
+            // response
             oai.setListIdentifiers(ids);
             return oaiFactory.createOAIPMH(oai);
         } catch (final Exception e) {
@@ -859,6 +865,14 @@ public class OAIProviderService {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
             oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
+
+            // request
+            final RequestType req = oaiFactory.createRequestType();
+            req.setVerb(VerbType.LIST_SETS);
+            req.setValue(uriInfo.getRequestUri().toASCIIString());
+            oai.setRequest(req);
+
+            // response
             final ListSetsType sets = oaiFactory.createListSetsType();
 
             // store community names in cache
@@ -919,6 +933,8 @@ public class OAIProviderService {
                 token.setCompleteListSize(new BigInteger(String.valueOf(result.getSize() + offset)));
                 sets.setResumptionToken(token);
             }
+
+            // response
             oai.setListSets(sets);
             return oaiFactory.createOAIPMH(oai);
         } catch (final Exception e) {
@@ -1010,11 +1026,16 @@ public class OAIProviderService {
                 token.setCompleteListSize(new BigInteger(String.valueOf(result.getSize() + offset)));
                 records.setResumptionToken(token);
             }
+
+            // request
             req.setVerb(VerbType.LIST_RECORDS);
             req.setMetadataPrefix(metadataPrefix);
             req.setFrom(StringUtils.isEmpty(from) ? null : from);
             req.setUntil(StringUtils.isEmpty(until) ? null : until);
             req.setSet(StringUtils.isEmpty(set) ? null : set);
+            req.setValue(uriInfo.getRequestUri().toASCIIString());
+
+            // response
             oai.setRequest(req);
             oai.setListRecords(records);
             return oaiFactory.createOAIPMH(oai);
