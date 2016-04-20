@@ -461,15 +461,14 @@ public class OAIProviderService {
         desc.setAny(idFactory.createOaiIdentifier(oaiIdType));
         id.getDescription().add(desc);
 
-        // request header
-        final RequestType req = oaiFactory.createRequestType();
-        req.setVerb(VerbType.IDENTIFY);
-        req.setValue(uriInfo.getRequestUri().toASCIIString());
-
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
-        oai.setIdentify(id);
+
+        // request
+        oai.setRequest(createRequest(VerbType.IDENTIFY, uriInfo));
+
+        // response
         oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
-        oai.setRequest(req);
+        oai.setIdentify(id);
         return oaiFactory.createOAIPMH(oai);
     }
 
@@ -520,10 +519,7 @@ public class OAIProviderService {
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
 
         // request
-        final RequestType req = oaiFactory.createRequestType();
-        req.setVerb(VerbType.LIST_METADATA_FORMATS);
-        req.setValue(uriInfo.getRequestUri().toASCIIString());
-        oai.setRequest(req);
+        oai.setRequest(createRequest(VerbType.LIST_METADATA_FORMATS, uriInfo));
 
         // response
         oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
@@ -585,13 +581,18 @@ public class OAIProviderService {
         final Container obj = containerService.find(session, path);
 
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
-        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
-        final RequestType req = oaiFactory.createRequestType();
-        req.setVerb(VerbType.GET_RECORD);
-        req.setValue(uriInfo.getRequestUri().toASCIIString());
-        req.setMetadataPrefix(metadataPrefix);
-        oai.setRequest(req);
 
+        // request
+        oai.setRequest(createRequest(VerbType.GET_RECORD, uriInfo));
+
+        // final RequestType req = oaiFactory.createRequestType();
+        // req.setVerb(VerbType.GET_RECORD);
+        // req.setValue(uriInfo.getRequestUri().toASCIIString());
+        // req.setMetadataPrefix(metadataPrefix);
+        // oai.setRequest(req);
+
+        // response
+        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
         final GetRecordType getRecord = oaiFactory.createGetRecordType();
         final RecordType record;
         try {
@@ -752,8 +753,7 @@ public class OAIProviderService {
                 }
             }
 
-            // request
-            final RequestType req = oaiFactory.createRequestType();
+            // resumptionToken
             if (ids.getHeader().size() == maxListSize) {
                 final ResumptionTokenType token = oaiFactory.createResumptionTokenType();
                 token.setValue(encodeResumptionToken(VerbType.LIST_IDENTIFIERS.value(), metadataPrefix, from, until,
@@ -762,13 +762,9 @@ public class OAIProviderService {
                 token.setCompleteListSize(new BigInteger(String.valueOf(result.getSize())));
                 ids.setResumptionToken(token);
             }
-            req.setVerb(VerbType.LIST_IDENTIFIERS);
-            req.setMetadataPrefix(metadataPrefix);
-            req.setFrom(StringUtils.isEmpty(from) ? null : from);
-            req.setUntil(StringUtils.isEmpty(until) ? null : until);
-            req.setSet(StringUtils.isEmpty(set) ? null : set);
-            req.setValue(uriInfo.getRequestUri().toASCIIString());
-            oai.setRequest(req);
+
+            // request
+            oai.setRequest(createRequest(VerbType.IDENTIFY, uriInfo));
 
             // response
             oai.setListIdentifiers(ids);
@@ -867,10 +863,7 @@ public class OAIProviderService {
             oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
 
             // request
-            final RequestType req = oaiFactory.createRequestType();
-            req.setVerb(VerbType.LIST_SETS);
-            req.setValue(uriInfo.getRequestUri().toASCIIString());
-            oai.setRequest(req);
+            oai.setRequest(createRequest(VerbType.LIST_SETS, uriInfo));
 
             // response
             final ListSetsType sets = oaiFactory.createListSetsType();
@@ -940,6 +933,19 @@ public class OAIProviderService {
             e.printStackTrace();
             throw new RepositoryException(e);
         }
+    }
+
+    private RequestType createRequest(final VerbType verb, final UriInfo uriInfo) {
+        final RequestType req = oaiFactory.createRequestType();
+        req.setVerb(verb);
+        req.setFrom(uriInfo.getQueryParameters().getFirst("from"));
+        req.setIdentifier(uriInfo.getQueryParameters().getFirst("identifier"));
+        req.setMetadataPrefix(uriInfo.getQueryParameters().getFirst("metadataPrefix"));
+        req.setResumptionToken(uriInfo.getQueryParameters().getFirst("resumptionToken"));
+        req.setSet(uriInfo.getQueryParameters().getFirst("set"));
+        req.setUntil(uriInfo.getQueryParameters().getFirst("until"));
+        req.setValue(uriInfo.getRequestUri().toASCIIString());
+        return req;
     }
 
     /**
@@ -1027,15 +1033,9 @@ public class OAIProviderService {
             }
 
             // request
-            req.setVerb(VerbType.LIST_RECORDS);
-            req.setMetadataPrefix(metadataPrefix);
-            req.setFrom(StringUtils.isEmpty(from) ? null : from);
-            req.setUntil(StringUtils.isEmpty(until) ? null : until);
-            req.setSet(StringUtils.isEmpty(set) ? null : set);
-            req.setValue(uriInfo.getRequestUri().toASCIIString());
+            oai.setRequest(createRequest(VerbType.LIST_RECORDS, uriInfo));
 
             // response
-            oai.setRequest(req);
             oai.setListRecords(records);
             return oaiFactory.createOAIPMH(oai);
         } catch (final Exception e) {
