@@ -107,9 +107,10 @@ JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/data/fedora_data2/fcre
 #JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/usr/local/fcrepo4-data-sample/fcrepo.index.directory"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.audit.container=/audit"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.directory=/usr/local/tomcat7/logs"
-#JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.auth=DEBUG"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.jcr=DEBUG"
-JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log=DEBUG"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.oai=DEBUG"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.maxHistory=30"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.totalSizeCap=3G"
 
 # pc: hawto.io agent
 # JAVA_OPTS="$JAVA_OPTS -javaagent:/var/lib/tomcat7/bin/jolokia-jvm-1.3.0-agent.jar"

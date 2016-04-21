@@ -9,7 +9,7 @@ JAVA_OPTS="$JAVA_OPTS -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m"
 JAVA_OPTS="$JAVA_OPTS -XX:+UseParallelGC -XX:+DisableExplicitGC -XX:SurvivorRatio=15"
 JAVA_OPTS="$JAVA_OPTS -XX:HeapDumpPath=/usr/share/tomcat7/logs/fedora_heap.hprof"
 JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime"
-JAVA_OPTS="$JAVA_OPTS -Xloggc:/usr/share/tomcat7/logs/gc.log"
+JAVA_OPTS="$JAVA_OPTS -Xloggc:/usr/share/tomcat7/logs/fcrepo-gc.log"
 
 # Timezone and JVM file encoding
 JAVA_OPTS="$JAVA_OPTS -Duser.timezone=UTC -Dfile.encoding=UTF8 -Djava.awt.headless=true"
@@ -21,11 +21,13 @@ export CATALINA_OPTS="-Dcom.sun.management.jmxremote \
 JAVA_OPTS="$JAVA_OPTS $CATALINA_OPTS -XX:OnOutOfMemoryError='kill -9 %p; /sbin/service tomcat7 start'"
 
 # fedora 4 properties
-export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/fedora_data2"
-export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/fedora_data2/fcrepo.index.directory"
-export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.directory=/usr/share/tomcat7/logs"
-export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.jcr=DEBUG"
-export JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log=DEBUG"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/fedora_data2"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/fedora_data2/fcrepo.index.directory"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.directory=/usr/share/tomcat7/logs"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.jcr=DEBUG"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.oai=DEBUG"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.maxHistory=30"
+JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.totalSizeCap=3G"
 
-
+export JAVA_OPTS
 export CATALINA_PID=$CATALINA_HOME/logs/tomcat.pid
