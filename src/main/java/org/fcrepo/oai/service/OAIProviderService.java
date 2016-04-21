@@ -944,7 +944,8 @@ public class OAIProviderService {
         req.setResumptionToken(uriInfo.getQueryParameters().getFirst("resumptionToken"));
         req.setSet(uriInfo.getQueryParameters().getFirst("set"));
         req.setUntil(uriInfo.getQueryParameters().getFirst("until"));
-        req.setValue(uriInfo.getRequestUri().toASCIIString());
+        req.setValue(
+            baseUrl.concat("?").concat(StringUtils.substringAfter(uriInfo.getRequestUri().toASCIIString(), "?")));
         return req;
     }
 

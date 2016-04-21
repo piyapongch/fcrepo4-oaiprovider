@@ -13,6 +13,10 @@
     <description>The Fedora Commons repository OAI provider.</description>
     <packaging>bundle</packaging>
 
+    <properties>
+        <!-- skip tests by default -->
+        <skipTests>true</skipTests>
+    </properties>
 
     <repositories>
         <repository>
