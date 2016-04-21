@@ -176,7 +176,8 @@ public class OAIProviderService {
 
     private static final Pattern slashPattern = Pattern.compile("\\/");
 
-    private static final Pattern pathPattern = Pattern.compile("(?<=\\G..)");
+    // object path from uri pattern
+    // private static final Pattern pathPattern = Pattern.compile("(?<=\\G..)");
 
     @Autowired
     private BinaryService binaryService;
@@ -584,12 +585,6 @@ public class OAIProviderService {
 
         // request
         oai.setRequest(createRequest(VerbType.GET_RECORD, uriInfo));
-
-        // final RequestType req = oaiFactory.createRequestType();
-        // req.setVerb(VerbType.GET_RECORD);
-        // req.setValue(uriInfo.getRequestUri().toASCIIString());
-        // req.setMetadataPrefix(metadataPrefix);
-        // oai.setRequest(req);
 
         // response
         oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
@@ -1023,7 +1018,6 @@ public class OAIProviderService {
                 }
             }
 
-            final RequestType req = oaiFactory.createRequestType();
             if (records.getRecord().size() == maxListSize) {
                 final ResumptionTokenType token = oaiFactory.createResumptionTokenType();
                 token.setValue(encodeResumptionToken(VerbType.LIST_RECORDS.value(), metadataPrefix, from, until, set,
@@ -1224,10 +1218,6 @@ public class OAIProviderService {
         // permission
         jql.append(" AND");
         jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
-
-        // public item, cast to binary and compare with xs:base64binary string property
-        // jql.append(" AND");
-        // jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
 
         // search criteria
         jql.append(" AND");
