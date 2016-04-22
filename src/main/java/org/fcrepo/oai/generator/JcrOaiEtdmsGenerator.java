@@ -102,7 +102,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "uatermsid:thesiscommitteemember":
+            case "ualrole:thesiscommitteemember":
                 for (final Value v : prop.getValues()) {
                     addContributor(v, thesis.getContributor(), "committeemember");
                 }
@@ -138,7 +138,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "uatermsid:specialization":
+            case "ualthesis:specialization":
                 for (final Value v : prop.getValues()) {
                     addDescription(v, thesis.getDescription(), "Specialization: ");
                 }
@@ -168,7 +168,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "uatermsid:thesislevel":
+            case "ualthesis:thesislevel":
                 for (final Value v : prop.getValues()) {
                     addString(v, degree.getLevel());
                 }
@@ -180,7 +180,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "uatermsid:fedora3handle":
+            case "ualid:fedora3handle":
                 for (final Value v : prop.getValues()) {
                     addString(v, thesis.getIdentifier());
                     handle = StringUtils.isEmpty(v.getString()) ? null : v.getString();

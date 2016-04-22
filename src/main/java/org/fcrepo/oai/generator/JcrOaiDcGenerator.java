@@ -142,7 +142,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addContributor(oaidc, prop);
                 break;
 
-            case "uatermsid:thesiscommitteemember":
+            case "ualrole:thesiscommitteemember":
                 addContributor(oaidc, prop);
                 break;
 
@@ -158,7 +158,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addSubject(oaidc, prop);
                 break;
 
-            case "uatermsid:specialization":
+            case "ualthesis:specialization":
                 addDescription(oaidc, prop, "Specialization: ");
                 break;
 
@@ -174,15 +174,15 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addIdentifier(oaidc, prop);
                 break;
 
-            case "uatermsid:trid":
+            case "ualid:trid":
                 addIdentifier(oaidc, prop);
                 break;
 
-            case "uatermsid:ser":
+            case "ualid:ser":
                 addIdentifier(oaidc, prop);
                 break;
 
-            case "uatermsid:fedora3handle":
+            case "ualid:fedora3handle":
                 addIdentifier(oaidc, prop);
                 break;
 
