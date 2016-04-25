@@ -570,6 +570,9 @@ public class OAIProviderService {
         jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
         jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
         jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
+        if (metadataPrefix.equals("oai_etdms")) {
+            jql.append(" AND res.[dcterms:type] = 'Thesis'");
+        }
 
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final RowIterator result = executeQuery(queryManager, jql.toString());
