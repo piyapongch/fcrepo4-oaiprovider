@@ -394,8 +394,7 @@ public class OAIProviderService {
         root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiAdminEmail)), adminEmail);
         root.getNode().setProperty(getPropertyName(session, createProperty(propertyOaiBaseUrl)), baseUrl);
         session.save();
-
-        // rootPath.replaceAll(".*/", "");
+        log.info("OAI Provider started.");
     }
 
     /**
@@ -867,7 +866,8 @@ public class OAIProviderService {
             final StringBuilder cjql = new StringBuilder();
             cjql.append("SELECT com.[mode:localName] AS id, com.[dcterms:title] as name ");
             cjql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as com ")
-                .append("WHERE com.[uatermsid:is_community] = CAST('" + booleanTrue + "' AS BINARY)");
+                .append("WHERE com.[ualidentifier:is_community] = CAST('" + booleanTrue + "' AS BINARY)")
+                .append(" OR com.[ualidentifier:is_community] = 'true'");
             final RowIterator res = executeQuery(queryManager, cjql.toString());
             final HashMap<String, String> com = new HashMap<>();
             while (res.hasNext()) {
@@ -879,11 +879,11 @@ public class OAIProviderService {
             // query official collections
             final StringBuilder jql = new StringBuilder();
             jql.append("SELECT col.[mode:localName] AS spec, col.[dcterms:title] AS name, ")
-                .append("col.[uatermsid:belongsToCommunity] as cid ");
+                .append("col.[ualidentifier:belongsToCommunity] as cid ");
             jql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as col ")
                 .append("WHERE col.[model:hasModel] = 'Collection' ")
-                .append(" AND col.[uatermsid:is_official] = CAST('" + booleanTrue + "' AS BINARY)")
-                .append(" AND col.[uatermsid:belongsToCommunity] IS NOT NULL");
+                .append(" AND col.[ualidentifier:is_official] = CAST('" + booleanTrue + "' AS BINARY)")
+                .append(" AND col.[ualidentifier:belongsToCommunity] IS NOT NULL");
 
             if (maxListSize > 0) {
                 // bug in 4.2.0 fixed in 4.5.0

@@ -72,21 +72,21 @@
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "uatermsid:hasCollectionId(STRING)"
+            "columns" : "ualidentifier:hasCollectionId(STRING)"
         },
         "isCommunity" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "uatermsid:is_community(STRING)"
+            "columns" : "ualidentifier:is_community(STRING)"
         },
         "isOfficial" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "uatermsid:is_official(STRING)"
+            "columns" : "ualidentifier:is_official(STRING)"
         },
         "localName" : {
             "kind" : "value",
