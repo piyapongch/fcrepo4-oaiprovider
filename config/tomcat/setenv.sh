@@ -7,9 +7,10 @@ JAVA_OPTS="$JAVA_OPTS -server"
 JAVA_OPTS="$JAVA_OPTS -XX:NewSize=2560m -XX:MaxNewSize=5g -XX:InitialHeapSize=10g -XX:MaxHeapSize=10g"
 JAVA_OPTS="$JAVA_OPTS -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m"
 JAVA_OPTS="$JAVA_OPTS -XX:+UseParallelGC -XX:+DisableExplicitGC -XX:SurvivorRatio=15"
-JAVA_OPTS="$JAVA_OPTS -XX:HeapDumpPath=/usr/share/tomcat7/logs/fedora_heap.hprof"
-JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime"
+JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
+JAVA_OPTS="$JAVA_OPTS -XX:+PrintTenuringDistribution -XX:+PrintGCTaskTimeStamps"
 JAVA_OPTS="$JAVA_OPTS -Xloggc:/usr/share/tomcat7/logs/fcrepo-gc.log"
+JAVA_OPTS="$JAVA_OPTS -XX:HeapDumpPath=/usr/share/tomcat7/logs/fedora_heap.hprof"
 
 # Timezone and JVM file encoding
 JAVA_OPTS="$JAVA_OPTS -Duser.timezone=UTC -Dfile.encoding=UTF8 -Djava.awt.headless=true"

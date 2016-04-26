@@ -101,8 +101,10 @@ JAVA_OPTS="$JAVA_OPTS -server -XX:NewSize=2048m -XX:MaxNewSize=4096m -XX:Initial
 JAVA_OPTS="$JAVA_OPTS -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m"
 #JAVA_OPTS="$JAVA_OPTS -XX:+DisableExplicitGC -XX:+UseG1GC"
 JAVA_OPTS="$JAVA_OPTS -XX:+DisableExplicitGC -XX:+UseParallelGC"
-#JAVA_OPTS="$JAVA_OPTS -XX:+DisableExplicitGC -XX:+UseConcMarkSweepGC"
-JAVA_OPTS="$JAVA_OPTS -Xloggc:/usr/local/tomcat7/logs/fcrepo-gc.log"
+JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDetails -XX:+PrintGCTimeStamps"
+JAVA_OPTS="$JAVA_OPTS -XX:+PrintTenuringDistribution -XX:+PrintGCTaskTimeStamps"
+JAVA_OPTS="$JAVA_OPTS -Xloggc:/usr/share/tomcat7/logs/fcrepo-gc.log"
+JAVA_OPTS="$JAVA_OPTS -XX:HeapDumpPath=/usr/share/tomcat7/logs/fedora_heap.hprof"
 
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/data/fedora_data2"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/data/fedora_data2/fcrepo.index.directory"
