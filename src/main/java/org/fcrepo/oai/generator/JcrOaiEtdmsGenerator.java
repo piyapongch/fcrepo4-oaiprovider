@@ -180,6 +180,12 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
+            case "model:downloadFilename":
+                for (final Value v : prop.getValues()) {
+                    thesis.getIdentifier().add(String.format(pdfUrlFormat, v.getString()));
+                }
+                break;
+
             case "ualid:fedora3handle":
                 for (final Value v : prop.getValues()) {
                     addString(v, thesis.getIdentifier());
@@ -243,9 +249,6 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         } catch (final Exception e) {
             // could not generate the identifier
         }
-
-        // add 2000 if it is thesisdeposit handle
-        thesis.getIdentifier().add(String.format(pdfUrlFormat, name));
 
         // era identifier
         thesis.getIdentifier().add(String.format(eraIdFormat, name));
