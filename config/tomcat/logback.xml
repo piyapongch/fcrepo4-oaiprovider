@@ -3,7 +3,7 @@
 <configuration scan="true">
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Canada/Mountain} %p [%t] \(%c{0}.%M:%L\) %m%n</pattern>
+            <pattern>%d{Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
         </encoder>
     </appender>
     <appender name="JCR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -19,7 +19,7 @@
         </rollingPolicy>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Canada/Mountain, Canada/Mountain} %p [%t] \(%c{0}.%M:%L\) %m%n</pattern>
+            <pattern>%d{Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
         </encoder>
     </appender>
     <appender name="JMS_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -31,7 +31,7 @@
         </rollingPolicy>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Canada/Mountain} %p [%t] \(%c{0}.%M:%L\) %m%n</pattern>
+            <pattern>%d{Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
         </encoder>
     </appender>
     <appender name="AUDIT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -43,7 +43,7 @@
         </rollingPolicy>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Canada/Mountain} %p [%t] \(%c{0}.%M:%L\) %m%n</pattern>
+            <pattern>%d{Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
         </encoder>
     </appender>
     <appender name="API_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -55,7 +55,7 @@
         </rollingPolicy>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Canada/Mountain} %p [%t] \(%c{0}.%M:%L\) %m%n</pattern>
+            <pattern>%d{Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
         </encoder>
     </appender>
     <appender name="KERNEL_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -67,7 +67,7 @@
         </rollingPolicy>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Canada/Mountain} %p [%t] \(%c{0}.%M:%L\) %m%n</pattern>
+            <pattern>%d{Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
         </encoder>
     </appender>
     <appender name="REPO_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -79,7 +79,7 @@
         </rollingPolicy>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Canada/Mountain} %p [%t] \(%c{0}.%M:%L\) %m%n</pattern>
+            <pattern>%d{Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
         </encoder>
     </appender>
     <appender name="AUTH_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -91,7 +91,7 @@
         </rollingPolicy>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Canada/Mountain} %p [%t] \(%c{0}.%M:%L\) %m%n</pattern>
+            <pattern>%d{Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
         </encoder>
     </appender>
     <appender name="OAI_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -103,7 +103,7 @@
         </rollingPolicy>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS, Canada/Mountain} %p [%t] \(%c{0}.%M:%L\) %m%n</pattern>
+            <pattern>%d{Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
         </encoder>
     </appender>
     
