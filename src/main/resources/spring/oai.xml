@@ -17,7 +17,7 @@
 
 	<bean name="jcrOaiEtdmsGenerator" class="org.fcrepo.oai.generator.JcrOaiEtdmsGenerator" parent="jcrOaiGenerator">
         <property name="lacIdFormat" value="TC-AEU-%1$s" />
-        <property name="pdfUrlFormat" value="https://era.library.ualberta.ca/downloads/%1$s.pdf" />
+        <property name="pdfUrlFormat" value="https://era.library.ualberta.ca/downloads/%1$s" />
 	</bean>
 
 	<!-- <bean name="jcrOaiQdcGenerator" class="org.fcrepo.oai.qdc.JcrPropertiesGenerator"/> -->
