@@ -110,10 +110,6 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             }
             pub.append(depts.length == 1 ? "." : "");
 
-            // If none of marcrel:dgg and vivo:AcademicDepartment are present
-            // } else if ((ddgs == null) && (depts == null)) {
-            // pub.append(uofa);
-
             // Otherwise, print only marcrel:dgg (no punctuation)
         } else if (ddgs != null) {
             pub.append(ddgs[0].getString());
