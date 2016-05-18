@@ -29,6 +29,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * @author Piyapong Charoenwattana
  */
 @WebFilter(filterName = "MetadataXsltFilter", urlPatterns = { "/rest/oai" }, initParams = {
-    @WebInitParam(name = "xslPath", value = "/xslt/metadata.xsl") })
+    @WebInitParam(name = "xslPath", value = "/xslt/metadata-ns.xsl") })
 public class MetadataXsltFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(MetadataXsltFilter.class);
@@ -65,6 +66,7 @@ public class MetadataXsltFilter implements Filter {
         this.xslSource = new StreamSource(this.getClass().getResourceAsStream(xslPath));
         try {
             transformer = factory.newTransformer(xslSource);
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         } catch (final TransformerConfigurationException e) {
             log.error("Could not create transformer!", e);
         }
@@ -90,7 +92,6 @@ public class MetadataXsltFilter implements Filter {
             final StreamResult result = new StreamResult(bos);
             transformer.transform(xmlSource, result);
             response.setContentType("text/xml");
-            // response.setContentLength(bos.size());
             out.write(new String(bos.toByteArray()));
             bos.flush();
             bos.close();
