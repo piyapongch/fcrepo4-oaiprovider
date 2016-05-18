@@ -22,6 +22,7 @@ export CATALINA_OPTS="-Dcom.sun.management.jmxremote \
 JAVA_OPTS="$JAVA_OPTS $CATALINA_OPTS -XX:OnOutOfMemoryError='kill -9 %p; /sbin/service tomcat7 start'"
 
 # fedora 4 properties
+JAVA_OPTS="$JAVA_OPTS -Djava.xml.transform.TransformerFactory=net.sf.saxon.TransformerFactoryImpl"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/fedora_data2"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/fedora_data2/fcrepo.index.directory"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.log.directory=/usr/share/tomcat7/logs"

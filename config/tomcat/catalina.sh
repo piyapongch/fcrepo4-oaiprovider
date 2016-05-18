@@ -106,6 +106,7 @@ JAVA_OPTS="$JAVA_OPTS -XX:+PrintTenuringDistribution -XX:+PrintGCTaskTimeStamps"
 JAVA_OPTS="$JAVA_OPTS -Xloggc:/usr/share/tomcat7/logs/fcrepo-gc.log"
 JAVA_OPTS="$JAVA_OPTS -XX:HeapDumpPath=/usr/share/tomcat7/logs/fedora_heap.hprof"
 
+JAVA_OPTS="$JAVA_OPTS -Djava.xml.transform.TransformerFactory=net.sf.saxon.TransformerFactoryImpl"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/data/fedora_data2"
 JAVA_OPTS="$JAVA_OPTS -Dfcrepo.modeshape.index.directory=/data/fedora_data2/fcrepo.index.directory"
 #JAVA_OPTS="$JAVA_OPTS -Dfcrepo.home=/usr/local/fcrepo4-data-plano"
