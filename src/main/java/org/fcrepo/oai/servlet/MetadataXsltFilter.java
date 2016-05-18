@@ -26,27 +26,33 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The MetadataXsltFilter class.
  *
  * @author Piyapong Charoenwattana
  */
-// @WebFilter(filterName = "MetadataXsltFilter", urlPatterns = { "/rest/oai" }, initParams = {
-// @WebInitParam(name = "xslPath", value = "/xslt/metadata.xsl") })
+@WebFilter(filterName = "MetadataXsltFilter", urlPatterns = { "/rest/oai" }, initParams = {
+    @WebInitParam(name = "xslPath", value = "/xslt/metadata.xsl") })
 public class MetadataXsltFilter implements Filter {
 
+    private static final Logger log = LoggerFactory.getLogger(MetadataXsltFilter.class);
     private String xslPath;
     private TransformerFactory factory;
     private StreamSource xslSource;
+    private Transformer transformer;
 
     /**
      *
@@ -57,6 +63,11 @@ public class MetadataXsltFilter implements Filter {
         this.factory = TransformerFactory.newInstance();
         this.xslPath = filterConfig.getInitParameter("xslPath");
         this.xslSource = new StreamSource(this.getClass().getResourceAsStream(xslPath));
+        try {
+            transformer = factory.newTransformer(xslSource);
+        } catch (final TransformerConfigurationException e) {
+            log.error("Could not create transformer!", e);
+        }
     }
 
     /**
@@ -72,23 +83,20 @@ public class MetadataXsltFilter implements Filter {
         final BufferedHttpResponseWrapper wrapper = new BufferedHttpResponseWrapper((HttpServletResponse) response);
         chain.doFilter(request, wrapper);
         final String resp = new String(wrapper.getBuffer());
-        if (StringUtils.isEmpty(resp)) {
-            chain.doFilter(request, response);
-            return;
-        }
         final Source xmlSource = new StreamSource(new StringReader(resp));
 
         try {
-            final Transformer transformer = factory.newTransformer(xslSource);
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             final StreamResult result = new StreamResult(bos);
             transformer.transform(xmlSource, result);
             response.setContentType("text/xml");
-            response.setContentLength(bos.size());
+            // response.setContentLength(bos.size());
             out.write(new String(bos.toByteArray()));
+            bos.flush();
+            bos.close();
         } catch (final Exception ex) {
             out.println(ex.toString());
-            out.write(wrapper.toString());
+            out.write(resp);
         }
         out.flush();
     }

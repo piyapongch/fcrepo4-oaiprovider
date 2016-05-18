@@ -3,8 +3,8 @@
 <fileset-config file-format-version="1.2.0" simple-config="false" sync-formatter="false">
   <local-check-config name="maven-checkstyle-plugin checkstyle" location="jar:file:/Users/pcharoen/.m2/repository/org/fcrepo/fcrepo-build-tools/4.2.0/fcrepo-build-tools-4.2.0.jar!/fcrepo-checkstyle/checkstyle.xml" type="remote" description="maven-checkstyle-plugin configuration checkstyle">
     <property name="checkstyle.cache.file" value="${project_loc}/target/checkstyle-cachefile"/>
-    <property name="checkstyle.suppressions.file" value="/Users/pcharoen/Documents/workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/fcrepo-oaiprovider/com.basistech.m2e.code.quality.checkstyleConfigurator/checkstyle-suppressions-checkstyle.xml"/>
-    <property name="checkstyle.header.file" value="/Users/pcharoen/Documents/workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/fcrepo-oaiprovider/com.basistech.m2e.code.quality.checkstyleConfigurator/checkstyle-header-checkstyle.txt"/>
+    <property name="checkstyle.suppressions.file" value="/Users/pcharoen/workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/fcrepo4-oaiprovider/com.basistech.m2e.code.quality.checkstyleConfigurator/checkstyle-suppressions-checkstyle.xml"/>
+    <property name="checkstyle.header.file" value="/Users/pcharoen/workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/fcrepo4-oaiprovider/com.basistech.m2e.code.quality.checkstyleConfigurator/checkstyle-header-checkstyle.txt"/>
   </local-check-config>
   <fileset name="java-sources-checkstyle" enabled="true" check-config-name="maven-checkstyle-plugin checkstyle" local="true">
     <file-match-pattern match-pattern="src/test/java/.*\.java" include-pattern="true"/>

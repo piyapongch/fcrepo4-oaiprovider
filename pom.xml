@@ -208,11 +208,12 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
-                    <exclude>**/oai/servlet/**</exclude>
+<!--                     <exclude>**/oai/servlet/**</exclude> -->
                     <exclude>**/schema/**</exclude>
                     <exclude>**/spring/**</exclude>
                     <exclude>**/config/**</exclude>
-                    <exclude>**/xslt/**</exclude>
+<!--                     <exclude>**/xslt/**</exclude> -->
+                    <exclude>**/jaxb/**</exclude>
                 </excludes>
             </resource>
         </resources>
@@ -223,7 +224,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <excludes>
-                        <exclude>**/oai/servlet/**</exclude>
+<!--                         <exclude>**/oai/servlet/**</exclude> -->
                         <exclude>**/ca/ualberta/library/terms/oai_qdc/**</exclude>
                     </excludes>
                 </configuration>
