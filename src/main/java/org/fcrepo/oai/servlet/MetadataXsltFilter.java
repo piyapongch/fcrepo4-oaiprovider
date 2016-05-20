@@ -15,6 +15,7 @@
  */
 package org.fcrepo.oai.servlet;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,6 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.openarchives.oai._2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,7 @@ public class MetadataXsltFilter implements Filter {
     private TransformerFactory factory;
     private StreamSource xslSource;
     private Transformer transformer;
+    private final ByteArrayOutputStream xsl = new ByteArrayOutputStream();
 
     /**
      *
@@ -65,6 +68,11 @@ public class MetadataXsltFilter implements Filter {
     public void init(final FilterConfig filterConfig) throws ServletException {
         this.factory = TransformerFactory.newInstance();
         this.xslPath = filterConfig.getInitParameter("xslPath");
+        try {
+            IOUtils.copy(this.getClass().getResourceAsStream(xslPath), xsl);
+        } catch (final IOException ex) {
+            log.error("Could not get xsl!", ex);
+        }
         this.xslSource = new StreamSource(this.getClass().getResourceAsStream(xslPath));
         try {
             transformer = factory.newTransformer(xslSource);
@@ -92,6 +100,8 @@ public class MetadataXsltFilter implements Filter {
                 final ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 final StreamResult result = new StreamResult(bos);
                 final Stopwatch timer = Stopwatch.createStarted();
+                final Transformer transformer =
+                    factory.newTransformer(new StreamSource(new ByteArrayInputStream(xsl.toByteArray())));
                 transformer.transform(xmlSource, result);
                 log.debug("transformation took: " + timer);
                 final String rs = new String(bos.toByteArray());
@@ -99,7 +109,7 @@ public class MetadataXsltFilter implements Filter {
                 response.setContentLength(rs.length());
                 out.write(new String(rs));
             } catch (final Exception ex) {
-                out.println(ex.toString());
+                log.warn("Could not transform reponse!", ex);
                 out.write(resp);
             }
         } else {
