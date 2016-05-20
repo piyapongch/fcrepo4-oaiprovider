@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OAI-PMH xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai-id="http://www.openarchives.org/OAI/2.0/oai-identifier" xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:etd_ms="http://www.ndltd.org/standards/metadata/etdms/1.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd
+    http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd
+    http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd
+    http://www.ndltd.org/standards/metadata/etdms/1.0/ http://www.ndltd.org/standards/metadata/etdms/1-0/etdms.xsd">
+    <responseDate>2016-05-19T16:39:38Z</responseDate>
+    <request verb="GetRecord" identifier="oai:era.library.ualberta.ca:ark:/54379/t73197xm950" metadataPrefix="oai_dc">https://era.library.ualberta.ca/oai?verb=GetRecord&amp;identifier=oai:era.library.ualberta.ca:ark:/54379/t73197xm950&amp;metadataPrefix=oai_dc</request>
+    <GetRecord>
+        <record>
+            <header>
+                <identifier>oai:era.library.ualberta.ca:ark:/54379/t73197xm950</identifier>
+                <datestamp>2016-04-04T21:00:44Z</datestamp>
+                <setSpec>ff365586z</setSpec>
+            </header>
+            <metadata>
+                <oai_dc:dc>
+                    <dc:type>Report</dc:type>
+                    <dc:creator>Armstrong, Glen W.</dc:creator>
+                    <dc:creator>Novak, Frank</dc:creator>
+                    <dc:creator>Adamowicz, Wiktor</dc:creator>
+                    <dc:date>1995</dc:date>
+                    <dc:publisher>University of Alberta</dc:publisher>
+                    <dc:identifier>https://era.library.ualberta.ca/files/3197xm950</dc:identifier>
+                    <dc:subject>Canada, Alberta</dc:subject>
+                    <dc:subject>timber harvesting</dc:subject>
+                    <dc:subject>sustainable forestry</dc:subject>
+                    <dc:subject>forest management</dc:subject>
+                    <dc:title>Environmental and Financial Sustainability of Forest Management Practices</dc:title>
+                    <dc:identifier>http://hdl.handle.net/10402/era.32834</dc:identifier>
+                    <dc:rights>Creative Commons Attribution-Non-Commercial-No Derivatives 3.0 Unported</dc:rights>
+                    <dc:description>One of the guiding themes for forest management policy throughout much of North America is sustained yield. The basic premise behind this theme is that a constant or non-declining flow of services from the forest is socially desirable. Unfortunately, the act of capturing the benefits of this service (timber harvesting) often has detrimental effects on the timber-productive capacity at a forest site. This paper presents a dynamic program that is used to determine the optimal harvest system choice for a timber stand described by average piece size, stand density, a measure of site quality, and stumpage value. The harvest systems are defined by logging costs, reforestation and rehabilitation costs, and the impact of the system on the productivity of the site. An application of the model is presented for lodgepole pine in Alberta. We conclude that at high discount rates, soil conservation is note economically rational. At lower discount rates, some degree of soil conservation is desirable on the more productive sites. At lower discount rates, there also appears to be an incentive for more intensive forest management. Limitations on acceptable harvest practices can have a large impact on optimal rotation age and the volume harvested. There is a large opportunity cost resulting from a requirement for sustainable volume production because of the imapct of harvesting on soil productivity.</dc:description>
+                    <dc:language>English</dc:language>
+                </oai_dc:dc>
+            </metadata>
+        </record>
+    </GetRecord>
+</OAI-PMH>

@@ -16,6 +16,7 @@
 package org.fcrepo.oai.servlet;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import javax.servlet.ServletOutputStream;
 
@@ -33,6 +34,24 @@ public class BufferedServletOutputStream extends ServletOutputStream {
      */
     public byte[] getBuffer() {
         return this.bos.toByteArray();
+    }
+
+    /**
+     *
+     * @see java.io.OutputStream#flush()
+     */
+    @Override
+    public void flush() throws IOException {
+        this.bos.flush();
+    }
+
+    /**
+     *
+     * @see java.io.OutputStream#close()
+     */
+    @Override
+    public void close() throws IOException {
+        this.bos.close();
     }
 
     /**

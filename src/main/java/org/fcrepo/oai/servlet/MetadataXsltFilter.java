@@ -29,7 +29,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -37,8 +36,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.openarchives.oai._2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Stopwatch;
 
 /**
  * The MetadataXsltFilter class.
@@ -46,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @author Piyapong Charoenwattana
  */
 @WebFilter(filterName = "MetadataXsltFilter", urlPatterns = { "/rest/oai" }, initParams = {
-    @WebInitParam(name = "xslPath", value = "/xslt/metadata-ns.xsl") })
+    @WebInitParam(name = "xslPath", value = "/xslt/metadata-2.0.xsl") })
 public class MetadataXsltFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(MetadataXsltFilter.class);
@@ -66,7 +68,6 @@ public class MetadataXsltFilter implements Filter {
         this.xslSource = new StreamSource(this.getClass().getResourceAsStream(xslPath));
         try {
             transformer = factory.newTransformer(xslSource);
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         } catch (final TransformerConfigurationException e) {
             log.error("Could not create transformer!", e);
         }
@@ -80,26 +81,30 @@ public class MetadataXsltFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
         throws IOException, ServletException {
-
-        final PrintWriter out = response.getWriter();
-        final BufferedHttpResponseWrapper wrapper = new BufferedHttpResponseWrapper((HttpServletResponse) response);
-        chain.doFilter(request, wrapper);
-        final String resp = new String(wrapper.getBuffer());
-        final Source xmlSource = new StreamSource(new StringReader(resp));
-
-        try {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final StreamResult result = new StreamResult(bos);
-            transformer.transform(xmlSource, result);
-            response.setContentType("text/xml");
-            out.write(new String(bos.toByteArray()));
-            bos.flush();
-            bos.close();
-        } catch (final Exception ex) {
-            out.println(ex.toString());
-            out.write(resp);
+        final String verb = request.getParameter("verb");
+        if (verb.equals(VerbType.LIST_RECORDS.value()) || verb.equals(VerbType.GET_RECORD.value())) {
+            final PrintWriter out = response.getWriter();
+            final BufferedHttpResponseWrapper wrapper = new BufferedHttpResponseWrapper((HttpServletResponse) response);
+            chain.doFilter(request, wrapper);
+            final String resp = new String(wrapper.getBuffer());
+            final Source xmlSource = new StreamSource(new StringReader(resp));
+            try {
+                final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                final StreamResult result = new StreamResult(bos);
+                final Stopwatch timer = Stopwatch.createStarted();
+                transformer.transform(xmlSource, result);
+                log.debug("transformation took: " + timer);
+                final String rs = new String(bos.toByteArray());
+                response.setContentType("text/xml");
+                response.setContentLength(rs.length());
+                out.write(new String(rs));
+            } catch (final Exception ex) {
+                out.println(ex.toString());
+                out.write(resp);
+            }
+        } else {
+            chain.doFilter(request, response);
         }
-        out.flush();
     }
 
     /**

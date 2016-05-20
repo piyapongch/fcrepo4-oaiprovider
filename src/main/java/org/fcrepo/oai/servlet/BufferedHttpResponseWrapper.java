@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * @version $Revision$ $Date$
  */
 public class BufferedHttpResponseWrapper extends HttpServletResponseWrapper {
-    private final BufferedServletOutputStream bufferedServletOut = new BufferedServletOutputStream();
 
+    private final BufferedServletOutputStream bufferedServletOut = new BufferedServletOutputStream();
     private PrintWriter printWriter = null;
     private ServletOutputStream outputStream = null;
 
@@ -58,7 +58,7 @@ public class BufferedHttpResponseWrapper extends HttpServletResponseWrapper {
     public PrintWriter getWriter() throws IOException {
         if (this.outputStream != null) {
             throw new IllegalStateException(
-                "The Servlet API forbids calling getWriter() after" + " getOutputStream() has been called");
+                "The Servlet API forbids calling getWriter() after getOutputStream() has been called");
         }
 
         if (this.printWriter == null) {
@@ -75,7 +75,7 @@ public class BufferedHttpResponseWrapper extends HttpServletResponseWrapper {
     public ServletOutputStream getOutputStream() throws IOException {
         if (this.printWriter != null) {
             throw new IllegalStateException(
-                "The Servlet API forbids calling getOutputStream() after" + " getWriter() has been called");
+                "The Servlet API forbids calling getOutputStream() after getWriter() has been called");
         }
 
         if (this.outputStream == null) {
