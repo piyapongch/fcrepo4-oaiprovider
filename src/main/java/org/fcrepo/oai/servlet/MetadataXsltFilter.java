@@ -15,7 +15,6 @@
  */
 package org.fcrepo.oai.servlet;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,13 +30,12 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.IOUtils;
 import org.openarchives.oai._2.VerbType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +54,7 @@ public class MetadataXsltFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(MetadataXsltFilter.class);
     private String xslPath;
     private TransformerFactory factory;
-    private StreamSource xslSource;
-    private Transformer transformer;
-    private final ByteArrayOutputStream xsl = new ByteArrayOutputStream();
+    private Templates templates;
 
     /**
      *
@@ -66,18 +62,12 @@ public class MetadataXsltFilter implements Filter {
      */
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        this.factory = TransformerFactory.newInstance();
-        this.xslPath = filterConfig.getInitParameter("xslPath");
+        factory = TransformerFactory.newInstance();
+        xslPath = filterConfig.getInitParameter("xslPath");
         try {
-            IOUtils.copy(this.getClass().getResourceAsStream(xslPath), xsl);
-        } catch (final IOException ex) {
-            log.error("Could not get xsl!", ex);
-        }
-        this.xslSource = new StreamSource(this.getClass().getResourceAsStream(xslPath));
-        try {
-            transformer = factory.newTransformer(xslSource);
-        } catch (final TransformerConfigurationException e) {
-            log.error("Could not create transformer!", e);
+            templates = factory.newTemplates(new StreamSource(this.getClass().getResourceAsStream(xslPath)));
+        } catch (final Exception e) {
+            throw new ServletException("Could not initialize filter!", e);
         }
     }
 
@@ -100,8 +90,7 @@ public class MetadataXsltFilter implements Filter {
                 final ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 final StreamResult result = new StreamResult(bos);
                 final Stopwatch timer = Stopwatch.createStarted();
-                final Transformer transformer =
-                    factory.newTransformer(new StreamSource(new ByteArrayInputStream(xsl.toByteArray())));
+                final Transformer transformer = templates.newTransformer();
                 transformer.transform(xmlSource, result);
                 log.debug("transformation took: " + timer);
                 final String rs = new String(bos.toByteArray());
