@@ -48,7 +48,7 @@ import com.google.common.base.Stopwatch;
  * @author Piyapong Charoenwattana
  */
 @WebFilter(filterName = "MetadataXsltFilter", urlPatterns = { "/rest/oai" }, initParams = {
-    @WebInitParam(name = "xslPath", value = "/xslt/metadata-2.0.xsl") })
+    @WebInitParam(name = "xslPath", value = "/xslt/metadata.xsl") })
 public class MetadataXsltFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(MetadataXsltFilter.class);
