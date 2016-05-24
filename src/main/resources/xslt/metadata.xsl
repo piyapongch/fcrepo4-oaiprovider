@@ -13,7 +13,7 @@
 				<xsl:namespace name="oai-id">http://www.openarchives.org/OAI/2.0/oai-identifier</xsl:namespace>
 				<xsl:attribute name="xsi:schemaLocation">http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd</xsl:attribute>
 			</xsl:if>
-			<xsl:apply-templates select="node()"/>
+		    <xsl:apply-templates select="@* | node()"/>
 		</xsl:copy>
 	</xsl:template>
 
