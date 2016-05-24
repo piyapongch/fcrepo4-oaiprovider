@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:oai_etdms="http://www.ndltd.org/standards/metadata/etdms/1.0/">
@@ -33,7 +33,7 @@
 	</xsl:template>
 	
 	
-	<!--<xsl:template match="oai_etdms:thesis">
+	<xsl:template match="oai_etdms:thesis">
 		<xsl:copy copy-namespaces="no">
 			<xsl:namespace name="oai_etdms">"http://www.ndltd.org/standards/metadata/etdms/1.0/"</xsl:namespace>
 			<xsl:namespace name="thesis">http://www.ndltd.org/standards/metadata/etdms/1.0/</xsl:namespace>
@@ -41,7 +41,7 @@
 			<xsl:attribute name="xsi:schemaLocation">http://www.ndltd.org/standards/metadata/etdms/1.0/ http://www.ndltd.org/standards/metadata/etdms/1-0/etdms.xsd</xsl:attribute>
 			<xsl:apply-templates select="@* | node()"/>
 		</xsl:copy>
-	</xsl:template>-->
+	</xsl:template>
 
 
 </xsl:stylesheet>
