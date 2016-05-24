@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-	xmlns:etdms="http://www.ndltd.org/standards/metadata/etdms/1.0/"
+	xmlns:etd_ms="http://www.ndltd.org/standards/metadata/etdms/1.0/"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 
@@ -26,10 +26,9 @@
 		</xsl:copy>
 	</xsl:template>
 
-
-	<xsl:template match="etdms:thesis">
+	<xsl:template match="etd_ms:thesis">
 		<xsl:copy copy-namespaces="no">
-			<xsl:namespace name="etdms">http://www.ndltd.org/standards/metadata/etdms/1.0/</xsl:namespace>
+		    <xsl:namespace name="etd_ms">http://www.ndltd.org/standards/metadata/etdms/1.0/</xsl:namespace>
 			<xsl:attribute name="xsi:schemaLocation">http://www.ndltd.org/standards/metadata/etdms/1.0/ http://www.ndltd.org/standards/metadata/etdms/1-0/etdms.xsd</xsl:attribute>
 			<xsl:apply-templates select="@* | node()"/>
 		</xsl:copy>

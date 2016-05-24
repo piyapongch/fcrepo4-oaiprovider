@@ -43,7 +43,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 
 /**
- * The MetadataXsltFilter class.
+ * The MetadataXsltFilter class is a servlet filter that transforms oai response metadata using xslt to add namespaces
+ * on the metadata elements.
  *
  * @author Piyapong Charoenwattana
  */
@@ -79,8 +80,9 @@ public class MetadataXsltFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
         throws IOException, ServletException {
-        final String verb = request.getParameter("verb");
-        if (verb.equals(VerbType.LIST_RECORDS.value()) || verb.equals(VerbType.GET_RECORD.value())) {
+        final String vb = request.getParameter("verb");
+        final String mp = request.getParameter("metadataPrefix");
+        if (vb.equals(VerbType.LIST_RECORDS.value()) || vb.equals(VerbType.GET_RECORD.value())) {
             final PrintWriter out = response.getWriter();
             final BufferedHttpResponseWrapper wrapper = new BufferedHttpResponseWrapper((HttpServletResponse) response);
             chain.doFilter(request, wrapper);
@@ -92,7 +94,7 @@ public class MetadataXsltFilter implements Filter {
                 final Stopwatch timer = Stopwatch.createStarted();
                 final Transformer transformer = templates.newTransformer();
                 transformer.transform(xmlSource, result);
-                log.debug("transformation took: " + timer);
+                log.debug(vb.toString() + " / " + mp + " transformation took: " + timer);
                 final String rs = new String(bos.toByteArray());
                 response.setContentType("text/xml");
                 response.setContentLength(rs.length());
