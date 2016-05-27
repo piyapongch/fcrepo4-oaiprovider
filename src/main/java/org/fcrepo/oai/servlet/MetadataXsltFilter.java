@@ -66,6 +66,7 @@ public class MetadataXsltFilter implements Filter {
         factory = TransformerFactory.newInstance();
         xslPath = filterConfig.getInitParameter("xslPath");
         try {
+            log.debug("creating templates using " + factory.toString() + "...");
             templates = factory.newTemplates(new StreamSource(this.getClass().getResourceAsStream(xslPath)));
         } catch (final Exception e) {
             throw new ServletException("Could not initialize filter!", e);
@@ -83,9 +84,11 @@ public class MetadataXsltFilter implements Filter {
         final String vb = request.getParameter("verb");
         final String mp = request.getParameter("metadataPrefix");
         if (vb.equals(VerbType.LIST_RECORDS.value()) || vb.equals(VerbType.GET_RECORD.value())) {
-            final PrintWriter out = response.getWriter();
             final BufferedHttpResponseWrapper wrapper = new BufferedHttpResponseWrapper((HttpServletResponse) response);
             chain.doFilter(request, wrapper);
+            response.setContentType("text/xml");
+            response.setCharacterEncoding("UTF-8");
+            final PrintWriter out = response.getWriter();
             final String resp = new String(wrapper.getBuffer());
             final Source xmlSource = new StreamSource(new StringReader(resp));
             try {
@@ -95,12 +98,11 @@ public class MetadataXsltFilter implements Filter {
                 final Transformer transformer = templates.newTransformer();
                 transformer.transform(xmlSource, result);
                 log.debug(vb.toString() + " / " + mp + " transformation took: " + timer);
-                final String rs = new String(bos.toByteArray());
-                response.setContentType("text/xml");
-                response.setContentLength(rs.length());
-                out.write(new String(rs));
+                final String rs = bos.toString();
+                response.setContentLength(bos.size());
+                out.write(rs);
             } catch (final Exception ex) {
-                log.warn("Could not transform reponse!", ex);
+                log.warn("Could not transform OAI response!", ex);
                 out.write(resp);
             }
         } else {
