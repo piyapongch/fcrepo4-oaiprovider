@@ -15,10 +15,10 @@
  */
 package org.fcrepo.oai.servlet;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringReader;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -84,13 +84,12 @@ public class MetadataXsltFilter implements Filter {
         final String vb = request.getParameter("verb");
         final String mp = request.getParameter("metadataPrefix");
         if (vb.equals(VerbType.LIST_RECORDS.value()) || vb.equals(VerbType.GET_RECORD.value())) {
-            final BufferedHttpResponseWrapper wrapper = new BufferedHttpResponseWrapper((HttpServletResponse) response);
+            final MetadataHttpResponseWrapper wrapper = new MetadataHttpResponseWrapper((HttpServletResponse) response);
             chain.doFilter(request, wrapper);
             response.setContentType("text/xml");
             response.setCharacterEncoding("UTF-8");
             final PrintWriter out = response.getWriter();
-            final String resp = new String(wrapper.getBuffer());
-            final Source xmlSource = new StreamSource(new StringReader(resp));
+            final Source xmlSource = new StreamSource(new ByteArrayInputStream(wrapper.getBuffer()));
             try {
                 final ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 final StreamResult result = new StreamResult(bos);
@@ -98,12 +97,11 @@ public class MetadataXsltFilter implements Filter {
                 final Transformer transformer = templates.newTransformer();
                 transformer.transform(xmlSource, result);
                 log.debug(vb.toString() + " / " + mp + " transformation took: " + timer);
-                final String rs = bos.toString();
                 response.setContentLength(bos.size());
-                out.write(rs);
-            } catch (final Exception ex) {
-                log.warn("Could not transform OAI response!", ex);
-                out.write(resp);
+                out.write(bos.toString());
+            } catch (final Exception e) {
+                log.error("Could not transform OAI response!", e);
+                out.write(new String(wrapper.getBuffer()));
             }
         } else {
             chain.doFilter(request, response);

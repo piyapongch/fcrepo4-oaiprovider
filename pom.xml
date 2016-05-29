@@ -226,6 +226,7 @@
                 <configuration>
                     <excludes>
                         <exclude>**/ca/ualberta/library/terms/oai_qdc/**</exclude>
+                        <exclude>**/servlet/Buffered*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
