@@ -1,0 +1,111 @@
+@prefix premis: <http://www.loc.gov/premis/rdf/v1#> .
+@prefix nt: <http://www.jcp.org/jcr/nt/1.0> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix hydragroup: <http://projecthydra.org/ns/auth/group#> .
+@prefix hydraacl: <http://projecthydra.org/ns/auth/acl#> .
+@prefix ualname: <http://terms.library.ualberta.ca/name/> .
+@prefix ns001: <http://purl.org/dc/terms/dateSubmitted:> .
+@prefix xsi: <http://www.w3.org/2001/XMLSchema-instance> .
+@prefix mode: <http://www.modeshape.org/1.0> .
+@prefix oai: <http://www.openarchives.org/OAI/2.0/> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix model: <info:fedora/fedora-system:def/model#> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+@prefix fedoraconfig: <http://fedora.info/definitions/v4/config#> .
+@prefix mix: <http://www.jcp.org/jcr/mix/1.0> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix relsext: <info:fedora/fedora-system:def/relations-external#> .
+@prefix image: <http://www.modeshape.org/images/1.0> .
+@prefix sv: <http://www.jcp.org/jcr/sv/1.0> .
+@prefix test: <info:fedora/test/> .
+@prefix ualterms: <http://terms.library.ualberta.ca/> .
+@prefix ualid: <http://terms.library.ualberta.ca/id/> .
+@prefix uatermsid: <http://terms.library.library.ca/identifiers/> .
+@prefix ualplace: <http://terms.library.ualberta.ca/place/> .
+@prefix scholarsphere: <http://scholarsphere.psu.edu/ns#> .
+@prefix ualsubj: <http://terms.library.ualberta.ca/subject/> .
+@prefix ualdate: <http://terms.library.ualberta.ca/date/> .
+@prefix ualrole: <http://terms.library.ualberta.ca/role/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix fedora: <http://fedora.info/definitions/v4/repository#> .
+@prefix marcrel: <http://id.loc.gov/vocabulary/relators/> .
+@prefix ldp: <http://www.w3.org/ns/ldp#> .
+@prefix ualthesis: <http://terms.library.ualberta.ca/thesis/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix webacl: <http://www.w3.org/ns/auth/acl#> .
+@prefix xs: <http://www.w3.org/2001/XMLSchema> .
+@prefix oaiid: <http://www.openarchives.org/OAI/2.0/oai-identifier> .
+@prefix ualidentifier: <http://terms.library.ualberta.ca/identifiers/> .
+@prefix ualtitle: <http://terms.library.ualberta.ca/title/> .
+@prefix etdms: <http://www.ndltd.org/standards/metadata/etdms/1.0/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+
+<http://localhost:8080/fedora/rest/dev/1g/05/fc/41/1g05fc41f> a ldp:RDFSource , ldp:Container , <http://www.jcp.org/jcr/nt/1.0folder> , <http://www.jcp.org/jcr/nt/1.0hierarchyNode> , <http://www.jcp.org/jcr/nt/1.0base> , <http://www.jcp.org/jcr/mix/1.0created> , fedora:Container , fedora:Resource , fedora:Resource , <http://www.jcp.org/jcr/mix/1.0created> , <http://www.jcp.org/jcr/mix/1.0lastModified> , <http://www.jcp.org/jcr/mix/1.0referenceable> ;
+	fedora:lastModifiedBy "bypassAdmin"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualid:proquest ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:fedora3handle "http://hdl.handle.net/10402/era.30232"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualidentifier:hasCollection <http://localhost:8080/fedora/rest/dev/z8/90/rv/11/z890rv11x> ;
+	dcterms:isVersionOf ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualidentifier:year_created "2013"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:thesiscommitteemember "Campbell, Robert E. (Chemistry)"^^<http://www.w3.org/2001/XMLSchema#string> , "Le, X. Chris (Laboratory Medicine and Pathology; Chemistry)"^^<http://www.w3.org/2001/XMLSchema#string> , "Zhang, Hongquan (Laboratory Medicine and Pathology)"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:subject "Nanosensor"^^<http://www.w3.org/2001/XMLSchema#string> , "Binding-induced DNA assembly"^^<http://www.w3.org/2001/XMLSchema#string> , "Fluorescence Resonance Energy Transfer"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:modified "2014-04-29T15:54:26.329Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+	marcrel:dgg "University of Alberta"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:ingestbatch "br86b424n"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:year_created "2013"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	bibo:ThesisDegree "Master of Science"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:unicorn ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:uuid "e6621475-5284-40bc-8fe4-88b4da0b76d8"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:hasCollection <http://localhost:8080/fedora/rest/dev/z8/90/rv/11/z890rv11x> ;
+	uatermsid:graduationdate "2013-06"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:rights "Permission is hereby granted to the University of Alberta Libraries to reproduce single copies of this thesis and to lend or sell such copies for private, scholarly or scientific research purposes only. The author reserves all other publication and other rights in association with the copyright in the thesis and, except as herein before provided, neither the thesis nor any substantial portion thereof may be printed or otherwise reproduced in any material form whatsoever without the author's prior written permission."^^<http://www.w3.org/2001/XMLSchema#string> ;
+	marcrel:ths "Le, X. Chris (Laboratory Medicine and Pathology; Chemistry)"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualid:fedora3uuid "uuid:1d160ff5-8d9d-4eef-abaf-38cb3d3197c0"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualid:ser ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:belongsToCommunity "n583xv533"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:hasCollectionId "z890rv11x"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	vivo:AcademicDepartment "Department of Chemistry"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:creator "Li, Xukun"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualid:trid ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	marcrel:dpt "Xukun@hydranorth.ca"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:mixinTypes "fedora:Container"^^<http://www.w3.org/2001/XMLSchema#string> , "fedora:Resource"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:abstract "This thesis describes a binding-induced DNA nanosensor and its application to homogeneous detection of DNA and proteins. This nanosensor was based on the binding-induced assembly of fluorescently labeled DNA on the DNA-functionalized quantum dots, resulting in fluorescence resonance energy transfer (FRET) between the quantum dots (605 QDs) and the fluorescent dye (Cy5). The sensor was applied to the detection of single-nucleotide polymorphism (SNP) in the p53 gene sequence and the detection of platelet derived growth factor, with pM detection limits. This strategy can be applied to developing assays for a wide range of targets by functionalizing the surface of quantum dots with appropriate affinity ligands (e.g., aptamers and antibodies)."^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:fedora3uuid "uuid:1d160ff5-8d9d-4eef-abaf-38cb3d3197c0"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:title "Development of a Binding-induced DNA Nanosensor Based on Fluorescence Resonance Energy Transfer"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:type "Thesis"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:ser ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualrole:thesiscommitteemember "Campbell, Robert E. (Chemistry)"^^<http://www.w3.org/2001/XMLSchema#string> , "Le, X. Chris (Laboratory Medicine and Pathology; Chemistry)"^^<http://www.w3.org/2001/XMLSchema#string> , "Zhang, Hongquan (Laboratory Medicine and Pathology)"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualidentifier:hasCollectionId "z890rv11x"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:trid ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualid:unicorn ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:proquest ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:createdBy "bypassAdmin"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualidentifier:ingestbatch "br86b424n"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:created "2016-01-29T19:47:42.018Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+	fedora:lastModified "2016-04-04T20:59:19.66Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+	ualthesis:specialization ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:specialization ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	marcrel:dis "Li, Xukun"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualid:fedora3handle "http://hdl.handle.net/10402/era.30232"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualdate:graduationdate "2013-06"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:license "I am required to use/link to a publisher's license"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	model:hasModel "GenericFile"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:dateSubmitted "2013-01-30T18:41:03Z"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	relsext:isPartOf <http://localhost:8080/fedora/rest/dev/tq/57/nr/86/tq57nr865> ;
+	fedora:primaryType "nt:folder"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	uatermsid:thesislevel "Master's"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:created ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualidentifier:belongsToCommunity "n583xv533"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:dateAccepted "2013-01-31T10:18:33Z"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:description ""^^<http://www.w3.org/2001/XMLSchema#string> ;
+	dcterms:language "English"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	ualthesis:thesislevel "Master's"^^<http://www.w3.org/2001/XMLSchema#string> ;
+	fedora:writable "true"^^<http://www.w3.org/2001/XMLSchema#boolean> ;
+	fedora:hasParent <http://localhost:8080/fedora/rest/dev> ;
+	ldp:contains <http://localhost:8080/fedora/rest/dev/1g/05/fc/41/1g05fc41f/fedora3foxml> .
+
+<http://localhost:8080/fedora/rest/dev/1g/05/fc/41/1g05fc41f/fcr:export?format=jcr/xml> dc:format <http://fedora.info/definitions/v4/repository#jcr/xml> .
+
+<http://localhost:8080/fedora/rest/dev/1g/05/fc/41/1g05fc41f> fedora:exportsAs <http://localhost:8080/fedora/rest/dev/1g/05/fc/41/1g05fc41f/fcr:export?format=jcr/xml> .

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.fcrepo</groupId>
@@ -12,22 +13,21 @@
     <description>The Fedora Commons repository OAI provider.</description>
     <packaging>bundle</packaging>
 
-
     <repositories>
-      <repository>
-        <id>snapshots-repo</id>
-        <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-        <releases>
-          <enabled>false</enabled>
-        </releases>
-        <snapshots>
-          <enabled>true</enabled>
-        </snapshots>
-      </repository>
+        <repository>
+            <id>snapshots-repo</id>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
 
-  <dependencyManagement>
+    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.fcrepo</groupId>
@@ -51,9 +51,9 @@
             <version>4.2.0</version>
         </dependency>
         <dependency>
-          <groupId>org.fcrepo</groupId>
-          <artifactId>fcrepo-kernel</artifactId>
-          <version>4.2.0</version>
+            <groupId>org.fcrepo</groupId>
+            <artifactId>fcrepo-kernel</artifactId>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.fcrepo</groupId>
@@ -77,6 +77,23 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- jms support -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-spring</artifactId>
+            <version>${activemq.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- test gear -->
         <dependency>
@@ -130,7 +147,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -170,27 +186,71 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- This dependency is for compile-time: it keeps this module independent of
-          any given choice of JAX-RS implementation. It must be _after_ the test gear. Otherwise
-          it will get loaded during test phase, but because this is just an API, the tests
-          will not be able to execute. -->
+        <!-- This dependency is for compile-time: it keeps this module independent of any given choice of JAX-RS implementation. 
+            It must be _after_ the test gear. Otherwise it will get loaded during test phase, but because this is just an API, the tests 
+            will not be able to execute. -->
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.7.0-4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fcrepo.client</groupId>
+            <artifactId>fcrepo-java-client</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+            </exclusions>
+            <version>0.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
-
         <resources>
-          <resource>
-            <directory>src/main/resources</directory>
-            <filtering>true</filtering>
-          </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>xslt/**</include>
+                </includes>
+            </resource>
         </resources>
 
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>pom.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/ca/ualberta/library/terms/oai_qdc/**</exclude>
+                        <exclude>**/servlet/Buffered*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -213,7 +273,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                      <project.version>${project.version}</project.version>
+                        <project.version>${project.version}</project.version>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -223,24 +283,30 @@
                 <version>1.6</version>
                 <executions>
                     <execution>
+                        <id>oai-pmh</id>
                         <goals>
                             <goal>xjc</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>target/generated-sources</outputDirectory>
+                            <schemaDirectory>src/main/resources/schema/oai-pmh</schemaDirectory>
+                            <clearOutputDir>false</clearOutputDir>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <outputDirectory>target/generated-sources</outputDirectory>
-                    <schemaDirectory>src/main/resources/schema</schemaDirectory>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.14</version>
+                <version>2.17</version>
+                <!--$NO-MVN-MAN-VER$ -->
                 <configuration>
-                    <excludes>**/integration/**/*, **/purl/**/**/**/*, **/openarchives/**/**/*</excludes>
+                    <excludes> **/integration/**, **/purl/**/**/**/*, **/openarchives/**/**/*,
+                        **/ndltd/standards/metadata/etdms/**,
+                        **/ualberta/library/terms/oai_qdc/**, **/fcrepo/jena/**
+                    </excludes>
                     <systemPropertyVariables>
-                      <project.version>${project.version}</project.version>
+                        <project.version>${project.version}</project.version>
                     </systemPropertyVariables>
                 </configuration>
                 <dependencies>
@@ -251,10 +317,92 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <header>fcrepo-license/LICENSE_HEADER.txt</header>
+                            <includes>
+                                <include>**/src/main/java/**</include>
+                                <include>**/src/test/java/**</include>
+                            </includes>
+                            <excludes>
+                                <exclude>target/**</exclude>
+                                <exclude>**/src/test/**</exclude>
+                                <exclude>**/src/main/resources/**</exclude>
+                                <exclude>**/*.properties</exclude>
+                                <exclude>**/oai/**</exclude>
+                            </excludes>
+                            <properties>
+                                <name>fcrepo-oaiprovider</name>
+                                <year>2015</year>
+                                <holder>DuraSpace, Inc.</holder>
+                            </properties>
+                            <encoding>UTF-8</encoding>
+                            <strictCheck>true</strictCheck>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-war</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="Building fcrepo-oaiprovider-${project.version}.war..." />
+                                <get
+                                    src="https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-4.2.0/fcrepo-webapp-${project.version}.war"
+                                    dest="target/fcrepo-webapp-${project.version}.war"/>
+                                <unzip src="target/fcrepo-webapp-${project.version}.war" dest="target/fcrepo-webapp-${project.version}" />
+                                <echo message="Copying libraries and configurations..." />
+                                <copy file="src/main/webapp/WEBINF/web.xml" todir="target/fcrepo-webapp-${project.version}/WEB-INF"
+                                   verbose="true" />
+                                <copy file="src/main/resources/logback.xml" todir="target/fcrepo-webapp-${project.version}/WEB-INF/classes"
+                                   verbose="true" />
+                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/lib" verbose="true">
+                                    <fileset dir="src/main/resources/lib" />
+                                </copy>
+                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/classes/spring" verbose="true">
+                                    <fileset dir="src/main/resources/spring" />
+                                </copy>
+                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/classes/config/minimal-default" verbose="true">
+                                    <fileset dir="src/main/resources/config/minimal-default" />
+                                </copy>
+                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/lib" file="target/fcrepo-oaiprovider-${project.version}.jar" verbose="true"/>
+                                <jar destfile="target/fcrepo-oaiprovider-${project.version}.war" basedir="target/fcrepo-webapp-${project.version}" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>deploy-war</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="Deploying fcrepo-oaiprovider-${project.version}.war..." />
+                                <copy file="target/fcrepo-oaiprovider-${project.version}.war" tofile="${tomcat.webapps.dir}/fedora.war"  verbose="true"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
-  <scm>
-    <tag>fcrepo-oaiprovider-4.2.0</tag>
-  </scm>
+    <scm>
+        <tag>fcrepo-oaiprovider-4.2.0</tag>
+    </scm>
 </project>

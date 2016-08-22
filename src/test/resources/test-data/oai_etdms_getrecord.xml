@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OAI-PMH xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai-id="http://www.openarchives.org/OAI/2.0/oai-identifier" xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:etd_ms="http://www.ndltd.org/standards/metadata/etdms/1.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd
+    http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd
+    http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd
+    http://www.ndltd.org/standards/metadata/etdms/1.0/ http://www.ndltd.org/standards/metadata/etdms/1-0/etdms.xsd">
+    <responseDate>2016-05-19T20:16:09Z</responseDate>
+    <request verb="GetRecord" identifier="oai:era.library.ualberta.ca:ark:/54379/t71g05fc41f" metadataPrefix="oai_etdms">https://era.library.ualberta.ca/oai?verb=GetRecord&amp;identifier=oai:era.library.ualberta.ca:ark:/54379/t71g05fc41f&amp;metadataPrefix=oai_etdms</request>
+    <GetRecord>
+        <record>
+            <header>
+                <identifier>oai:era.library.ualberta.ca:ark:/54379/t71g05fc41f</identifier>
+                <datestamp>2016-04-04T20:59:19Z</datestamp>
+                <setSpec>z890rv11x</setSpec>
+            </header>
+            <metadata>
+                <etd_ms:thesis>
+                    <etd_ms:title>Development of a Binding-induced DNA Nanosensor Based on Fluorescence Resonance Energy Transfer</etd_ms:title>
+                    <etd_ms:creator>Li, Xukun</etd_ms:creator>
+                    <etd_ms:subject>Nanosensor</etd_ms:subject>
+                    <etd_ms:subject>Binding-induced DNA assembly</etd_ms:subject>
+                    <etd_ms:subject>Fluorescence Resonance Energy Transfer</etd_ms:subject>
+                    <etd_ms:description>Abstract: This thesis describes a binding-induced DNA nanosensor and its application to homogeneous detection of DNA and proteins. This nanosensor was based on the binding-induced assembly of fluorescently labeled DNA on the DNA-functionalized quantum dots, resulting in fluorescence resonance energy transfer (FRET) between the quantum dots (605 QDs) and the fluorescent dye (Cy5). The sensor was applied to the detection of single-nucleotide polymorphism (SNP) in the p53 gene sequence and the detection of platelet derived growth factor, with pM detection limits. This strategy can be applied to developing assays for a wide range of targets by functionalizing the surface of quantum dots with appropriate affinity ligands (e.g., aptamers and antibodies).</etd_ms:description>
+                    <etd_ms:contributor role="advisor">Le, X. Chris (Laboratory Medicine and Pathology; Chemistry)</etd_ms:contributor>
+                    <etd_ms:contributor role="committeemember">Campbell, Robert E. (Chemistry)</etd_ms:contributor>
+                    <etd_ms:contributor role="committeemember">Le, X. Chris (Laboratory Medicine and Pathology; Chemistry)</etd_ms:contributor>
+                    <etd_ms:contributor role="committeemember">Zhang, Hongquan (Laboratory Medicine and Pathology)</etd_ms:contributor>
+                    <etd_ms:date>2013-01-31T10:18:33Z</etd_ms:date>
+                    <etd_ms:type>Thesis</etd_ms:type>
+                    <etd_ms:identifier>http://hdl.handle.net/10402/era.30232</etd_ms:identifier>
+                    <etd_ms:identifier>TC-AEU-32232</etd_ms:identifier>
+                    <etd_ms:identifier>https://era.library.ualberta.ca/files/1g05fc41f</etd_ms:identifier>
+                    <etd_ms:language>English</etd_ms:language>
+                    <etd_ms:rights>Permission is hereby granted to the University of Alberta Libraries to reproduce single copies of this thesis and to lend or sell such copies for private, scholarly or scientific research purposes only. The author reserves all other publication and other rights in association with the copyright in the thesis and, except as herein before provided, neither the thesis nor any substantial portion thereof may be printed or otherwise reproduced in any material form whatsoever without the author's prior written permission.</etd_ms:rights>
+                    <etd_ms:degree>
+                        <etd_ms:name>Master of Science</etd_ms:name>
+                        <etd_ms:level>Master's</etd_ms:level>
+                        <etd_ms:discipline>Department of Chemistry</etd_ms:discipline>
+                        <etd_ms:grantor>University of Alberta</etd_ms:grantor>
+                    </etd_ms:degree>
+                </etd_ms:thesis>
+            </metadata>
+        </record>
+    </GetRecord>
+</OAI-PMH>

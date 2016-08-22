@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration scan="true">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{ISO8601, Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="JCR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${fcrepo.log.directory}/fcrepo-jcr.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+            <!-- daily rollover -->
+            <fileNamePattern>${fcrepo.log.directory}/fcrepo-jcr.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+
+            <!-- keep 30 days' worth of history capped at 3GB total size -->
+            <maxHistory>${fcrepo.log.maxHistory}</maxHistory>
+            <totalSizeCap>${fcrepo.log.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{ISO8601, Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="JMS_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${fcrepo.log.directory}/fcrepo-jms.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${fcrepo.log.directory}/fcrepo-jms.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${fcrepo.log.maxHistory}</maxHistory>
+            <totalSizeCap>${fcrepo.log.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{ISO8601, Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="AUDIT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${fcrepo.log.directory}/fcrepo-audit.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${fcrepo.log.directory}/fcrepo-audit.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${fcrepo.log.maxHistory}</maxHistory>
+            <totalSizeCap>${fcrepo.log.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{ISO8601, Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="API_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${fcrepo.log.directory}/fcrepo-api.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${fcrepo.log.directory}/fcrepo-api.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${fcrepo.log.maxHistory}</maxHistory>
+            <totalSizeCap>${fcrepo.log.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{ISO8601, Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="KERNEL_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${fcrepo.log.directory}/fcrepo-kernel.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${fcrepo.log.directory}/fcrepo-kernel.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${fcrepo.log.maxHistory}</maxHistory>
+            <totalSizeCap>${fcrepo.log.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{ISO8601, Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="REPO_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${fcrepo.log.directory}/fcrepo-repo.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${fcrepo.log.directory}/fcrepo-repo.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${fcrepo.log.maxHistory}</maxHistory>
+            <totalSizeCap>${fcrepo.log.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{ISO8601, Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="AUTH_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${fcrepo.log.directory}/fcrepo-auth.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${fcrepo.log.directory}/fcrepo-auth.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${fcrepo.log.maxHistory}</maxHistory>
+            <totalSizeCap>${fcrepo.log.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{ISO8601, Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="OAI_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--        
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        -->
+        <file>${fcrepo.log.directory}/fcrepo-oai.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${fcrepo.log.directory}/fcrepo-oai.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${fcrepo.log.maxHistory}</maxHistory>
+            <totalSizeCap>${fcrepo.log.totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{ISO8601, Canada/Mountain} [%t] %-5p - %C{0}.%M\(%L\): %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.fcrepo" additivity="false" level="${fcrepo.log:-INFO}">
+        <appender-ref ref="REPO_LOG"/>
+    </logger>
+    <logger name="org.fcrepo.auth" additivity="false" level="${fcrepo.log.auth:-INFO}">
+        <appender-ref ref="AUTH_LOG"/>
+    </logger>
+    <logger name="org.fcrepo.connector.file" additivity="false" level="${fcrepo.log.connector.file:-INFO}">
+        <appender-ref ref="REPO_LOG"/>
+    </logger>
+    <logger name="org.fcrepo.http.api" additivity="false" level="${fcrepo.log.http.api:-INFO}">
+        <appender-ref ref="API_LOG"/>
+    </logger>
+    <logger name="org.fcrepo.http.commons" additivity="false" level="${fcrepo.log.http.commons:-INFO}">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.fcrepo.jms" additivity="false" level="${fcrepo.log.jms:-INFO}">
+        <appender-ref ref="REPO_LOG"/>
+    </logger>
+    <logger name="org.fcrepo.kernel" additivity="false" level="${fcrepo.log.kernel:-INFO}">
+        <appender-ref ref="KERNEL_LOG"/>
+    </logger>
+    <logger name="org.fcrepo.transform" additivity="false" level="${fcrepo.log.transform:-INFO}">
+        <appender-ref ref="REPO_LOG"/>
+    </logger>
+    <logger name="org.fcrepo.oai" additivity="false" level="${fcrepo.log.oai:-INFO}">
+        <appender-ref ref="OAI_LOG"/>
+    </logger>
+    <logger name="org.fcrepo.audit" additivity="false" level="${fcrepo.log.audit:-TRACE}">
+        <appender-ref ref="AUDIT_LOG"/>
+    </logger>
+    <logger name="org.modeshape.jcr" additivity="false" level="${fcrepo.log.jcr:-INFO}">
+        <appender-ref ref="JCR_LOG"/>
+    </logger>
+    <root additivity="false" level="WARN">
+        <appender-ref ref="SYSOUT"/>
+        <appender-ref ref="REPO_LOG"/>
+    </root>
+</configuration>

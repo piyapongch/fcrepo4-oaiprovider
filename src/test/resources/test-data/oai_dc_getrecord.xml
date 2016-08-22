@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OAI-PMH xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai-id="http://www.openarchives.org/OAI/2.0/oai-identifier" xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:etd_ms="http://www.ndltd.org/standards/metadata/etdms/1.0/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd
+    http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd
+    http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd
+    http://www.ndltd.org/standards/metadata/etdms/1.0/ http://www.ndltd.org/standards/metadata/etdms/1-0/etdms.xsd">
+    <responseDate>2016-05-26T17:06:55Z</responseDate>
+    <request verb="GetRecord" identifier="oai:era.library.ualberta.ca:ark:/54379/t744558d306" metadataPrefix="oai_dc">https://era.library.ualberta.ca/oai?verb=GetRecord&amp;identifier=oai:era.library.ualberta.ca:ark:/54379/t744558d306&amp;metadataPrefix=oai_dc</request>
+    <GetRecord>
+        <record>
+            <header>
+                <identifier>oai:era.library.ualberta.ca:ark:/54379/t744558d306</identifier>
+                <datestamp>2016-04-07T21:45:07Z</datestamp>
+                <setSpec>44558t017</setSpec>
+            </header>
+            <metadata>
+                <oai_dc:dc>
+                    <dc:type>Report</dc:type>
+                    <dc:creator>Hill Times Publishing</dc:creator>
+                    <dc:date>2010/12/01</dc:date>
+                    <dc:publisher>University of Alberta</dc:publisher>
+                    <dc:identifier>https://era.library.ualberta.ca/files/44558d306</dc:identifier>
+                    <dc:subject>Canada--Parliament--Periodicals</dc:subject>
+                    <dc:rights>This material can be used for non-commercial educational,...</dc:rights>
+                    <dc:title>Parliament Now, December 1, 2010</dc:title>
+                    <dc:identifier>http://hdl.handle.net/10402/era.22571</dc:identifier>
+                    <dc:description>Canada’s premier daily information service about Parliament and the federal government</dc:description>
+                    <dc:language>English</dc:language>
+                </oai_dc:dc>
+            </metadata>
+        </record>
+    </GetRecord>
+</OAI-PMH>
