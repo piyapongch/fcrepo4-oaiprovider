@@ -83,7 +83,7 @@ public class MetadataXsltFilter implements Filter {
         throws IOException, ServletException {
         final String vb = request.getParameter("verb");
         final String mp = request.getParameter("metadataPrefix");
-        if (vb.equals(VerbType.LIST_RECORDS.value()) || vb.equals(VerbType.GET_RECORD.value())) {
+        if (vb != null && (vb.equals(VerbType.LIST_RECORDS.value()) || vb.equals(VerbType.GET_RECORD.value()))) {
             final MetadataHttpResponseWrapper wrapper = new MetadataHttpResponseWrapper((HttpServletResponse) response);
             chain.doFilter(request, wrapper);
             response.setContentType("text/xml");
