@@ -146,7 +146,7 @@
         <appender-ref ref="JCR_LOG"/>
     </logger>
     <root additivity="false" level="WARN">
-        <appender-ref ref="SYSOUT"/>
+        <appender-ref ref="STDOUT"/>
         <appender-ref ref="REPO_LOG"/>
     </root>
 </configuration>
