@@ -30,6 +30,7 @@
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
 
+    <!--  
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Fedora4</web-resource-name>
@@ -59,5 +60,6 @@
         <auth-method>BASIC</auth-method>
         <realm-name>fcrepo</realm-name>
     </login-config>
+    -->
 
 </web-app>

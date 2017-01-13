@@ -1,0 +1,80 @@
+@prefix premis: <http://www.loc.gov/premis/rdf/v1#> .
+@prefix nt: <http://www.jcp.org/jcr/nt/1.0> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix hydragroup: <http://projecthydra.org/ns/auth/group#> .
+@prefix hydraacl: <http://projecthydra.org/ns/auth/acl#> .
+@prefix ualname: <http://terms.library.ualberta.ca/name/> .
+@prefix xsi: <http://www.w3.org/2001/XMLSchema-instance> .
+@prefix ns001: <AASM::Persistence::ActiveFedoraPersistence::> .
+@prefix mode: <http://www.modeshape.org/1.0> .
+@prefix oai: <http://www.openarchives.org/OAI/2.0/> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix model: <info:fedora/fedora-system:def/model#> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+@prefix fedoraconfig: <http://fedora.info/definitions/v4/config#> .
+@prefix mix: <http://www.jcp.org/jcr/mix/1.0> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix authz: <http://fedora.info/definitions/v4/authorization#> .
+@prefix relsext: <info:fedora/fedora-system:def/relations-external#> .
+@prefix image: <http://www.modeshape.org/images/1.0> .
+@prefix sv: <http://www.jcp.org/jcr/sv/1.0> .
+@prefix test: <info:fedora/test/> .
+@prefix ualterms: <http://terms.library.ualberta.ca/> .
+@prefix ualid: <http://terms.library.ualberta.ca/id/> .
+@prefix uatermsid: <http://terms.library.library.ca/identifiers/> .
+@prefix ualplace: <http://terms.library.ualberta.ca/place/> .
+@prefix scholarsphere: <http://scholarsphere.psu.edu/ns#> .
+@prefix ualsubj: <http://terms.library.ualberta.ca/subject/> .
+@prefix ualdate: <http://terms.library.ualberta.ca/date/> .
+@prefix ualrole: <http://terms.library.ualberta.ca/role/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix fedora: <http://fedora.info/definitions/v4/repository#> .
+@prefix marcrel: <http://id.loc.gov/vocabulary/relators/> .
+@prefix ldp: <http://www.w3.org/ns/ldp#> .
+@prefix ualthesis: <http://terms.library.ualberta.ca/thesis/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix webacl: <http://www.w3.org/ns/auth/acl#> .
+@prefix xs: <http://www.w3.org/2001/XMLSchema> .
+@prefix oaiid: <http://www.openarchives.org/OAI/2.0/oai-identifier> .
+@prefix ualidentifier: <http://terms.library.ualberta.ca/identifiers/> .
+@prefix ualtitle: <http://terms.library.ualberta.ca/title/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+
+<> 	model:createdDate "2016-04-01T21:32:29.348Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+	model:downloadFilename "Zaman_Hamid_U_201603_PhD.pdf" ;
+	ualidentifier:hasCollectionId "x346d4831" ;
+	ualid:proquest "" ;
+	ualrole:thesiscommitteemember "Zayed, Tarek (External, Concordia University)" , "Bayat, Ali Reza (Civil and Environmental Engineering)" , "Mohamed, Yasser ((Civil and Environmental Engineering)" , "Man, Yongsheng (Mechanical Engineering)" ;
+	dcterms:isVersionOf "Zaman, H., Bouferguene, A., Al-Hussein, M., Lorentz, C., Girard, L. (2012). “Sustainable Practice in Infrastructure Management through Route Optimization for Preventive Maintenance of Wastewater Collection System.” Proceedings, CSCE Annual Conference, Edmonton, AB, Canada, Jun. 6-9. Zaman, H., Bouferguene. A., Al-Hussein, M., Lorentz, C., Melmoth, D. (2013). “Estimation of Flushing Duration for Preventive Maintenance of Wastewater Collection System.” Proceedings, Annual CSCE Conference, Montréal, QC, Canada, May 29-Jun. 1. Zaman, H., Bouferguene. A., Al-Hussein, M., Lorentz, C. (2015). “Framework for modeling on-site productivity of preventive maintenance activities for wastewater collection system.” Journal of Infrastructure Systems, 21(4), 10.1061/(ASCE)IS.1943-555X.0000252, 04015003. Zaman, H., Bouferguene. A., Al-Hussein, M., Lorentz, C. (2015). “Improving the productivity of drainage network maintenance activities through schedule optimization.” Urban Water Journal, Tailor & Francis online, 10.1080/1573062X.2015.1112409." ;
+	ualid:unicorn "" ;
+	ualidentifier:ingestbatch "csb397825f" ;
+	ualidentifier:year_created "2016" ;
+	dcterms:subject "Wastewater Collection System" , "Schedule Optimization" , "Optimization Algorithms" , "Productivity Improvement" , "Drainage Operations" ;
+	dcterms:modified "2016-04-01T21:37:24.864Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+	ualthesis:specialization "Construction Engineering and Management" ;
+	marcrel:dgg "University of Alberta" ;
+	ualid:fedora3handle "http://hdl.handle.net/10402/era.42860" ;
+	marcrel:dis "Zaman, Hamid U" ;
+	bibo:ThesisDegree "Doctor of Philosophy" ;
+	ualdate:graduationdate "2016-06" ;
+	dcterms:license "I am required to use/link to a publisher's license" ;
+	dcterms:rights "This thesis is made available by the University of Alberta Libraries with permission of the copyright owner solely for the purpose of private, scholarly or scientific research. This thesis, or any portion thereof, may not otherwise be copied or reproduced without the written consent of the copyright owner, except to the extent permitted by Canadian copyright law." ;
+	ualid:fedora3uuid "uuid:ee96dd64-e6d6-48e0-8fdc-bbf0d5519205" ;
+	marcrel:ths "Al-Hussein, Mohamed (Civil and Environmental Engineering)" , "Bouferguene, Ahmed (Faculty Saint Jean)" ;
+	model:hasModel "GenericFile" ;
+	ualid:ser "" ;
+	vivo:AcademicDepartment "Department of Civil and Environmental Engineering" ;
+	dcterms:dateSubmitted "2016-04-01T15:32:28Z" ;
+	ualid:trid "" ;
+	marcrel:dpt "hzaman@hydranorth.ca" ;
+	dcterms:created "" ;
+	ualidentifier:belongsToCommunity "44558r66n" ;
+	dcterms:description "" ;
+	dcterms:dateAccepted "2016-04-01T15:37:19Z" ;
+	dcterms:language "English" ;
+	dcterms:abstract "Operational maintenance of the wastewater collection system is an important part of urban infrastructure management. It involves various activities, such as visual inspection, low-pressure flushing (LPF), high-pressure flushing (HPF), catch basin cleaning, and hydro-mechanized cleaning. Large cities require significant budget and resources to perform the necessary cleaning activities at various locations around the city at regular intervals. For instance, the collection system in Edmonton, Canada, comprises over 5,500 km of sewer pipes, and as of 2014 there are over 1,400 prescheduled HPF locations. However, planning and scheduling these activities can be challenging because of the wide variation of actual on-site flushing duration, which depends on a number of factors such as length and diameter of the pipes, frequency of flushing, structural condition, age, and season. Moreover, travelling between these locations results in a large amount of unproductive time. Reviews of the literature and of current industry practice reveal that the existing models and algorithms do not specifically address these issues. This research, therefore, develops a framework for improving the productivity of these activities by optimizing operational maintenance schedule. The research consists of two primary modules: (i) developing a forecasting model to estimate the on-site duration of activities, and (ii) developing an optimization algorithm to maximize productivity. The models are developed and tested using historical data of HPF activity from the Drainage Operations group at the City of Edmonton. The forecasting model captures the majority of the variations in on-site flushing duration and provides useful insight into the factors affecting on-site productivity. For optimization, this research formulates the drainage operations scheduling problem (DOSP) as a special class of the stochastic and capacitated vehicle routing problem (VRP), where the objective is to maximize value-added on-site flushing time while minimizing travel. Alongside existing algorithms (such as integer programming, genetic algorithm), a heuristic algorithm is developed to meet the specific needs of this complex combinatorial problem. The proposed optimization algorithm is tested and compared with other algorithms by simulating a monthly HPF schedule. The results show that accurate estimation of on-site duration, coupled with schedule optimization can improve daily productivity by a considerable margin. The outcome of this research makes significant academic, economic, and environmental contributions by proposing a systematic approach to planning and scheduling operational maintenance for wastewater collection systems." ;
+	dcterms:type "Thesis" ;
+	dcterms:title "A Framework for Improving the Productivity of Operational Preventive Maintenance Activities for Wastewater Collection System" ;
+	ualthesis:thesislevel "Doctoral" .

@@ -442,11 +442,11 @@ public class OAIProviderService {
                 "The requested identifier does not exist");
         }
         final StringBuilder jql = new StringBuilder();
-        jql.append("SELECT res.[jcr:path] AS path FROM [fedora:Resource] AS res");
-        jql.append(" JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
+        jql.append("SELECT res.[jcr:path] AS path FROM [fedora:Resource] AS res ");
+        // jql.append(" JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
         jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
-        jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
-        jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
+        // jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
+        // jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
         if (metadataPrefix.equals("oai_etdms")) {
             jql.append(" AND res.[dcterms:type] = 'Thesis'");
         }
@@ -509,7 +509,7 @@ public class OAIProviderService {
         final FedoraBinary bin = binaryService.findOrCreate(session, "/" + recordPath);
 
         try (final InputStream src = new XmlDeclarationStrippingInputStream(bin.getContent())) {
-            return new JAXBElement<String>(new QName(format.getPrefix()), String.class, IOUtils.toString(src));
+            return new JAXBElement<>(new QName(format.getPrefix()), String.class, IOUtils.toString(src));
         }
     }
 
@@ -554,7 +554,7 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> listIdentifiers(final Session session, final UriInfo uriInfo,
         final String metadataPrefix, final String from, final String until, final String set, final int offset)
-            throws RepositoryException {
+        throws RepositoryException {
 
         if (metadataPrefix == null) {
             return error(VerbType.LIST_IDENTIFIERS, null, null, OAIPMHerrorcodeType.BAD_ARGUMENT,
@@ -839,7 +839,7 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> listRecords(final Session session, final UriInfo uriInfo,
         final String metadataPrefix, final String from, final String until, final String set, final int offset)
-            throws RepositoryException {
+        throws RepositoryException {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
@@ -965,14 +965,15 @@ public class OAIProviderService {
      * @return
      */
     private String createId(final String path) {
-        final String noid = slashPattern.split(path)[6];
+        final String[] pa = slashPattern.split(path);
+        final String noid = pa[pa.length - 1];
         final String id = String.format(idFormat, noid);
         return id;
     }
 
     private String listResourceQuery(final Session session, final String mixinTypes, final String metadataPrefix,
         final String from, final String until, final String set, final int limit, final int offset)
-            throws RepositoryException {
+        throws RepositoryException {
 
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
         final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
@@ -986,9 +987,9 @@ public class OAIProviderService {
 
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub, res.[mode:localName] AS name ");
-        jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
-        jql.append(" JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
-        jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
+        jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res] ");
+        // jql.append(" JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
+        // jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
         jql.append("WHERE ");
 
         // mixin type constraint
@@ -999,12 +1000,12 @@ public class OAIProviderService {
         jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
 
         // permission
-        jql.append(" AND");
-        jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
+        // jql.append(" AND");
+        // jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
 
         // public item, cast to binary and compare with xs:base64binary string property
-        jql.append(" AND");
-        jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
+        // jql.append(" AND");
+        // jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
 
         // start datetime constraint
         if (StringUtils.isNotBlank(from)) {
@@ -1086,20 +1087,20 @@ public class OAIProviderService {
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub ");
         jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
-        jql.append(" JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
-        jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
+        // jql.append(" JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
+        // jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
         jql.append("WHERE ");
 
         // mixin type constraint
         jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
 
         // items
-        jql.append(" AND");
-        jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
+        // jql.append(" AND");
+        // jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
 
         // permission
-        jql.append(" AND");
-        jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
+        // jql.append(" AND");
+        // jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
 
         // search criteria
         jql.append(" AND");
