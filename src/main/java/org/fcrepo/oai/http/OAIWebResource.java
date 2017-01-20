@@ -129,7 +129,7 @@ public class OAIWebResource {
         final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
         final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
-        final @QueryParam("property") String propery, final @QueryParam("value") String value)
+        final @QueryParam("property") String property, final @QueryParam("value") String value)
         throws RepositoryException {
 
         int offset = 0;
@@ -245,7 +245,7 @@ public class OAIWebResource {
         if (verb.equals("Search")) {
             try {
                 verifyEmpty(identifier);
-                return providerService.search(this.session, uriInfo, metadataPrefix, propery, value, offset);
+                return providerService.search(this.session, uriInfo, metadataPrefix, property, value, offset);
             } catch (final IllegalArgumentException e) {
                 return OAIProviderService.error(VerbType.LIST_RECORDS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
