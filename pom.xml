@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>org.fcrepo</groupId>
-    <artifactId>fcrepo-oaiprovider</artifactId>
+    <artifactId>fcrepo4-oaiprovider</artifactId>
     <description>The Fedora Commons repository OAI provider.</description>
     <packaging>bundle</packaging>
 
@@ -339,7 +339,7 @@
                                 <exclude>**/oai/**</exclude>
                             </excludes>
                             <properties>
-                                <name>fcrepo-oaiprovider</name>
+                                <name>${project.artifactId}</name>
                                 <year>2015</year>
                                 <holder>DuraSpace, Inc.</holder>
                             </properties>
@@ -357,7 +357,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <echo message="Building fcrepo-oaiprovider-${project.version}.war..." />
+                                <echo message="Building ${project.artifactId}-${project.version}.war..." />
                                 <get
                                     src="https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-4.2.0/fcrepo-webapp-${project.version}.war"
                                     dest="target/fcrepo-webapp-${project.version}.war"/>
@@ -376,8 +376,8 @@
                                 <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/classes/config/minimal-default" verbose="true">
                                     <fileset dir="src/main/resources/config/minimal-default" />
                                 </copy>
-                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/lib" file="target/fcrepo-oaiprovider-${project.version}.jar" verbose="true"/>
-                                <jar destfile="target/fcrepo-oaiprovider-${project.version}.war" basedir="target/fcrepo-webapp-${project.version}" />
+                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/lib" file="target/${project.artifactId}-${project.version}.jar" verbose="true"/>
+                                <jar destfile="target/${project.artifactId}-${project.version}.war" basedir="target/fcrepo-webapp-${project.version}" />
                             </tasks>
                         </configuration>
                         <goals>
@@ -389,8 +389,8 @@
                         <phase>install</phase>
                         <configuration>
                             <tasks>
-                                <echo message="Deploying fcrepo-oaiprovider-${project.version}.war..." />
-                                <copy file="target/fcrepo-oaiprovider-${project.version}.war" tofile="${tomcat.webapps.dir}/fedora.war"  verbose="true"/>
+                                <echo message="Deploying ${project.artifactId}-${project.version}.war..." />
+                                <copy file="target/${project.artifactId}-${project.version}.war" tofile="${tomcat.webapps.dir}/fedora.war"  verbose="true"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -403,6 +403,6 @@
     </build>
 
     <scm>
-        <tag>fcrepo-oaiprovider-4.2.0</tag>
+        <tag>${project.artifactId}-${project.version}</tag>
     </scm>
 </project>

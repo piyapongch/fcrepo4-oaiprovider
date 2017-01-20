@@ -78,7 +78,7 @@ public class OAIWebResource {
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
         final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
         final @QueryParam("property") String propery, final @QueryParam("value") String value)
-            throws RepositoryException {
+        throws RepositoryException {
         return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
             resumptionToken, uriInfo, propery, value);
     }
@@ -105,7 +105,7 @@ public class OAIWebResource {
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
         final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
         final @QueryParam("property") String propery, final @QueryParam("value") String value)
-            throws RepositoryException {
+        throws RepositoryException {
         return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
             resumptionToken, uriInfo, propery, value);
     }
@@ -130,7 +130,7 @@ public class OAIWebResource {
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
         final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
         final @QueryParam("property") String propery, final @QueryParam("value") String value)
-            throws RepositoryException {
+        throws RepositoryException {
 
         int offset = 0;
 
@@ -261,6 +261,20 @@ public class OAIWebResource {
                 throw new IllegalArgumentException("Wrong argument for method");
             }
         }
+    }
+
+    /**
+     * The delete method.
+     * 
+     * @param path
+     * @return
+     * @throws RepositoryException
+     */
+    @GET
+    @Path("/delete")
+    @Produces(MediaType.TEXT_XML)
+    public Object delete(final @QueryParam("path") String path) throws RepositoryException {
+        return providerService.delete(path);
     }
 
 }
