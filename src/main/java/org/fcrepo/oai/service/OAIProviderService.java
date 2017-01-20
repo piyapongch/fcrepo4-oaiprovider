@@ -169,10 +169,6 @@ public class OAIProviderService {
 
     private String idFormat;
 
-    // public item, webacl:agent "http://projecthydra.org/ns/auth/group#public^^URI"
-    private final String publicAgent =
-        new String(Base64.decodeBase64("aHR0cDovL3Byb2plY3RoeWRyYS5vcmcvbnMvYXV0aC9ncm91cCNwdWJsaWMYXl4YVVJJ"));
-
     // public collection, ualindentifier:is_official "true^^http://www.w3.org/2001/XMLSchema#boolean"
     private final String booleanTrue =
         new String(Base64.decodeBase64("dHJ1ZRheXhhodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYSNib29sZWFu"));
@@ -443,10 +439,7 @@ public class OAIProviderService {
         }
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[jcr:path] AS path FROM [fedora:Resource] AS res ");
-        // jql.append(" JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
         jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
-        // jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
-        // jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
         if (metadataPrefix.equals("oai_etdms")) {
             jql.append(" AND res.[dcterms:type] = 'Thesis'");
         }
@@ -977,19 +970,13 @@ public class OAIProviderService {
 
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
         final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
-        final String propJcrUuid = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "uuid"));
         final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
-        final String propAccessTo =
-            getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo_ref"));
-        final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
         final String propHasCollectionId = getPropertyName(session, createProperty(propertyHasCollectionId));
 
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub, res.[mode:localName] AS name ");
         jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res] ");
-        // jql.append(" JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
-        // jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
         jql.append("WHERE ");
 
         // mixin type constraint
@@ -998,14 +985,6 @@ public class OAIProviderService {
         // items
         jql.append(" AND");
         jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
-
-        // permission
-        // jql.append(" AND");
-        // jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
-
-        // public item, cast to binary and compare with xs:base64binary string property
-        // jql.append(" AND");
-        // jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
 
         // start datetime constraint
         if (StringUtils.isNotBlank(from)) {
@@ -1078,29 +1057,13 @@ public class OAIProviderService {
 
         final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
-        final String propJcrUuid = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "uuid"));
-        // final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
-        final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
-        final String propAccessTo =
-            getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo_ref"));
-        // final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub ");
-        jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res]");
-        // jql.append(" JOIN [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [per]");
-        // jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
+        jql.append("FROM [" + FedoraJcrTypes.FEDORA_RESOURCE + "] AS [res] ");
         jql.append("WHERE ");
 
         // mixin type constraint
         jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
-
-        // items
-        // jql.append(" AND");
-        // jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
-
-        // permission
-        // jql.append(" AND");
-        // jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
 
         // search criteria
         jql.append(" AND");
