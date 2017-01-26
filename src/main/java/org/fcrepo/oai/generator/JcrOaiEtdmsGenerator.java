@@ -182,6 +182,12 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
+            case "ualid:doi":
+                for (final Value v : prop.getValues()) {
+                    addString(v, thesis.getIdentifier());
+                }
+                break;
+
             case "model:downloadFilename":
                 for (final Value v : prop.getValues()) {
                     try {
