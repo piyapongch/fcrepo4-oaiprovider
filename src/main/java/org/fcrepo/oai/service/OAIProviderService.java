@@ -153,7 +153,7 @@ public class OAIProviderService {
 
     private Map<String, MetadataFormat> metadataFormats;
 
-    private final DateTimeFormatter dateFormat = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.UTC);
+    private static final DateTimeFormatter dateFormat = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.UTC);
 
     private int maxListSize;
 
@@ -485,7 +485,7 @@ public class OAIProviderService {
     }
 
     private JAXBElement<String> fetchOaiResponse(final Container obj, final Session session,
-        final MetadataFormat format, final UriInfo uriInfo) throws RepositoryException, IOException {
+        final MetadataFormat format, final UriInfo uriInfo) throws IOException {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
@@ -515,10 +515,19 @@ public class OAIProviderService {
      * @param errorCode the error code
      * @param msg the msg
      * @return the jAXB element
+     * @throws RepositoryException
+     * @throws DatatypeConfigurationException
      */
     public static JAXBElement<OAIPMHtype> error(final VerbType verb, final String identifier,
-        final String metadataPrefix, final OAIPMHerrorcodeType errorCode, final String msg) {
+        final String metadataPrefix, final OAIPMHerrorcodeType errorCode, final String msg) throws RepositoryException {
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
+        DatatypeFactory dataFactory;
+        try {
+            dataFactory = DatatypeFactory.newInstance();
+            oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
+        } catch (final DatatypeConfigurationException e) {
+            throw new RepositoryException();
+        }
         final RequestType req = oaiFactory.createRequestType();
         req.setVerb(verb);
         req.setIdentifier(identifier);
@@ -774,8 +783,9 @@ public class OAIProviderService {
                     final SetType set = oaiFactory.createSetType();
                     final Row sol = result.nextRow();
                     // create setName: comunity name / collection name
-                    final String setName = com.get(valueConverter.convert(sol.getValue("cid")).asLiteral().getString())
-                        + " / " + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
+                    final String cn = com.get(valueConverter.convert(sol.getValue("cid")).asLiteral().getString());
+                    final String setName = (cn == null ? "" : cn + " / ")
+                        + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
                     set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
                     set.setSetName(setName);
                     sets.getSet().add(set);
@@ -953,7 +963,7 @@ public class OAIProviderService {
 
     /**
      * The createId method.
-     * 
+     *
      * @param path
      * @return
      */
@@ -1161,7 +1171,7 @@ public class OAIProviderService {
 
     /**
      * The delete method.
-     * 
+     *
      * @param path
      * @return
      * @throws RepositoryException
@@ -1177,11 +1187,10 @@ public class OAIProviderService {
                 log.trace("Resource {} has been deleted", path);
                 return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
                     "Resource has been deleted");
-            } else {
-                log.trace("Resource {} does not exist", path);
-                return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
-                    "Resource does not exist");
             }
+            log.trace("Resource {} does not exist", path);
+            return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
+                "Resource does not exist");
         } catch (final Exception e) {
             log.trace("Delete resource error!", e);
             return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, e.getMessage());
@@ -1214,7 +1223,7 @@ public class OAIProviderService {
 
     /**
      * The setPropertyHasModel setter method.
-     * 
+     *
      * @param propertyHasModel the propertyHasModel to set
      */
     public void setPropertyHasModel(final String propertyHasModel) {
@@ -1223,7 +1232,7 @@ public class OAIProviderService {
 
     /**
      * The setIdFormat setter method.
-     * 
+     *
      * @param idFormat the idFormat to set
      */
     public final void setIdFormat(final String idFormat) {
@@ -1322,7 +1331,7 @@ public class OAIProviderService {
 
     /**
      * The setPropertyOaiBaseUrl setter method.
-     * 
+     *
      * @param propertyOaiBaseUrl the propertyOaiBaseUrl to set
      */
     public void setPropertyOaiBaseUrl(final String propertyOaiBaseUrl) {
@@ -1331,7 +1340,7 @@ public class OAIProviderService {
 
     /**
      * The setSearchEnabled setter method.
-     * 
+     *
      * @param searchEnabled the searchEnabled to set
      */
     public void setSearchEnabled(final boolean searchEnabled) {

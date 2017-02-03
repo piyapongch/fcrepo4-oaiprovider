@@ -227,7 +227,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addFormat method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @throws RepositoryException
@@ -247,7 +247,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addRights method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @throws RepositoryException
@@ -267,7 +267,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addSource method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @throws RepositoryException
@@ -287,7 +287,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addRelation method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @throws RepositoryException
@@ -307,7 +307,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addLanguage method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @throws RepositoryException
@@ -327,7 +327,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addIdentifier method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @throws RepositoryException
@@ -347,7 +347,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addTitle method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @throws RepositoryException
@@ -367,7 +367,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addDescription method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @param string
@@ -388,7 +388,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addSubject method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @throws RepositoryException
@@ -408,7 +408,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addContributor method.
-     * 
+     *
      * @param oaidc
      * @param prop
      * @throws RepositoryException
@@ -428,7 +428,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addDate method.
-     * 
+     *
      * @param oaidc
      * @param values
      * @throws RepositoryException
@@ -448,7 +448,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The addCreator method.
-     * 
+     *
      * @param oaidc
      * @param values
      * @throws RepositoryException
@@ -468,7 +468,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
     /**
      * The isThesis method.
-     * 
+     *
      * @param values
      * @return
      */
@@ -486,14 +486,13 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                     return false;
                 }
             });
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
      * The createType method.
-     * 
+     *
      * @param values
      * @param oaidc
      * @throws RepositoryException

@@ -38,7 +38,7 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 /**
  * The type Oai jaxb provider.
- * 
+ *
  * @author Frank Asseg
  * @author Piyapong Charoenwattana
  */
@@ -46,7 +46,7 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 public class OaiJaxbProvider implements ContextResolver<Marshaller> {
 
     @SuppressWarnings("serial")
-    private static final Map<String, String> namespacePrefixMap() {
+    static final Map<String, String> namespacePrefixMap() {
         return Collections.unmodifiableMap(new HashMap<String, String>() {
             {
                 put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
