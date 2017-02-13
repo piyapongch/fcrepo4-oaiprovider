@@ -523,7 +523,7 @@ public class OAIProviderService {
      * @param msg the msg
      * @return the jAXB element
      */
-    public static JAXBElement<OAIPMHtype> error(final VerbType verb, final String identifier,
+    public JAXBElement<OAIPMHtype> error(final VerbType verb, final String identifier,
         final String metadataPrefix, final OAIPMHerrorcodeType errorCode, final String msg) {
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
         final RequestType req = oaiFactory.createRequestType();
@@ -531,6 +531,7 @@ public class OAIProviderService {
         req.setIdentifier(identifier);
         req.setMetadataPrefix(metadataPrefix);
         oai.setRequest(req);
+	oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
 
         final OAIPMHerrorType error = oaiFactory.createOAIPMHerrorType();
         error.setCode(errorCode);
