@@ -43,6 +43,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
+import javax.jcr.Value;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -781,9 +782,35 @@ public class OAIProviderService {
                 if (result.getPosition() < maxListSize) {
                     final SetType set = oaiFactory.createSetType();
                     final Row sol = result.nextRow();
-                    // create setName: comunity name / collection name
-                    final String setName = com.get(valueConverter.convert(sol.getValue("cid")).asLiteral().getString())
-                        + " / " + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
+                    // create setName: community name / collection name
+                    // if there is no community name then
+                    // remove "community name" and "/"
+                    final Value cid = sol.getValue("cid");
+                    String comStr = null;
+                    if (cid != null)
+                    {
+                       comStr = com.get(valueConverter.convert(cid).asLiteral().getString()); 
+                    }
+                    final Value name = sol.getValue("name");
+                    String setName = null;
+                    if (comStr != null && name != null)
+                    {
+                        setName = 
+                            comStr 
+                            + " / " 
+                            + valueConverter.convert(name).asLiteral().getString()
+                            ;
+                    }
+                    else if (comStr == null && name != null)
+                    {
+                        setName = valueConverter.convert(name).asLiteral().getString();
+                    }
+                    else
+                    {
+                        setName = "";
+                    }
+	 
+                    // spec
                     set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
                     set.setSetName(setName);
                     sets.getSet().add(set);
