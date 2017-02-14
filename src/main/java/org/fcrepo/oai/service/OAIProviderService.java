@@ -570,7 +570,7 @@ public class OAIProviderService {
         }
 
         if (StringUtils.isNotBlank(set) && !setsEnabled) {
-            return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.NO_SET_HIERARCHY,
+            return error(VerbType.LIST_IDENTIFIERS, null, metadataPrefix, OAIPMHerrorcodeType.NO_SET_HIERARCHY,
                 "Sets are not enabled");
         }
 
