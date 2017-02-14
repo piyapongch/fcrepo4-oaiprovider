@@ -888,7 +888,7 @@ public class OAIProviderService {
             validateDateTimeFormat(from);
             validateDateTimeFormat(until);
         } catch (final IllegalArgumentException e) {
-            return error(VerbType.LIST_IDENTIFIERS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
+            return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
                 e.getMessage());
         }
 
