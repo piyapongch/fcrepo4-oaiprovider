@@ -170,6 +170,10 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addIdentifier(oaidc, prop);
                 break;
 
+            case "ualid:doi":
+                addIdentifier(oaidc, prop);
+                break;
+
             case "ualid:trid":
                 addIdentifier(oaidc, prop);
                 break;
