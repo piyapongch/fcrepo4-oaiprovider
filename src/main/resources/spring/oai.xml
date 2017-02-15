@@ -10,6 +10,7 @@
  
     <bean name="jcrOaiGenerator" class="org.fcrepo.oai.generator.JcrOaiGenerator">
         <property name="eraIdFormat" value="https://era.library.ualberta.ca/files/%1$s" />
+        <property name="doiFullUriFormat" value="https://doi.org/%1$s" />
     </bean>
 
 	<bean name="jcrOaiDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator" parent="jcrOaiGenerator">
