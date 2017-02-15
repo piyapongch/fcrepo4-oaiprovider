@@ -437,7 +437,7 @@ public class OAIProviderService {
 
         final String noid;
         try {
-            noid = slashPattern.split(identifier)[2].substring(2);
+            noid = getNoidFromIdentifier(identifier);
         } catch (final Exception e) {
             return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
                 "The requested identifier does not exist");
@@ -1250,6 +1250,19 @@ public class OAIProviderService {
             log.trace("Delete resource error!", e);
             return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, e.getMessage());
         }
+    }
+
+    /**
+     * get noid from identifier.
+     *
+     * @param identifier id passed (e.g., oai:era.library.ualberta.ca:1/) 
+     *
+     * @return noid String
+     */
+    protected String getNoidFromIdentifier(final String identifier) 
+        throws Exception
+    {
+        return slashPattern.split(identifier)[1];        
     }
 
     /**
