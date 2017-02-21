@@ -171,7 +171,7 @@ public class OAIWebResource {
 
         /* decide what to do depending on the verb passed */
         if (verb == null) {
-            return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
+            return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_VERB,
                 "Verb is required");
         }
 
