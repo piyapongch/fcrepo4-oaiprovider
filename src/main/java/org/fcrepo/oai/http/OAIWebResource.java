@@ -156,7 +156,7 @@ public class OAIWebResource {
                 metadataPrefix = token.getMetadataPrefix();
                 offset = token.getOffset();
             } catch (final Exception e) {
-                return OAIProviderService.error(null, null, null, OAIPMHerrorcodeType.BAD_RESUMPTION_TOKEN,
+                return providerService.error(null, null, null, OAIPMHerrorcodeType.BAD_RESUMPTION_TOKEN,
                     "Resumption token is invalid");
             }
         } else {
@@ -171,7 +171,7 @@ public class OAIWebResource {
 
         /* decide what to do depending on the verb passed */
         if (verb == null) {
-            return OAIProviderService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
+            return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_VERB,
                 "Verb is required");
         }
 
@@ -181,7 +181,7 @@ public class OAIWebResource {
                 verifyEmpty(identifier, metadataPrefix, from, until, set);
                 return providerService.identify(this.session, uriInfo);
             } catch (JAXBException | IllegalArgumentException e) {
-                return OAIProviderService.error(VerbType.IDENTIFY, identifier, metadataPrefix,
+                return providerService.error(VerbType.IDENTIFY, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -192,7 +192,7 @@ public class OAIWebResource {
                 verifyEmpty(from, until, set);
                 return providerService.listMetadataFormats(this.session, uriInfo, identifier);
             } catch (final IllegalArgumentException e) {
-                return OAIProviderService.error(VerbType.LIST_METADATA_FORMATS, identifier, metadataPrefix,
+                return providerService.error(VerbType.LIST_METADATA_FORMATS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -203,7 +203,7 @@ public class OAIWebResource {
                 verifyEmpty(from, until, set);
                 return providerService.getRecord(this.session, uriInfo, identifier, metadataPrefix);
             } catch (final IllegalArgumentException e) {
-                return OAIProviderService.error(VerbType.GET_RECORD, identifier, metadataPrefix,
+                return providerService.error(VerbType.GET_RECORD, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -214,7 +214,7 @@ public class OAIWebResource {
                 verifyEmpty(identifier);
                 return providerService.listIdentifiers(this.session, uriInfo, metadataPrefix, from, until, set, offset);
             } catch (final IllegalArgumentException e) {
-                return OAIProviderService.error(VerbType.LIST_IDENTIFIERS, identifier, metadataPrefix,
+                return providerService.error(VerbType.LIST_IDENTIFIERS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -225,7 +225,7 @@ public class OAIWebResource {
                 verifyEmpty(identifier);
                 return providerService.listSets(session, uriInfo, offset);
             } catch (final IllegalArgumentException e) {
-                return OAIProviderService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
+                return providerService.error(VerbType.LIST_SETS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -236,7 +236,7 @@ public class OAIWebResource {
                 verifyEmpty(identifier);
                 return providerService.listRecords(this.session, uriInfo, metadataPrefix, from, until, set, offset);
             } catch (final IllegalArgumentException e) {
-                return OAIProviderService.error(VerbType.LIST_RECORDS, identifier, metadataPrefix,
+                return providerService.error(VerbType.LIST_RECORDS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
@@ -247,11 +247,11 @@ public class OAIWebResource {
                 verifyEmpty(identifier);
                 return providerService.search(this.session, uriInfo, metadataPrefix, property, value, offset);
             } catch (final IllegalArgumentException e) {
-                return OAIProviderService.error(VerbType.LIST_RECORDS, identifier, metadataPrefix,
+                return providerService.error(VerbType.LIST_RECORDS, identifier, metadataPrefix,
                     OAIPMHerrorcodeType.BAD_ARGUMENT, "Invalid arguments");
             }
         }
-        return OAIProviderService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_VERB,
+        return providerService.error(null, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_VERB,
             "Unknown verb '" + verb + "'");
     }
 

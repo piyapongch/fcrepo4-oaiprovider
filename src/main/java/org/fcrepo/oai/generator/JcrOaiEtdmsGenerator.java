@@ -182,6 +182,13 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
+            case "ualid:doi":
+                for (final Value v : prop.getValues()) {
+                    addString(v, thesis.getIdentifier());
+                    addString(formatUalidDoi(v.getString()), thesis.getIdentifier());
+                }
+                break;
+
             case "model:downloadFilename":
                 for (final Value v : prop.getValues()) {
                     try {
@@ -312,6 +319,22 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
         if (StringUtils.isNotEmpty(v.getString())) {
             level.add(v.getString());
+        }
+    }
+
+    /**
+     * The addString method.
+     *
+     * @param v
+     * @param level
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addString(final String v, final List<String> level)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        if (StringUtils.isNotEmpty(v)) {
+            level.add(v);
         }
     }
 

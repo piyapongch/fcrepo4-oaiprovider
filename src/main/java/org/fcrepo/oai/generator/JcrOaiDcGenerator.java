@@ -170,6 +170,11 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addIdentifier(oaidc, prop);
                 break;
 
+            case "ualid:doi":
+                addIdentifier(oaidc, prop);
+                addIdentifierDoi(oaidc, prop, dcFactory);
+                break;
+
             case "ualid:trid":
                 addIdentifier(oaidc, prop);
                 break;
@@ -340,6 +345,26 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
                 simple.getContent().add(v.getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
+            }
+        }
+    }
+
+    /**
+     * The addIdentifier method - modify the string to include the full DOI URL.
+     * 
+     * @param oaidc
+     * @param prop
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    protected void addIdentifierDoi(final OaiDcType oaidc, final Property prop, ObjectFactory dcFactory)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        for (final Value v : prop.getValues()) {
+            if (StringUtils.isNotEmpty(v.getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(formatUalidDoi(v.getString()));
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
             }
         }

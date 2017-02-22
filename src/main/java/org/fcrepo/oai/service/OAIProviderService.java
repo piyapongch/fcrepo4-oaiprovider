@@ -43,6 +43,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
+import javax.jcr.Value;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -106,6 +107,8 @@ import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 import com.google.common.base.Stopwatch;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -367,7 +370,22 @@ public class OAIProviderService {
 
         /* check which formats are available on top of oai_dc for this object */
         if (identifier != null && !identifier.isEmpty()) {
-            final String path = identifier.substring(this.baseUrl.length());
+
+            final String noid;
+            try {
+                noid = getNoidFromIdentifier(identifier);
+            } catch (final Exception e) {
+                return error(VerbType.GET_RECORD, identifier, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
+                    "The requested identifier does not exist");
+            }
+
+            final String path = getPathFromNoid(session, noid, null);
+            if (path==null) {
+                return error(VerbType.GET_RECORD, identifier, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
+                    "The requested identifier does not exist");
+            }
+
+            //final String path = identifier.substring(this.baseUrl.length());
             if (path != null && !path.isEmpty()) {
                 /* generate metadata format response for a single pid */
                 if (!nodeService.exists(session, path)) {
@@ -429,6 +447,11 @@ public class OAIProviderService {
     public JAXBElement<OAIPMHtype> getRecord(final Session session, final UriInfo uriInfo, final String identifier,
         final String metadataPrefix) throws RepositoryException {
         final MetadataFormat format = metadataFormats.get(metadataPrefix);
+        
+        if (identifier == null || metadataPrefix == null) {
+            return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
+                "The request includes illegal arguments or is missing required arguments.");
+        }
         if (format == null) {
             return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT,
                 "The metadata format is not available");
@@ -436,28 +459,18 @@ public class OAIProviderService {
 
         final String noid;
         try {
-            noid = slashPattern.split(identifier)[2].substring(2);
+            noid = getNoidFromIdentifier(identifier);
         } catch (final Exception e) {
             return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
                 "The requested identifier does not exist");
         }
-        final StringBuilder jql = new StringBuilder();
-        jql.append("SELECT res.[jcr:path] AS path FROM [fedora:Resource] AS res");
-        jql.append(" JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
-        jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
-        jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
-        jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
-        if (metadataPrefix.equals("oai_etdms")) {
-            jql.append(" AND res.[dcterms:type] = 'Thesis'");
-        }
 
-        final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        final RowIterator result = executeQuery(queryManager, jql.toString());
-        if (!result.hasNext()) {
+        final String path = getPathFromNoid(session, noid, metadataPrefix);
+        if (path==null) {
             return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
                 "The requested identifier does not exist");
         }
-        final String path = result.nextRow().getValue("path").getString();
+
         final Container obj = containerService.find(session, path);
 
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
@@ -523,14 +536,15 @@ public class OAIProviderService {
      * @param msg the msg
      * @return the jAXB element
      */
-    public static JAXBElement<OAIPMHtype> error(final VerbType verb, final String identifier,
+    public JAXBElement<OAIPMHtype> error(final VerbType verb, final String identifier,
         final String metadataPrefix, final OAIPMHerrorcodeType errorCode, final String msg) {
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
         final RequestType req = oaiFactory.createRequestType();
         req.setVerb(verb);
-        req.setIdentifier(identifier);
+        req.setIdentifier(StringEscapeUtils.escapeXml(identifier));
         req.setMetadataPrefix(metadataPrefix);
         oai.setRequest(req);
+	oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
 
         final OAIPMHerrorType error = oaiFactory.createOAIPMHerrorType();
         error.setCode(errorCode);
@@ -568,7 +582,7 @@ public class OAIProviderService {
         }
 
         if (StringUtils.isNotBlank(set) && !setsEnabled) {
-            return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.NO_SET_HIERARCHY,
+            return error(VerbType.LIST_IDENTIFIERS, null, metadataPrefix, OAIPMHerrorcodeType.NO_SET_HIERARCHY,
                 "Sets are not enabled");
         }
 
@@ -780,9 +794,35 @@ public class OAIProviderService {
                 if (result.getPosition() < maxListSize) {
                     final SetType set = oaiFactory.createSetType();
                     final Row sol = result.nextRow();
-                    // create setName: comunity name / collection name
-                    final String setName = com.get(valueConverter.convert(sol.getValue("cid")).asLiteral().getString())
-                        + " / " + valueConverter.convert(sol.getValue("name")).asLiteral().getString();
+                    // create setName: community name / collection name
+                    // if there is no community name then
+                    // remove "community name" and "/"
+                    final Value cid = sol.getValue("cid");
+                    String comStr = null;
+                    if (cid != null)
+                    {
+                       comStr = com.get(valueConverter.convert(cid).asLiteral().getString()); 
+                    }
+                    final Value name = sol.getValue("name");
+                    String setName = null;
+                    if (comStr != null && name != null)
+                    {
+                        setName = 
+                            comStr 
+                            + " / " 
+                            + valueConverter.convert(name).asLiteral().getString()
+                            ;
+                    }
+                    else if (comStr == null && name != null)
+                    {
+                        setName = valueConverter.convert(name).asLiteral().getString();
+                    }
+                    else
+                    {
+                        setName = "";
+                    }
+	 
+                    // spec
                     set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
                     set.setSetName(setName);
                     sets.getSet().add(set);
@@ -860,7 +900,7 @@ public class OAIProviderService {
             validateDateTimeFormat(from);
             validateDateTimeFormat(until);
         } catch (final IllegalArgumentException e) {
-            return error(VerbType.LIST_IDENTIFIERS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
+            return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
                 e.getMessage());
         }
 
@@ -1222,6 +1262,54 @@ public class OAIProviderService {
             log.trace("Delete resource error!", e);
             return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, e.getMessage());
         }
+    }
+
+    /**
+     * get path given an noid identifier vai a jcr query
+     *
+     * @param noid identifier
+     * @param metadataPrefix string indicating the type of metadata
+     *
+     * @return Fedora path or null if identifier not found
+     */
+    protected String getPathFromNoid(final Session session, final String noid, final String metadataPrefix) throws RepositoryException
+    { 
+        String path = null;
+        if (noid!=null) {
+            final StringBuilder jql = new StringBuilder();
+            jql.append("SELECT res.[jcr:path] AS path FROM [fedora:Resource] AS res");
+            jql.append(" JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
+            jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
+            jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
+            jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
+            if (metadataPrefix!=null && metadataPrefix.equals("oai_etdms")) {
+                jql.append(" AND res.[dcterms:type] = 'Thesis'");
+            }
+
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            final RowIterator result = executeQuery(queryManager, jql.toString());
+
+            if (result.hasNext()) {
+                path = result.nextRow().getValue("path").getString();
+            }
+        }
+
+        return path;
+    }
+
+    /**
+     * get noid from identifier.
+     *
+     * @param identifier id passed (e.g., oai:era.library.ualberta.ca:1/) 
+     *
+     * @return noid String or null if not valid
+     */
+    protected String getNoidFromIdentifier(final String identifier) 
+        throws Exception
+    {
+        // whitelist noid to avoid JCR injections
+        String noid = slashPattern.split(identifier)[1];        
+        return noid.matches("^[/\\pL\\pN:_-]+$") ? noid : null;        
     }
 
     /**
