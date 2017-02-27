@@ -8,11 +8,11 @@
         <version>4.2.0</version>
     </parent>
 
-    <groupId>org.fcrepo</groupId>
     <artifactId>fcrepo4-oaiprovider</artifactId>
     <description>The Fedora Commons repository OAI provider.</description>
     <packaging>bundle</packaging>
-
+    <version>4.2.0_1</version>
+    
     <repositories>
         <repository>
             <id>snapshots-repo</id>
@@ -26,13 +26,12 @@
         </repository>
     </repositories>
 
-
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.fcrepo</groupId>
                 <artifactId>fcrepo-jcr-bom</artifactId>
-                <version>${project.version}</version>
+                <version>4.2.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -273,7 +272,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <project.version>${project.version}</project.version>
+                        <project.version>${fcrepo.version}</project.version>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -306,14 +305,14 @@
                         **/ualberta/library/terms/oai_qdc/**, **/fcrepo/jena/**
                     </excludes>
                     <systemPropertyVariables>
-                        <project.version>${project.version}</project.version>
+                        <project.version>${fcrepo.version}</project.version>
                     </systemPropertyVariables>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.fcrepo</groupId>
                         <artifactId>fcrepo-build-tools</artifactId>
-                        <version>${project.version}</version>
+                        <version>4.2.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -348,6 +347,13 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.fcrepo</groupId>
+                        <artifactId>fcrepo-build-tools</artifactId>
+                        <version>4.2.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -359,25 +365,25 @@
                             <tasks>
                                 <echo message="Building ${project.artifactId}-${project.version}.war..." />
                                 <get
-                                    src="https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-4.2.0/fcrepo-webapp-${project.version}.war"
-                                    dest="target/fcrepo-webapp-${project.version}.war"/>
-                                <unzip src="target/fcrepo-webapp-${project.version}.war" dest="target/fcrepo-webapp-${project.version}" />
+                                    src="https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-4.2.0/fcrepo-webapp-${fcrepo.version}.war"
+                                    dest="target/fcrepo-webapp-${fcrepo.version}.war"/>
+                                <unzip src="target/fcrepo-webapp-${fcrepo.version}.war" dest="target/fcrepo-webapp-${fcrepo.version}" />
                                 <echo message="Copying libraries and configurations..." />
-                                <copy file="src/main/webapp/WEBINF/web.xml" todir="target/fcrepo-webapp-${project.version}/WEB-INF"
+                                <copy file="src/main/webapp/WEBINF/web.xml" todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF"
                                    verbose="true" />
-                                <copy file="src/main/resources/logback.xml" todir="target/fcrepo-webapp-${project.version}/WEB-INF/classes"
+                                <copy file="src/main/resources/logback.xml" todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes"
                                    verbose="true" />
-                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/lib" verbose="true">
+                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib" verbose="true">
                                     <fileset dir="src/main/resources/lib" />
                                 </copy>
-                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/classes/spring" verbose="true">
+                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/spring" verbose="true">
                                     <fileset dir="src/main/resources/spring" />
                                 </copy>
-                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/classes/config/minimal-default" verbose="true">
+                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/config/minimal-default" verbose="true">
                                     <fileset dir="src/main/resources/config/minimal-default" />
                                 </copy>
-                                <copy todir="target/fcrepo-webapp-${project.version}/WEB-INF/lib" file="target/${project.artifactId}-${project.version}.jar" verbose="true"/>
-                                <jar destfile="target/${project.artifactId}-${project.version}.war" basedir="target/fcrepo-webapp-${project.version}" />
+                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib" file="target/${project.artifactId}-${project.version}.jar" verbose="true"/>
+                                <jar destfile="target/${project.artifactId}-${project.version}.war" basedir="target/fcrepo-webapp-${fcrepo.version}" />
                             </tasks>
                         </configuration>
                         <goals>
