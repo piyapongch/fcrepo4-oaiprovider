@@ -8,7 +8,7 @@
         <version>4.2.0</version>
     </parent>
 
-    <artifactId>fcrepo4-oaiprovider</artifactId>
+    <artifactId>fcrepo-oaiprovider</artifactId>
     <description>The Fedora Commons repository OAI provider.</description>
     <packaging>bundle</packaging>
     <version>4.2.1</version>

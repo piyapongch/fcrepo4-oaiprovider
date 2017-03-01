@@ -39,11 +39,11 @@ import javax.annotation.PreDestroy;
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
-import javax.jcr.Value;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -54,6 +54,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fcrepo.http.api.FedoraLdp;
 import org.fcrepo.http.api.FedoraNodes;
@@ -107,8 +108,6 @@ import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.apache.commons.lang.StringEscapeUtils;
 
 import com.google.common.base.Stopwatch;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -380,13 +379,13 @@ public class OAIProviderService {
             }
 
             final String path = getPathFromNoid(session, noid, null);
-            if (path==null) {
+            if (path == null) {
                 return error(VerbType.GET_RECORD, identifier, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
                     "The requested identifier does not exist");
             }
 
-            //final String path = identifier.substring(this.baseUrl.length());
-            if (path != null && !path.isEmpty()) {
+            // final String path = identifier.substring(this.baseUrl.length());
+            if (!path.isEmpty()) {
                 /* generate metadata format response for a single pid */
                 if (!nodeService.exists(session, path)) {
                     return error(VerbType.LIST_METADATA_FORMATS, identifier, null,
@@ -399,6 +398,7 @@ public class OAIProviderService {
                     } else if (mdf.getPrefix().equals("oai_etdms")) {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else {
+                        // FIXME: should check on dcterms:type == 'Thesis' ? oai_dc and oai_etdms : oai_dc
                         final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
                             .filter(new PropertyPredicate(mdf.getPropertyName()));
                         if (triples.hasNext()) {
@@ -447,7 +447,7 @@ public class OAIProviderService {
     public JAXBElement<OAIPMHtype> getRecord(final Session session, final UriInfo uriInfo, final String identifier,
         final String metadataPrefix) throws RepositoryException {
         final MetadataFormat format = metadataFormats.get(metadataPrefix);
-        
+
         if (identifier == null || metadataPrefix == null) {
             return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
                 "The request includes illegal arguments or is missing required arguments.");
@@ -466,7 +466,7 @@ public class OAIProviderService {
         }
 
         final String path = getPathFromNoid(session, noid, metadataPrefix);
-        if (path==null) {
+        if (path == null) {
             return error(VerbType.GET_RECORD, identifier, metadataPrefix, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
                 "The requested identifier does not exist");
         }
@@ -505,7 +505,7 @@ public class OAIProviderService {
     }
 
     private JAXBElement<String> fetchOaiResponse(final Container obj, final Session session,
-        final MetadataFormat format, final UriInfo uriInfo) throws RepositoryException, IOException {
+        final MetadataFormat format, final UriInfo uriInfo) throws IOException {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
@@ -522,7 +522,7 @@ public class OAIProviderService {
         final FedoraBinary bin = binaryService.findOrCreate(session, "/" + recordPath);
 
         try (final InputStream src = new XmlDeclarationStrippingInputStream(bin.getContent())) {
-            return new JAXBElement<String>(new QName(format.getPrefix()), String.class, IOUtils.toString(src));
+            return new JAXBElement<>(new QName(format.getPrefix()), String.class, IOUtils.toString(src));
         }
     }
 
@@ -536,15 +536,15 @@ public class OAIProviderService {
      * @param msg the msg
      * @return the jAXB element
      */
-    public JAXBElement<OAIPMHtype> error(final VerbType verb, final String identifier,
-        final String metadataPrefix, final OAIPMHerrorcodeType errorCode, final String msg) {
+    public JAXBElement<OAIPMHtype> error(final VerbType verb, final String identifier, final String metadataPrefix,
+        final OAIPMHerrorcodeType errorCode, final String msg) {
         final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
         final RequestType req = oaiFactory.createRequestType();
         req.setVerb(verb);
         req.setIdentifier(StringEscapeUtils.escapeXml(identifier));
         req.setMetadataPrefix(metadataPrefix);
         oai.setRequest(req);
-	oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
+        oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
 
         final OAIPMHerrorType error = oaiFactory.createOAIPMHerrorType();
         error.setCode(errorCode);
@@ -568,7 +568,7 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> listIdentifiers(final Session session, final UriInfo uriInfo,
         final String metadataPrefix, final String from, final String until, final String set, final int offset)
-            throws RepositoryException {
+        throws RepositoryException {
 
         if (metadataPrefix == null) {
             return error(VerbType.LIST_IDENTIFIERS, null, null, OAIPMHerrorcodeType.BAD_ARGUMENT,
@@ -799,29 +799,19 @@ public class OAIProviderService {
                     // remove "community name" and "/"
                     final Value cid = sol.getValue("cid");
                     String comStr = null;
-                    if (cid != null)
-                    {
-                       comStr = com.get(valueConverter.convert(cid).asLiteral().getString()); 
+                    if (cid != null) {
+                        comStr = com.get(valueConverter.convert(cid).asLiteral().getString());
                     }
                     final Value name = sol.getValue("name");
                     String setName = null;
-                    if (comStr != null && name != null)
-                    {
-                        setName = 
-                            comStr 
-                            + " / " 
-                            + valueConverter.convert(name).asLiteral().getString()
-                            ;
-                    }
-                    else if (comStr == null && name != null)
-                    {
+                    if (comStr != null && name != null) {
+                        setName = comStr + " / " + valueConverter.convert(name).asLiteral().getString();
+                    } else if (comStr == null && name != null) {
                         setName = valueConverter.convert(name).asLiteral().getString();
-                    }
-                    else
-                    {
+                    } else {
                         setName = "";
                     }
-	 
+
                     // spec
                     set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
                     set.setSetName(setName);
@@ -879,7 +869,7 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> listRecords(final Session session, final UriInfo uriInfo,
         final String metadataPrefix, final String from, final String until, final String set, final int offset)
-            throws RepositoryException {
+        throws RepositoryException {
 
         final HttpResourceConverter converter =
             new HttpResourceConverter(session, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
@@ -900,8 +890,7 @@ public class OAIProviderService {
             validateDateTimeFormat(from);
             validateDateTimeFormat(until);
         } catch (final IllegalArgumentException e) {
-            return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
-                e.getMessage());
+            return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT, e.getMessage());
         }
 
         if (StringUtils.isNotBlank(set) && !setsEnabled) {
@@ -1000,7 +989,7 @@ public class OAIProviderService {
 
     /**
      * The createId method.
-     * 
+     *
      * @param path
      * @return
      */
@@ -1012,7 +1001,7 @@ public class OAIProviderService {
 
     private String listResourceQuery(final Session session, final String mixinTypes, final String metadataPrefix,
         final String from, final String until, final String set, final int limit, final int offset)
-            throws RepositoryException {
+        throws RepositoryException {
 
         final String propJcrPath = getPropertyName(session, createProperty(RdfLexicon.JCR_NAMESPACE + "path"));
         final String propHasMixinType = getPropertyName(session, RdfLexicon.HAS_MIXIN_TYPE);
@@ -1237,7 +1226,7 @@ public class OAIProviderService {
 
     /**
      * The delete method.
-     * 
+     *
      * @param path
      * @return
      * @throws RepositoryException
@@ -1253,11 +1242,10 @@ public class OAIProviderService {
                 log.trace("Resource {} has been deleted", path);
                 return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
                     "Resource has been deleted");
-            } else {
-                log.trace("Resource {} does not exist", path);
-                return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
-                    "Resource does not exist");
             }
+            log.trace("Resource {} does not exist", path);
+            return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST,
+                "Resource does not exist");
         } catch (final Exception e) {
             log.trace("Delete resource error!", e);
             return error(VerbType.GET_RECORD, null, null, OAIPMHerrorcodeType.ID_DOES_NOT_EXIST, e.getMessage());
@@ -1272,17 +1260,17 @@ public class OAIProviderService {
      *
      * @return Fedora path or null if identifier not found
      */
-    protected String getPathFromNoid(final Session session, final String noid, final String metadataPrefix) throws RepositoryException
-    { 
+    protected String getPathFromNoid(final Session session, final String noid, final String metadataPrefix)
+        throws RepositoryException {
         String path = null;
-        if (noid!=null) {
+        if (noid != null) {
             final StringBuilder jql = new StringBuilder();
             jql.append("SELECT res.[jcr:path] AS path FROM [fedora:Resource] AS res");
             jql.append(" JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
             jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
             jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
             jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
-            if (metadataPrefix!=null && metadataPrefix.equals("oai_etdms")) {
+            if (metadataPrefix != null && metadataPrefix.equals("oai_etdms")) {
                 jql.append(" AND res.[dcterms:type] = 'Thesis'");
             }
 
@@ -1300,16 +1288,14 @@ public class OAIProviderService {
     /**
      * get noid from identifier.
      *
-     * @param identifier id passed (e.g., oai:era.library.ualberta.ca:1/) 
+     * @param identifier id passed (e.g., oai:era.library.ualberta.ca:1/)
      *
      * @return noid String or null if not valid
      */
-    protected String getNoidFromIdentifier(final String identifier) 
-        throws Exception
-    {
+    protected String getNoidFromIdentifier(final String identifier) throws Exception {
         // whitelist noid to avoid JCR injections
-        String noid = slashPattern.split(identifier)[1];        
-        return noid.matches("^[/\\pL\\pN:_-]+$") ? noid : null;        
+        final String noid = slashPattern.split(identifier)[1];
+        return noid.matches("^[/\\pL\\pN:_-]+$") ? noid : null;
     }
 
     /**
@@ -1338,7 +1324,7 @@ public class OAIProviderService {
 
     /**
      * The setPropertyHasModel setter method.
-     * 
+     *
      * @param propertyHasModel the propertyHasModel to set
      */
     public void setPropertyHasModel(final String propertyHasModel) {
@@ -1347,7 +1333,7 @@ public class OAIProviderService {
 
     /**
      * The setIdFormat setter method.
-     * 
+     *
      * @param idFormat the idFormat to set
      */
     public final void setIdFormat(final String idFormat) {
@@ -1446,7 +1432,7 @@ public class OAIProviderService {
 
     /**
      * The setPropertyOaiBaseUrl setter method.
-     * 
+     *
      * @param propertyOaiBaseUrl the propertyOaiBaseUrl to set
      */
     public void setPropertyOaiBaseUrl(final String propertyOaiBaseUrl) {
@@ -1455,7 +1441,7 @@ public class OAIProviderService {
 
     /**
      * The setSearchEnabled setter method.
-     * 
+     *
      * @param searchEnabled the searchEnabled to set
      */
     public void setSearchEnabled(final boolean searchEnabled) {
