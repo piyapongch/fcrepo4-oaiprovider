@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +77,7 @@ import org.fcrepo.oai.generator.JcrOaiEtdmsGenerator;
 import org.fcrepo.oai.http.ResumptionToken;
 import org.fcrepo.oai.jersey.XmlDeclarationStrippingInputStream;
 import org.fcrepo.oai.rdf.PropertyPredicate;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -156,6 +158,8 @@ public class OAIProviderService {
     private Map<String, MetadataFormat> metadataFormats;
 
     private final DateTimeFormatter dateFormat = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.UTC);
+
+    private final DateTimeFormatter dateFormatMillis = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
 
     private int maxListSize;
 
@@ -1043,8 +1047,16 @@ public class OAIProviderService {
 
         // end datetime constraint
         if (StringUtils.isNotBlank(until)) {
+            // www.openarchives.org/Register/ValidateSite tests by sending the same YYYY-MM-DDYHH:MM:SSZ 
+            // (second granularity) as the "from" and "until" values. Fedora uses millisecond granularity 
+            // the truncation to second granularity causes failures when the "from" and "until are the same 
+            // thus the comparison fails "from" <= object.timestamp <= "until" fails 
+            // E.G., 2017-03-13T22:36:23Z <= 2017-03-13T22:36:23.655Z <= 2017-03-13T22:36:23Z fails 
+            // Fix: add 999 milliseconds to the end of the "until" thus accounting for the second granularity 
+            DateTime dt = dateFormat.parseDateTime(until);
+            dt = dt.plusMillis(999);
             jql.append(" AND");
-            jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST('" + until + "' AS DATE)");
+            jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST('" + dt.toString(dateFormatMillis) + "' AS DATE)");
         }
 
         // etdms for thesis only
