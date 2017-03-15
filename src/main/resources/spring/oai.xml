@@ -95,7 +95,7 @@
 
 	<bean name="oaiEtdmsFormat" class="org.fcrepo.oai.service.MetadataFormat">
 		<property name="prefix" value="oai_etdms" />
-		<property name="schemaUrl" value="http://www.ndltd.org/standards/metadata/etdms/1.0/xml.xsd" />
+		<property name="schemaUrl" value="http://www.ndltd.org/standards/metadata/etdms/1-0/xml.xsd" />
 		<property name="namespace" value="http://www.ndltd.org/standards/metadata/etdms/1.0/" />
 		<property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiETDMSRecord" />
 	</bean>
