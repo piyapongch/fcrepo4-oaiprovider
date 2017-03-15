@@ -25,6 +25,7 @@ import static org.openarchives.oai._2.VerbType.LIST_SETS;
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -99,12 +100,12 @@ public class OAIWebResource {
      */
     @POST
     @Produces(MediaType.TEXT_XML)
-    public Object postOAIResponse(final @QueryParam("verb") String verbParam,
-        final @QueryParam("identifier") String identifierParam,
-        final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
-        final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
-        final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
-        final @QueryParam("property") String propery, final @QueryParam("value") String value)
+    public Object postOAIResponse(final @FormParam("verb") String verbParam,
+        final @FormParam("identifier") String identifierParam,
+        final @FormParam("metadataPrefix") String metadataPrefixParam, final @FormParam("from") String fromParam,
+        final @FormParam("until") String untilParam, final @FormParam("set") String setParam,
+        final @FormParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
+        final @FormParam("property") String propery, final @FormParam("value") String value)
         throws RepositoryException {
         return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
             resumptionToken, uriInfo, propery, value);

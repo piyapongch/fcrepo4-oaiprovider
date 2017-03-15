@@ -854,7 +854,16 @@ public class OAIProviderService {
         req.setSet(uriInfo.getQueryParameters().getFirst("set"));
         req.setUntil(uriInfo.getQueryParameters().getFirst("until"));
         final String reqUri = uriInfo.getRequestUri().toASCIIString();
-        req.setValue(baseUrl.concat(reqUri.substring(reqUri.indexOf("?"))));
+        int position = reqUri.indexOf("?");
+        // account for POST request (i.e.,  no "?" URL as per the HTTP GET URL parameter passing syntax
+        if (position == -1) {
+            // HTTP POST request: use entire URL
+            req.setValue(baseUrl.concat(reqUri));
+        }
+        else {
+            // HTTP GET request: use URL before the "?"
+            req.setValue(baseUrl.concat(reqUri.substring(reqUri.indexOf("?"))));
+        }
         return req;
     }
 
