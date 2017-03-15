@@ -26,7 +26,6 @@ import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -854,13 +853,13 @@ public class OAIProviderService {
         req.setSet(uriInfo.getQueryParameters().getFirst("set"));
         req.setUntil(uriInfo.getQueryParameters().getFirst("until"));
         final String reqUri = uriInfo.getRequestUri().toASCIIString();
-        int position = reqUri.indexOf("?");
-        // account for POST request (i.e.,  no "?" URL as per the HTTP GET URL parameter passing syntax
+        final int position = reqUri.indexOf("?");
+        // account for POST request
+        // (i.e.,  no "?" in URL as per the HTTP GET URL parameter passing syntax
         if (position == -1) {
             // HTTP POST request: use entire URL
             req.setValue(baseUrl.concat(reqUri));
-        }
-        else {
+        } else {
             // HTTP GET request: use URL before the "?"
             req.setValue(baseUrl.concat(reqUri.substring(reqUri.indexOf("?"))));
         }
@@ -1056,16 +1055,17 @@ public class OAIProviderService {
 
         // end datetime constraint
         if (StringUtils.isNotBlank(until)) {
-            // www.openarchives.org/Register/ValidateSite tests by sending the same YYYY-MM-DDYHH:MM:SSZ 
-            // (second granularity) as the "from" and "until" values. Fedora uses millisecond granularity 
-            // the truncation to second granularity causes failures when the "from" and "until are the same 
-            // thus the comparison fails "from" <= object.timestamp <= "until" fails 
-            // E.G., 2017-03-13T22:36:23Z <= 2017-03-13T22:36:23.655Z <= 2017-03-13T22:36:23Z fails 
-            // Fix: add 999 milliseconds to the end of the "until" thus accounting for the second granularity 
+            // www.openarchives.org/Register/ValidateSite tests by sending the same YYYY-MM-DDYHH:MM:SSZ
+            // (second granularity) as the "from" and "until" values. Fedora uses millisecond granularity
+            // the truncation to second granularity causes failures when the "from" and "until are the same
+            // thus the comparison fails "from" <= object.timestamp <= "until" fails
+            // E.G., 2017-03-13T22:36:23Z <= 2017-03-13T22:36:23.655Z <= 2017-03-13T22:36:23Z fails
+            // Fix: add 999 milliseconds to the end of the "until" thus accounting for the second granularity
             DateTime dt = dateFormat.parseDateTime(until);
             dt = dt.plusMillis(999);
             jql.append(" AND");
-            jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST('" + dt.toString(dateFormatMillis) + "' AS DATE)");
+            jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST('"
+                + dt.toString(dateFormatMillis) + "' AS DATE)");
         }
 
         // etdms for thesis only
