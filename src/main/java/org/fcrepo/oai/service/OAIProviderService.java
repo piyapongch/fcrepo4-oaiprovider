@@ -852,17 +852,10 @@ public class OAIProviderService {
         req.setResumptionToken(uriInfo.getQueryParameters().getFirst("resumptionToken"));
         req.setSet(uriInfo.getQueryParameters().getFirst("set"));
         req.setUntil(uriInfo.getQueryParameters().getFirst("until"));
-        final String reqUri = uriInfo.getRequestUri().toASCIIString();
-        final int position = reqUri.indexOf("?");
-        // account for POST request
-        // (i.e.,  no "?" in URL as per the HTTP GET URL parameter passing syntax
-        if (position == -1) {
-            // HTTP POST request: use entire URL
-            req.setValue(baseUrl.concat(reqUri));
-        } else {
-            // HTTP GET request: use URL before the "?"
-            req.setValue(baseUrl.concat(reqUri.substring(reqUri.indexOf("?"))));
-        }
+
+        final String reqUri = uriInfo.getBaseUri().toASCIIString();
+        req.setValue(baseUrl);
+
         return req;
     }
 
