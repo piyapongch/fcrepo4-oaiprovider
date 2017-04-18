@@ -854,7 +854,7 @@ public class OAIProviderService {
         req.setUntil(uriInfo.getQueryParameters().getFirst("until"));
 
         final String reqUri = uriInfo.getBaseUri().toASCIIString();
-        req.setValue(baseUrl);
+        req.setValue(reqUri);
 
         return req;
     }

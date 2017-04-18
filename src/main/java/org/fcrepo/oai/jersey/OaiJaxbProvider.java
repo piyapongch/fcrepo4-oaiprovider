@@ -65,7 +65,7 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
             + "http://www.openarchives.org/OAI/2.0/oai-identifier.xsd\n"
             + "    http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\n"
             + "    http://www.ndltd.org/standards/metadata/etdms/1.0/ "
-            + "http://www.ndltd.org/standards/metadata/etdms/1-0/etdms.xsd";
+            + "    http://www.ndltd.org/standards/metadata/etdms/1.0/etdms.xsd";
 
     private final Marshaller marshaller;
 
