@@ -214,8 +214,22 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 break;
 
             case "dcterms:abstract":
+               /*
+               * In the context of the Fedora 4.2 & HydraNorth stack,
+               * if dcterms:description property (in jcr/xml) is of a
+               * substantial length (tested with 6760 characters) the property
+               * type switches to `Binary` with subsequent edits appending a new
+               * value to the list of values for the property (i.e., not replacing)
+               * This workaround chooses the last value assuming the previous
+               * values are old versions (to avoid returning all values of the
+               * property, including the obsolete). 2017-05-12
+               */
+                Value lastValue = null;
                 for (final Value v : prop.getValues()) {
-                    addDescription(v, thesis.getDescription(), "Abstract: ");
+                    lastValue = v;
+                }
+                if (lastValue != null) {
+                    addDescription(lastValue, thesis.getDescription(), "Abstract: ");
                 }
                 break;
 

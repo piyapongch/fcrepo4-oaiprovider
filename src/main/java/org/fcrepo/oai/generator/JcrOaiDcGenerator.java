@@ -188,11 +188,11 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 break;
 
             case "dcterms:description":
-                addDescription(oaidc, prop, null);
+                addLongDescription(oaidc, prop, null);
                 break;
 
             case "dcterms:abstract":
-                addDescription(oaidc, prop, "Abstract: ");
+                addLongDescription(oaidc, prop, "Abstract: ");
                 break;
 
             case "dcterms:language":
@@ -408,6 +408,39 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 simple.getContent().add(prefix == null ? v.getString() : prefix + v.getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
             }
+        }
+    }
+
+    /**
+     * The addDescription method for long descriptions.
+     *
+     * In the context of the Fedora 4.2 & HydraNorth stack,
+     * if dcterms:description property (in jcr/xml) is of a
+     * substantial length (tested with 6760 characters) the property
+     * type switches to `Binary` with subsequent edits appending a new value to the
+     * list of values for the property (instead of replacing).
+     * This workaround chooses the last value assuming the previous
+     * values are old versions (to avoid returning all values of the
+     * property, including the obsolete). 2017-05-12
+     *
+     * @param oaidc
+     * @param prop
+     * @param string
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addLongDescription(final OaiDcType oaidc, final Property prop, final String prefix)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        SimpleLiteral simple = null;
+        for (final Value v : prop.getValues()) {
+            if (StringUtils.isNotEmpty(v.getString())) {
+                simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(prefix == null ? v.getString() : prefix + v.getString());
+            }
+        }
+        if (simple != null) {
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
     }
 
