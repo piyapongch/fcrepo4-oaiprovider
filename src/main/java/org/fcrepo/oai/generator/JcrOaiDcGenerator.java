@@ -432,15 +432,15 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      */
     private void addLongDescription(final OaiDcType oaidc, final Property prop, final String prefix)
         throws ValueFormatException, IllegalStateException, RepositoryException {
-        SimpleLiteral simple = null;
-        for (final Value v : prop.getValues()) {
-            if (StringUtils.isNotEmpty(v.getString())) {
-                simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(prefix == null ? v.getString() : prefix + v.getString());
+        final Value[] vals = prop.getValues();
+        final int len = java.lang.Math.toIntExact(vals.length);
+        if (len > 0) {
+            final Value lastValue = (len > 0) ? vals[len - 1] : null;
+            if (StringUtils.isNotEmpty(lastValue.getString())) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(prefix == null ? lastValue.getString() : prefix + lastValue.getString());
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
             }
-        }
-        if (simple != null) {
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
         }
     }
 
