@@ -794,7 +794,8 @@ public class OAIProviderService {
                 .append("col.[ualidentifier:belongsToCommunity] as cid ");
             jql.append("FROM [").append(FedoraJcrTypes.FEDORA_RESOURCE).append("] as col ")
                 .append("WHERE col.[model:hasModel] = 'Collection' ")
-                .append(" AND col.[ualidentifier:is_official] = CAST('" + booleanTrue + "' AS BINARY)")
+                .append(" AND (col.[ualidentifier:is_official] = 'true'")
+                .append(" OR col.[ualidentifier:is_official] = CAST('" + booleanTrue + "' AS BINARY) )")
                 .append(" AND col.[ualidentifier:belongsToCommunity] IS NOT NULL");
 
             if (maxListSize > 0) {

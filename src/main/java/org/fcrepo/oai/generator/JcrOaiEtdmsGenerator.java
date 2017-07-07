@@ -208,15 +208,11 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 break;
 
             case "dcterms:description":
-                for (final Value v : prop.getValues()) {
-                    addDescription(v, thesis.getDescription(), null);
-                }
+                addLongDescription(thesis, prop, null);
                 break;
 
             case "dcterms:abstract":
-                for (final Value v : prop.getValues()) {
-                    addDescription(v, thesis.getDescription(), "Abstract: ");
-                }
+                addLongDescription(thesis, prop, "Abstract: ");
                 break;
 
             case "dcterms:language":
@@ -269,6 +265,37 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
 
         return thesis;
     }
+
+
+  /**
+     * The addDescription method for long descriptions.
+     *
+     * In the context of the Fedora 4.2 & HydraNorth stack,
+     * if dcterms:description property (in jcr/xml) is of a
+     * substantial length (tested with 6760 characters) the property
+     * type switches to `Binary` with subsequent edits appending a new value to the
+     * list of values for the property (instead of replacing).
+     * This workaround chooses the last value assuming the previous
+     * values are old versions (to avoid returning all values of the
+     * property, including the obsolete). 2017-05-12
+     *
+     * @param thesis
+     * @param prop
+     * @param string
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addLongDescription(final Thesis thesis, final Property prop, final String prefix)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        final Value[] vals = prop.getValues();
+        final int len = java.lang.Math.toIntExact(vals.length);
+        if (len > 0) {
+            final Value lastValue = (len > 0) ? vals[len - 1] : null;
+            addDescription(lastValue, thesis.getDescription(), prefix);
+        }
+    }
+
 
     /**
      * The addDescription method.
