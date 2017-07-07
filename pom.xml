@@ -11,7 +11,7 @@
     <artifactId>fcrepo-oaiprovider</artifactId>
     <description>The Fedora Commons repository OAI provider.</description>
     <packaging>bundle</packaging>
-    <version>4.2.3</version>
+    <version>4.2.5</version>
     
     <repositories>
         <repository>
@@ -313,7 +313,9 @@
                 <configuration>
                     <excludes> **/integration/**, **/purl/**/**/**/*, **/openarchives/**/**/*,
                         **/ndltd/standards/metadata/etdms/**,
-                        **/ualberta/library/terms/oai_qdc/**, **/fcrepo/jena/**
+                        **/ualberta/library/terms/oai_qdc/**, **/fcrepo/jena/**,
+                        , **/target/generated-sources/**
+                        , org/w3/**, **/generated/**
                     </excludes>
                     <systemPropertyVariables>
                         <project.version>${fcrepo.version}</project.version>

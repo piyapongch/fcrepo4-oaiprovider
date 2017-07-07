@@ -73,6 +73,7 @@ import org.fcrepo.kernel.services.NodeService;
 import org.fcrepo.kernel.utils.iterators.RdfStream;
 import org.fcrepo.oai.generator.JcrOaiDcGenerator;
 import org.fcrepo.oai.generator.JcrOaiEtdmsGenerator;
+import org.fcrepo.oai.generator.JcrOaiOreGenerator;
 import org.fcrepo.oai.http.ResumptionToken;
 import org.fcrepo.oai.jersey.XmlDeclarationStrippingInputStream;
 import org.fcrepo.oai.rdf.PropertyPredicate;
@@ -122,6 +123,10 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * @author Piyapong Charoenwattana
  */
 public class OAIProviderService {
+
+    // supported metadata prefixes
+    // OAI-ORE - only for Thesis
+    private static final String METADATA_PREFIX_ORE = "ore";
 
     private static final Logger log = LoggerFactory.getLogger(OAIProviderService.class);
 
@@ -201,6 +206,9 @@ public class OAIProviderService {
 
     @Autowired
     private JcrOaiEtdmsGenerator jcrOaiEtdmsGenerator;
+
+    @Autowired
+    private JcrOaiOreGenerator jcrOaiOreGenerator;
 
     /**
      * Service intitialization
@@ -400,6 +408,8 @@ public class OAIProviderService {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else if (mdf.getPrefix().equals("oai_etdms")) {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
+                    } else if (mdf.getPrefix().equals(METADATA_PREFIX_ORE)) {
+                        listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else {
                         // FIXME: should check on dcterms:type == 'Thesis' ? oai_dc and oai_etdms : oai_dc
                         final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
@@ -505,6 +515,11 @@ public class OAIProviderService {
     private Thesis generateOaiEtdms(final Session session, final Container obj, final String name,
         final UriInfo uriInfo) throws RepositoryException {
         return jcrOaiEtdmsGenerator.generate(session, obj, name, uriInfo);
+    }
+
+    private generated.Entry generateOaiOre(final Session session, final Container obj, final String name,
+        final UriInfo uriInfo) throws RepositoryException {
+        return jcrOaiOreGenerator.generate(session, obj, name, uriInfo);
     }
 
     private JAXBElement<String> fetchOaiResponse(final Container obj, final Session session,
@@ -979,6 +994,9 @@ public class OAIProviderService {
         } else if (mdf.getPrefix().equals("oai_etdms")) {
             /* generate a OAI ETDMS reponse using the DC Generator from fcrepo4 */
             md.setAny(generateOaiEtdms(session, obj, name, uriInfo));
+        } else if (mdf.getPrefix().equals(METADATA_PREFIX_ORE)) {
+            /* generate a OAI ORE reponse using the DC Generator from fcrepo4 */
+            md.setAny(generateOaiOre(session, obj, name, uriInfo));
         } else {
             /* generate a OAI response from the linked Binary */
             md.setAny(fetchOaiResponse(obj, session, mdf, uriInfo));
@@ -1059,8 +1077,8 @@ public class OAIProviderService {
                 + dt.toString(dateFormatMillis) + "' AS DATE)");
         }
 
-        // etdms for thesis only
-        if (metadataPrefix.equals("oai_etdms")) {
+        // etdms and orefor thesis only
+        if (metadataPrefix.equals("oai_etdms") || metadataPrefix.equals(METADATA_PREFIX_ORE)) {
             jql.append(" AND");
             jql.append(" res.[dcterms:type] = 'Thesis'");
         }
@@ -1282,7 +1300,9 @@ public class OAIProviderService {
             jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
             jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
             jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
-            if (metadataPrefix != null && metadataPrefix.equals("oai_etdms")) {
+            if (metadataPrefix != null
+                && (metadataPrefix.equals("oai_etdms") || metadataPrefix.equals(METADATA_PREFIX_ORE))
+                ) {
                 jql.append(" AND res.[dcterms:type] = 'Thesis'");
             }
 
