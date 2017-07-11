@@ -80,7 +80,7 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
         this.marshaller = JAXBContext
             .newInstance(
                     OaiDcType.class, OaiIdentifierType.class, OAIPMHtype.class, Thesis.class,
-                    org.w3._2005.atom.EntryType.class
+                    org.w3._2005.atom.EntryType.class, org.w3._2005.atom.IdType.class
                     ).createMarshaller();
 
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
