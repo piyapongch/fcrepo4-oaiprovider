@@ -85,12 +85,12 @@ public class MetadataXsltFilter implements Filter {
         final String mp = request.getParameter("metadataPrefix");
         if (vb != null && (vb.equals(VerbType.LIST_RECORDS.value()) || vb.equals(VerbType.GET_RECORD.value()))) {
             final MetadataHttpResponseWrapper wrapper = new MetadataHttpResponseWrapper((HttpServletResponse) response);
-            chain.doFilter(request, wrapper);
-            response.setContentType("text/xml");
             response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/xml");
             final PrintWriter out = response.getWriter();
-            final Source xmlSource = new StreamSource(new ByteArrayInputStream(wrapper.getBuffer()));
             try {
+                chain.doFilter(request, wrapper);
+                final Source xmlSource = new StreamSource(new ByteArrayInputStream(wrapper.getBuffer()));
                 final ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 final StreamResult result = new StreamResult(bos);
                 final Stopwatch timer = Stopwatch.createStarted();
@@ -101,7 +101,10 @@ public class MetadataXsltFilter implements Filter {
                 out.write(bos.toString());
             } catch (final Exception e) {
                 log.error("Could not transform OAI response!", e);
-                out.write(new String(wrapper.getBuffer()));
+                final String tmp = new String(wrapper.getBuffer());
+                log.debug("Could not transform OAI response: " + tmp);
+                response.setContentLength(tmp.length());
+                out.write(tmp);
             }
         } else {
             chain.doFilter(request, response);

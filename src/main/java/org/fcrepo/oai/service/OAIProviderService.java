@@ -295,7 +295,8 @@ public class OAIProviderService {
      */
     public OAIProviderService() throws DatatypeConfigurationException, JAXBException {
         dataFactory = DatatypeFactory.newInstance();
-        final JAXBContext ctx = JAXBContext.newInstance(OAIPMHtype.class, IdentifyType.class, SetType.class);
+        final JAXBContext ctx = JAXBContext.newInstance
+        (OAIPMHtype.class, IdentifyType.class, SetType.class, org.w3._2005.atom.Entry.class);
         ctx.createUnmarshaller();
     }
 
@@ -517,8 +518,9 @@ public class OAIProviderService {
         return jcrOaiEtdmsGenerator.generate(session, obj, name, uriInfo);
     }
 
-    private generated.Entry generateOaiOre(final Session session, final Container obj, final String name,
-        final UriInfo uriInfo) throws RepositoryException {
+    private org.w3._2005.atom.Entry generateOaiOre
+        (final Session session, final Container obj, final String name,final UriInfo uriInfo)
+                throws RepositoryException {
         return jcrOaiOreGenerator.generate(session, obj, name, uriInfo);
     }
 
