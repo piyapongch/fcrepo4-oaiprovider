@@ -296,7 +296,7 @@ public class OAIProviderService {
     public OAIProviderService() throws DatatypeConfigurationException, JAXBException {
         dataFactory = DatatypeFactory.newInstance();
         final JAXBContext ctx = JAXBContext.newInstance
-        (OAIPMHtype.class, IdentifyType.class, SetType.class, org.w3._2005.atom.Entry.class);
+        (OAIPMHtype.class, IdentifyType.class, SetType.class, org.w3._2005.atom.EntryType.class);
         ctx.createUnmarshaller();
     }
 
@@ -500,6 +500,22 @@ public class OAIProviderService {
             record = createRecord(session, format, obj.getPath(), noid, uriInfo);
             getRecord.setRecord(record);
             oai.setGetRecord(getRecord);
+
+            try {
+            final java.io.StringWriter sw = new java.io.StringWriter();
+            final JAXBElement<OAIPMHtype> a = oaiFactory.createOAIPMH(oai);
+            final JAXBContext context = JAXBContext.newInstance
+                (OAIPMHtype.class, IdentifyType.class, SetType.class, org.w3._2005.atom.EntryType.class);
+            final javax.xml.bind.Marshaller m = context.createMarshaller();
+            m.setProperty("jaxb.formatted.output",Boolean.TRUE);
+            m.marshal(a,sw);
+            log.error("Marshalled Object: " + sw.toString());
+
+            } catch (final Exception e) {
+                log.error("Unable to create OAI record for object: " + obj.getPath(), e);
+            }
+
+
             return oaiFactory.createOAIPMH(oai);
         } catch (final IOException e) {
             log.error("Unable to create OAI record for object " + obj.getPath());
@@ -518,7 +534,7 @@ public class OAIProviderService {
         return jcrOaiEtdmsGenerator.generate(session, obj, name, uriInfo);
     }
 
-    private org.w3._2005.atom.Entry generateOaiOre
+    private JAXBElement<org.w3._2005.atom.EntryType> generateOaiOre
         (final Session session, final Container obj, final String name,final UriInfo uriInfo)
                 throws RepositoryException {
         return jcrOaiOreGenerator.generate(session, obj, name, uriInfo);

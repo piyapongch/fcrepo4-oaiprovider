@@ -55,7 +55,7 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
                 put("http://www.openarchives.org/OAI/2.0/oai_dc/", "oai_dc");
                 put("http://purl.org/dc/elements/1.1/", "dc");
                 put("http://www.ndltd.org/standards/metadata/etdms/1.0/", "etd_ms");
-                put("http://www.w3.org/2005/Atom", "ore");
+                put("http://www.w3.org/2005/Atom", "atom");
             }
         });
     }
@@ -80,7 +80,7 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
         this.marshaller = JAXBContext
             .newInstance(
                     OaiDcType.class, OaiIdentifierType.class, OAIPMHtype.class, Thesis.class,
-                    org.w3._2005.atom.Entry.class
+                    org.w3._2005.atom.EntryType.class
                     ).createMarshaller();
 
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
