@@ -16,6 +16,7 @@
 package org.fcrepo.oai.generator;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
 //import java.time.Instant;
@@ -42,6 +43,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.fcrepo.kernel.models.Container;
 
 // generated-sources
+import org.w3._2005.atom.CategoryType;
 import org.w3._2005.atom.DateTimeType;
 import org.w3._2005.atom.EntryType;
 import org.w3._2005.atom.GeneratorType;
@@ -49,7 +51,7 @@ import org.w3._2005.atom.IdType;
 import org.w3._2005.atom.LinkType;
 import org.w3._2005.atom.ObjectFactory;
 import org.w3._2005.atom.PersonType;
-import org.w3._2005.atom.SourceType;
+//import org.w3._2005.atom.SourceType;
 import org.w3._2005.atom.TextType;
 import org.w3._2005.atom.UriType;
 
@@ -79,6 +81,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
     private String oreSourceAuthorUri;
 
+    private String oaiUrlFormat;
+
+    private String htmlUrlFormat;
+
     /**
      * The generate method.
      *
@@ -89,7 +95,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @throws RepositoryException
      */
     public JAXBElement<EntryType> generate
-        (final Session session, final Container obj, final String name, final UriInfo uriInfo)
+        (final Session session, final Container obj, final String name, final UriInfo uriInfo, final String identifier)
         throws RepositoryException {
 
         final EntryType entry = oreFactory.createEntryType();
@@ -106,7 +112,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                     break;
                 case "dcterms:alternative":
                     break;
+                case "dcterms:creator":
+                    // <!-- dcterms:creator / http://id.loc.gov/vocabulary/relators/dis (thesis) -->
+                    addAtomAuthor(entry, prop);
+                    break;
                 case "dcterms:contributor":
+                    // <!-- dcterms:contributor (optional)-->/
+                    addAtomContributor(entry, prop);
                     break;
                 case "dcterms:dateAccepted":
                 case "dcterms:created":
@@ -131,8 +143,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 case "dcterms:temporal":
                     break;
                 case "dcterms:title":
+                    //<!-- dcterms:title -->
+                    addAtomTitle(entry, prop);
                     break;
                 case "dcterms:type":
+
                     break;
 
                 case "marcrel:dis":
@@ -173,13 +188,33 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
         }
 
-
+        addIdentifier(entry, name);
         addEraIdentifier(entry, name);
 
-        //addAtomPublishedDate(entry, obj);
-        //addAtomSource(entry, obj.getProperty("ualid:doi").getValues());
+        addAtomCategory(entry, obj);
+        addAtomPublishedDate(entry, obj);
+        addAtomSource(entry, obj.getProperty("ualid:doi").getValues());
+        addAggregatedResources(entry, obj, name, identifier);
+        //addAtomTriples(entry, obj, name, identifier);
 
         return oreFactory.createEntry(entry);
+    }
+
+  /**
+     * The add multi-valued identifier method.
+     *
+     * @param et entryType class
+     * @param prop JCR property output
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addIdentifier(final EntryType et, final String identifier) {
+        if (StringUtils.isNotEmpty(identifier)) {
+            final IdType id = oreFactory.createIdType();
+            id.setValue(identifier);
+            et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeId(id));
+        }
     }
 
     /**
@@ -194,11 +229,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addIdentifier(final EntryType et, final Property prop)
         throws ValueFormatException, IllegalStateException, RepositoryException {
         for (final Value v : prop.getValues()) {
-            if (StringUtils.isNotEmpty(v.getString())) {
-                final IdType id = oreFactory.createIdType();
-                id.setValue(v.getString());
-                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeId(id));
-            }
+            addIdentifier(et, v.getString());
         }
     }
 
@@ -214,11 +245,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addUalidDoiIdentifier(final EntryType et, final Property prop)
         throws ValueFormatException, IllegalStateException, RepositoryException {
         for (final Value v : prop.getValues()) {
-            if (StringUtils.isNotEmpty(v.getString())) {
-                final IdType id = oreFactory.createIdType();
-                id.setValue(formatUalidDoi(v.getString()));
-                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeId(id));
-            }
+            addIdentifier(et, formatUalidDoi(v.getString()));
         }
     }
 
@@ -298,6 +325,71 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     }
 
     /**
+     * The add Title method.
+     *
+     * @param et entryType class
+     * @param prop
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addAtomTitle(final EntryType et, final Property prop)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+        for (final Value v : prop.getValues()) {
+            if (StringUtils.isNotEmpty(v.getString())) {
+                final TextType title = oreFactory.createTextType();
+                title.getContent().add(v.getString());
+                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeTitle(title));
+            }
+        }
+    }
+
+    /**
+     * The add Author method.
+     *
+     * @param et entryType class
+     * @param prop
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addAtomAuthor(final EntryType et, final Property prop)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+        for (final Value v : prop.getValues()) {
+            if (StringUtils.isNotEmpty(v.getString())) {
+                final JAXBElement<String> authorName = oreFactory.createPersonTypeName(v.getString());
+                final PersonType author = oreFactory.createPersonType();
+                author.getNameOrUriOrEmail().add(authorName);
+                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeAuthor(author));
+            }
+        }
+    }
+
+    /**
+     * The add Contributor method.
+     *
+     * @param et entryType class
+     * @param prop
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addAtomContributor(final EntryType et, final Property prop)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+        for (final Value v : prop.getValues()) {
+            if (StringUtils.isNotEmpty(v.getString())) {
+                final JAXBElement<String> authorName = oreFactory.createPersonTypeName(v.getString());
+                final PersonType author = oreFactory.createPersonType();
+                author.getNameOrUriOrEmail().add(authorName);
+                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeContributor(author));
+            }
+        }
+    }
+
+    /**
      * The add Atom Source section method
      *
      * @param et entryType class
@@ -309,29 +401,29 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addAtomSource(final EntryType et, final Value[] values)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
-        final SourceType source = oreFactory.createSourceType();
+        final TextType source = oreFactory.createTextType();
 
         // atom:source/atom:author - <!-- name of record creator -->
         final PersonType author = oreFactory.createPersonType();
         // add author uri
         final UriType authorUri = oreFactory.createUriType();
         authorUri.setValue(oreSourceAuthorUri);
-        author.getNameOrUriOrEmail().add(authorUri);
+        author.getNameOrUriOrEmail().add(oreFactory.createPersonTypeUri(authorUri));
         // add author name
         final JAXBElement<String> authorName = oreFactory.createPersonTypeName(oreSourceAuthorName);
-        author.getNameOrUriOrEmail().add(authorName);
-        source.getAuthorOrCategoryOrContributor().add(author);
+        author.getNameOrUriOrEmail().add(oreFactory.createPersonTypeName(oreSourceAuthorName));
+        source.getContent().add(oreFactory.createSourceTypeAuthor(author));
 
         // atom:source/atom:generator - <!-- publisher of recod -->
         final GeneratorType generator = oreFactory.createGeneratorType();
         generator.setValue(oreSourceGenerator);
-        source.getAuthorOrCategoryOrContributor().add(oreFactory.createSourceTypeGenerator(generator));
+        source.getContent().add(oreFactory.createSourceTypeGenerator(generator));
 
         // atom:source/atom:update - <!-- timestamp -->
         final DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
         final DateTimeType dateTime = oreFactory.createDateTimeType();
         generator.setValue(formatter.format(java.time.Instant.now()));
-        source.getAuthorOrCategoryOrContributor().add(oreFactory.createSourceTypeUpdated(dateTime));
+        source.getContent().add(oreFactory.createSourceTypeUpdated(dateTime));
 
         // atom:source/atom:id - <!-- identifier -->
         final int len = java.lang.Math.toIntExact(values.length);
@@ -340,13 +432,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             if (StringUtils.isNotEmpty(lastValue.getString())) {
                 final IdType id = oreFactory.createIdType();
                 id.setValue(formatUalidDoi(lastValue.getString()));
-                source.getAuthorOrCategoryOrContributor().add(oreFactory.createSourceTypeId(id));
+                source.getContent().add(oreFactory.createSourceTypeId(id));
             }
         }
 
-        final TextType text = oreFactory.createTextType();
-        text.getContent().add(source);
-        et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeSource(text));
+        //final TextType text = oreFactory.createTextType();
+        //text.getContent().add(source);
+        et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeSource(source));
     }
 
     /**
@@ -369,7 +461,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
         //  <!-- dcterms:created | dcterms:dateAccepted (thesis)  -->
         if (isThesis) {
-            values = obj.hasProperty("marcrel:dis") ? obj.getProperty("marcrel:dis").getValues() : null;
+            values = obj.hasProperty("dcterms:dateAccepted")
+                    ? obj.getProperty("dcterms:dateAccepted").getValues() : null;
         } else {
             values = obj.hasProperty("dcterms:created") ? obj.getProperty("dcterms:created").getValues() : null;
         }
@@ -385,10 +478,193 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             }
 
         }
-
     }
 
+    /**
+     * The add Category method.
+     *
+     * @param et entryType class
+     * @param prop
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addAtomCategory(final EntryType et, final Property prop)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
 
+        for (final Value v : prop.getValues()) {
+            if (StringUtils.isNotEmpty(v.getString())) {
+                final CategoryType category = oreFactory.createCategoryType();
+                category.setTerm(v.getString());
+                category.setLabel(v.getString());
+                category.setScheme("http://purl.org/ontology/bibo/");
+                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(category));
+            }
+        }
+    }
+
+    /**
+     * The add Atom Category method
+     *
+     * @param et entryType class
+     * @param obj JCR object properties
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addAtomCategory(final EntryType et, final Container obj)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+        // <!-- Creation and Modification date/time of the Aggregation (rdf literals) -->
+        final DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
+        final String dateStr = formatter.format(java.time.Instant.now());
+        final CategoryType modified = oreFactory.createCategoryType();
+        modified.setTerm(dateStr);
+        modified.setScheme("http://www.openarchives.org/ore/atom/modified");
+        et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(modified));
+
+        // <!-- Categories for the Aggregation (rdf:type) (repeatable for multifile resources) -->
+        final CategoryType catAgg = oreFactory.createCategoryType();
+        catAgg.setTerm("http://www.openarchives.org/ore/terms/Aggregation");
+        catAgg.setScheme("http://www.openarchives.org/ore/terms/");
+        catAgg.setLabel("Aggregation");
+        et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(catAgg));
+
+        final CategoryType catFedora = oreFactory.createCategoryType();
+        catFedora.setTerm("http://fedora.info/definitions/v4/repository");
+        catFedora.setScheme("http://fedora.info/definitions/v4/repository#resource");
+        catFedora.setLabel("Fedora Resource");
+        et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(catFedora));
+        // <!-- dcterms:type -->
+        final Property prop = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type") : null;
+        addAtomCategory(et, prop);
+    }
+
+    /**
+     * The add aggregated resource section method
+     *
+     * @param et entryType class
+     * @param values array of property values
+     * @param name identifier of the object
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addAggregatedResources(final EntryType et, final Container obj, final String name,
+            final String identifier)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+        try {
+            // <!-- Aggregated Resources -->
+            // <!-- info:fedora/fedora-system:def/model#downloadFilename |
+            // premis:hasOriginalName | fedora:mimetype | premis:hasSize -->
+
+            /* TODO: remove */
+            /*
+            final Value[] files = obj.hasProperty("model:downloadFilename")
+                ? obj.getProperty("model:downloadFilename").getValues() : null;
+            final Value[] premisName = obj.hasProperty("premis:hasOriginalName")
+                ? obj.getProperty("model:downloadFilename").getValues() : null;
+            final Value[] premisSize = obj.hasProperty("premis:hasSize")
+                ? obj.getProperty("premis:hasSize").getValues() : null;
+            final Value[] mimetype = obj.hasProperty("fedora:mimetype")
+                ? obj.getProperty("fedora:mimetype").getValues() : null;
+            for (int i = 0; i < files.length; i++) {
+                if (StringUtils.isNotEmpty(files[i].getString())) {
+                    final String hrefStr = String.format(
+                        pdfUrlFormat, name, URLEncoder.encode(files[i].getString(), "UTF-8"));
+                    final String titleStr = premisName[i].getString();
+                    final String mimetypeStr = mimetype[i].getString();
+                    final BigInteger len = new BigInteger(premisSize[1].getString());
+
+                    final LinkType link = oreFactory.createLinkType();
+                    link.setRel("http://www.openarchives.org/ore/terms/aggregates");
+                    if (titleStr != null ) {
+                        link.setTitle(titleStr);
+                    }
+                    if (hrefStr != null ) {
+                        link.setHref(hrefStr);
+                    }
+                    if (hrefStr != null ) {
+                        link.setType(mimetypeStr);
+                    }
+                    if (len != null ) {
+                        link.setLength(len);
+                    }
+                    et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(link));
+                }
+            }
+            */
+
+            // <!-- Aggregated Resources -->
+            // <!-- info:fedora/fedora-system:def/model#downloadFilename |
+            // premis:hasOriginalName | fedora:mimetype | premis:hasSize -->
+            final LinkType linkFile = oreFactory.createLinkType();
+            String fileStr = null;
+            if (obj.hasProperty("model:downloadFilename")) {
+                fileStr = findLastPropertyValue(obj.getProperty("model:downloadFilename")).getString();
+                final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
+                linkFile.setHref(hrefStr);
+            }
+            if (obj.hasProperty("premis:hasOriginalName")) {
+                linkFile.setTitle(findLastPropertyValue(obj.getProperty("premis:hasOriginalName")).getString());
+            } else {
+                linkFile.setTitle(fileStr);
+            }
+            if (obj.hasProperty("premis:hasSize")) {
+                final BigInteger len
+                        = new BigInteger(findLastPropertyValue(obj.getProperty("dcterms:title")).getString());
+                linkFile.setLength(len);
+            }
+            if (obj.hasProperty("fedora:mimeType")) {
+                linkFile.setType(findLastPropertyValue(obj.getProperty("dcterms:title")).getString());
+            }
+            linkFile.setRel("http://www.openarchives.org/ore/terms/aggregates");
+            et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(linkFile));
+
+            // add html
+            final LinkType linkHtml = oreFactory.createLinkType();
+            linkHtml.setRel("http://www.openarchives.org/ore/terms/aggregates");
+            linkHtml.setType("text/html");
+            if (obj.hasProperty("dcterms:title")) {
+                final String titleStr = findLastPropertyValue(obj.getProperty("dcterms:title")).getString();
+                linkHtml.setTitle(titleStr);
+            }
+            linkHtml.setHref(String.format(htmlUrlFormat, URLEncoder.encode(name, "UTF-8")));
+            et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(linkHtml));
+
+            // add OAI-PMH
+            final LinkType linkOai = oreFactory.createLinkType();
+            linkOai.setRel("http://www.openarchives.org/ore/terms/aggregates");
+            if (obj.hasProperty("dcterms:title")) {
+                final String titleStr = findLastPropertyValue(obj.getProperty("dcterms:title")).getString();
+                linkOai.setTitle(titleStr);
+            }
+            linkOai.setHref(String.format(oaiUrlFormat, URLEncoder.encode(identifier, "UTF-8")));
+            linkOai.setType("application/xml");
+            et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(linkOai));
+
+        } catch (final UnsupportedEncodingException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    /**
+     * The add Atom triple section method
+     *
+     * @param et entryType class
+     * @param values array of property values
+     * @param name identifier of the object
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addAtomTriples(final EntryType et, final Container obj, final String name,
+            final String identifier)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+
+    }
 
     /**
      * The isThesis method.
@@ -414,6 +690,18 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         return false;
     }
 
+    /**
+     * The find last value method.
+     *
+     * @param prop a property
+     */
+    public final Value findLastPropertyValue(final Property prop)
+        throws ValueFormatException, RepositoryException {
+        final Value[] vals = prop.getValues();
+        final int len = java.lang.Math.toIntExact(vals.length);
+        final Value val = (len > 0) ? vals[len - 1] : null;
+        return val;
+    }
 
     /**
      * The setLacIdFormat setter method.
@@ -461,6 +749,23 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         this.oreSourceAuthorUri = oreSourceAuthorUri;
     }
 
+    /**
+     * The oaiUrlFormat setter method - from Bean.
+     *
+     * @param oaiUrlFormat the OreSourceAuthorUri to set
+     */
+    public final void setOaiUrlFormat(final String oaiUrlFormat) {
+        this.oaiUrlFormat = oaiUrlFormat;
+    }
+
+    /**
+     * The htmlUrlFormat setter method - from Bean.
+     *
+     * @param htmlUrlFormat
+     */
+    public final void setHtmlUrlFormat(final String htmlUrlFormat) {
+        this.htmlUrlFormat = htmlUrlFormat;
+    }
 
 
 

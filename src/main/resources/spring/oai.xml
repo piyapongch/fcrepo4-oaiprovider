@@ -24,6 +24,8 @@
 	<bean name="jcrOaiOreGenerator" class="org.fcrepo.oai.generator.JcrOaiOreGenerator" parent="jcrOaiGenerator">
         <property name="lacIdFormat" value="TC-AEU-%1$s" />
         <property name="pdfUrlFormat" value="https://era.library.ualberta.ca/files/%1$s/%2$s" />
+        <property name="oaiUrlFormat" value="https://era.library.ualberta.ca/oai?verb=GetRecord&amp;metadataPrefix=oai_dc&amp;identifier=%1$s" />
+        <property name="htmlUrlFormat" value="https://era.library.ualberta.ca/files/%1$s" />
         <property name="oreSourceGenerator" value="University of Alberta Education &amp; Research Archive" />
         <property name="oreSourceAuthorName" value="University of Alberta Education &amp; Research Archive" />
         <property name="oreSourceAuthorUri" value="http://era.library.ualberta.ca" />

@@ -211,7 +211,7 @@ public class OAIProviderService {
     private JcrOaiOreGenerator jcrOaiOreGenerator;
 
     /**
-     * Service intitialization
+     * Service initialization
      *
      * @throws RepositoryException the repository exception
      */
@@ -537,9 +537,9 @@ public class OAIProviderService {
     }
 
     private JAXBElement<org.w3._2005.atom.EntryType> generateOaiOre
-        (final Session session, final Container obj, final String name,final UriInfo uriInfo)
+        (final Session session, final Container obj, final String name,final UriInfo uriInfo, final String identifier)
                 throws RepositoryException {
-        return jcrOaiOreGenerator.generate(session, obj, name, uriInfo);
+        return jcrOaiOreGenerator.generate(session, obj, name, uriInfo, identifier);
     }
 
     private JAXBElement<String> fetchOaiResponse(final Container obj, final Session session,
@@ -1017,7 +1017,7 @@ public class OAIProviderService {
             md.setAny(generateOaiEtdms(session, obj, name, uriInfo));
         } else if (mdf.getPrefix().equals(METADATA_PREFIX_ORE)) {
             /* generate a OAI ORE reponse using the DC Generator from fcrepo4 */
-            md.setAny(generateOaiOre(session, obj, name, uriInfo));
+            md.setAny(generateOaiOre(session, obj, name, uriInfo, h.getIdentifier()));
         } else {
             /* generate a OAI response from the linked Binary */
             md.setAny(fetchOaiResponse(obj, session, mdf, uriInfo));
