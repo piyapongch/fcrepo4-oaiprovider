@@ -15,16 +15,21 @@
  */
 package org.fcrepo.oai.generator;
 
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
+import java.time.ZoneOffset;
+//import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.GregorianCalendar;
+//import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
+//import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -105,107 +110,28 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
         final EntryType entry = oreFactory.createEntryType();
 
-        final PropertyIterator props = obj.getNode().getProperties();
-        while (props.hasNext()) {
-            final Property prop = (Property) props.next();
-            switch (prop.getName()) {
-
-                case "bibo:ThesisDegree":
-                    break;
-
-                case "dcterms:abstract":
-                    break;
-                case "dcterms:alternative":
-                    break;
-                case "dcterms:creator":
-                    // <!-- dcterms:creator / http://id.loc.gov/vocabulary/relators/dis (thesis) -->
-                    addAtomAuthor(entry, prop);
-                    break;
-                case "dcterms:contributor":
-                    // <!-- dcterms:contributor (optional)-->/
-                    addAtomContributor(entry, prop);
-                    break;
-                case "dcterms:dateAccepted":
-                case "dcterms:created":
-                    break;
-                case "dcterms:description":
-                    break;
-                case "dcterms:format":
-                    break;
-                case "dcterms:identifier":
-                    addIdentifier(entry, prop);
-                    break;
-                case "dcterms:language":
-                    break;
-                case "dcterms:license":
-                    break;
-                case "dcterms:rights":
-                    break;
-                case "dcterms:spatial":
-                    break;
-                case "dcterms:subject":
-                    break;
-                case "dcterms:temporal":
-                    break;
-                case "dcterms:title":
-                    //<!-- dcterms:title -->
-                    addAtomTitle(entry, prop);
-                    break;
-                case "dcterms:type":
-
-                    break;
-
-                case "marcrel:dis":
-                    break;
-                case "marcrel:dgg":
-                    break;
-                case "marcrel:ths":
-                    break;
-
-                case "model:downloadFilename":
-                    addFilenameIdentifier(entry, prop, name);
-                    break;
-
-                case "ualid:doi":
-                    addIdentifier(entry, prop);
-                    addUalidDoiIdentifier(entry, prop);
-                    break;
-
-                case "ualid:fedora3handle":
-                    addIdentifier(entry, prop);
-                    addLacIdentifier(entry, prop);
-                    break;
-
-                case "ualrole:thesiscommitteemember":
-                    break;
-
-                case "ualthesis:specialization":
-                    break;
-                case "ualthesis:thesislevel":
-                    break;
-
-                case "vivo:AcademicDepartment":
-                    break;
-
-                default:
-                    break;
-            }
-
-        }
-
         // get href values used repetedly
         try {
             final String htmlHref = String.format(htmlUrlFormat, URLEncoder.encode(name, "UTF-8"));
             final String oreHref  = htmlHref.concat("/ore.xml");
-            final String oaiHref  = String.format(oaiUrlFormat, URLEncoder.encode(name, "UTF-8"));
+            final String oaiHref  = String.format(oaiUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
 
-            addIdentifier(entry, name);
-            addEraIdentifier(entry, name);
+            // <!-- Atom Specific; No ORE Semantics -->
+            addAtomIdentifiers(entry, obj, name);
 
+            // <!-- Resource map metadata -->
+            addResourceMapMetadata(entry, obj, oreHref);
+
+            // <!-- Aggregation metadata -->
+            addAggregationMetadata(entry, obj);
+
+            //<!-- Categories for the Aggregation (rdf:type) (repeatable for multifile resources) -->
             addAtomCategory(entry, obj);
-            addAtomPublishedDate(entry, obj);
-            addAtomSource(entry, obj.getProperty("ualid:doi").getValues());
-            addAggregatedResources(entry, obj, name, identifier);
+
+            // <!-- Aggregated Resources -->
+            addAggregatedResources(entry, obj, name, oaiHref);
+
+            // <!-- Additional properties pertaining to Aggregated Resources and Aggregation -->
             addAtomTriples(entry, obj, name, identifier, htmlHref, oreHref, oaiHref);
         } catch (final UnsupportedEncodingException e) {
             throw new RepositoryException(e);
@@ -284,10 +210,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 }
             }
         } catch (final UnsupportedEncodingException e) {
-            throw new RepositoryException(e);
+            throw new ValueFormatException(e);
         }
     }
-
 
     /**
      * The add ERA Id method.
@@ -334,7 +259,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 }
             }
         } catch (final Exception e) {
-            throw new RepositoryException(e);
+            throw new ValueFormatException(e);
         }
     }
 
@@ -433,10 +358,16 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         source.getContent().add(oreFactory.createSourceTypeGenerator(generator));
 
         // atom:source/atom:update - <!-- timestamp -->
-        final DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
-        final DateTimeType dateTime = oreFactory.createDateTimeType();
-        generator.setValue(formatter.format(java.time.Instant.now()));
-        source.getContent().add(oreFactory.createSourceTypeUpdated(dateTime));
+        try {
+            final DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
+            final DateTimeType dateTime = oreFactory.createDateTimeType();
+            final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(
+                    GregorianCalendar.from(java.time.ZonedDateTime.now(ZoneOffset.UTC)));
+            dateTime.setValue(xgc);
+            source.getContent().add(oreFactory.createSourceTypeUpdated(dateTime));
+        } catch (DatatypeConfigurationException e) {
+            throw new ValueFormatException(e);
+        }
 
         // atom:source/atom:id - <!-- identifier -->
         final int len = java.lang.Math.toIntExact(values.length);
@@ -449,8 +380,6 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             }
         }
 
-        //final TextType text = oreFactory.createTextType();
-        //text.getContent().add(source);
         et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeSource(source));
     }
 
@@ -463,12 +392,30 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @throws IllegalStateException
      * @throws ValueFormatException
      */
-    private void addAtomPublishedDate(final EntryType et, final Container obj)
+    private void addResourceMapMetadata(final EntryType entry, final Container obj, final String oreHref)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
+        // metadata link
+        // <!-- this ReM is serialized in Atom -->
+        final LinkType atomLink = oreFactory.createLinkType();
+        atomLink.setHref(oreHref.concat("#atom"));
+        atomLink.setRel("rel");
+        atomLink.setType("application/atom+xml");
+        entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(atomLink));
+
+        // <!-- This ReM is an ReM -->
+        final LinkType oreLink = oreFactory.createLinkType();
+        oreLink.setHref(oreHref);
+        oreLink.setRel("http://www.openarchives.org/ore/terms/describes");
+        entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(oreLink));
+
+        // add atom:source
+        addAtomSource(entry, obj.getProperty("ualid:doi").getValues());
+
+        // atom:published
         Value[] values;
 
-        // dc:type
+        // get date depending on dc:type
         final Value[] dcType = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type").getValues() : null;
         final boolean isThesis = isThesis(dcType);
 
@@ -485,13 +432,71 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             try {
                 final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
                 dateTime.setValue(xgc);
-                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypePublished(dateTime));
+                entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypePublished(dateTime));
             } catch (DatatypeConfigurationException e) {
-                throw new RepositoryException(e);
+                throw new ValueFormatException(e);
             }
-
         }
     }
+
+    /**
+     * Identifiers
+     *
+     * @param et entryType class
+     * @param obj JCR object properties
+     * @param name
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addAtomIdentifiers(final EntryType entry, final Container obj, final String name)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+           // identifiers
+            addIdentifier(entry, name);
+            addEraIdentifier(entry, name);
+            if (obj.hasProperty("dcterms:identifier")) {
+                addIdentifier(entry, obj.getProperty("dcterms:identifier"));
+            }
+            if (obj.hasProperty("model:downloadFilename")) {
+                addFilenameIdentifier(entry, obj.getProperty("model:downloadFilename"), name);
+            }
+            if (obj.hasProperty("ualid:doi")) {
+                addIdentifier(entry, obj.getProperty("ualid:doi"));
+                addUalidDoiIdentifier(entry, obj.getProperty("ualid:doi"));
+            }
+            if (obj.hasProperty("ualid:fedora3handle")) {
+                addIdentifier(entry, obj.getProperty("ualid:fedora3handle"));
+                addLacIdentifier(entry, obj.getProperty("ualid:fedora3handle"));
+            }
+    }
+
+    /**
+     * Aggregation metadata
+     *
+     * @param et entryType class
+     * @param obj JCR object properties
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addAggregationMetadata(final EntryType entry, final Container obj)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+            // <!-- dcterms:creator / http://id.loc.gov/vocabulary/relators/dis (thesis) -->
+            if (obj.hasProperty("dcterms:creator")) {
+                addAtomAuthor(entry, obj.getProperty("dcterms:creator"));
+            }
+            // <!-- dcterms:contributor (optional)-->/
+            if (obj.hasProperty("dcterms:contributor")) {
+                addAtomContributor(entry, obj.getProperty("dcterms:contributor"));
+            }
+            // <!-- dcterms:title -->
+            if (obj.hasProperty("dcterms:title")) {
+                addAtomTitle(entry, obj.getProperty("dcterms:title"));
+            }
+    }
+
 
     /**
      * The add Category method.
@@ -564,51 +569,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @throws ValueFormatException
      */
     private void addAggregatedResources(final EntryType et, final Container obj, final String name,
-            final String identifier)
+            final String oaiHref)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
         try {
-            // <!-- Aggregated Resources -->
-            // <!-- info:fedora/fedora-system:def/model#downloadFilename |
-            // premis:hasOriginalName | fedora:mimetype | premis:hasSize -->
-
-            /* TODO: remove */
-            /*
-            final Value[] files = obj.hasProperty("model:downloadFilename")
-                ? obj.getProperty("model:downloadFilename").getValues() : null;
-            final Value[] premisName = obj.hasProperty("premis:hasOriginalName")
-                ? obj.getProperty("model:downloadFilename").getValues() : null;
-            final Value[] premisSize = obj.hasProperty("premis:hasSize")
-                ? obj.getProperty("premis:hasSize").getValues() : null;
-            final Value[] mimetype = obj.hasProperty("fedora:mimetype")
-                ? obj.getProperty("fedora:mimetype").getValues() : null;
-            for (int i = 0; i < files.length; i++) {
-                if (StringUtils.isNotEmpty(files[i].getString())) {
-                    final String hrefStr = String.format(
-                        pdfUrlFormat, name, URLEncoder.encode(files[i].getString(), "UTF-8"));
-                    final String titleStr = premisName[i].getString();
-                    final String mimetypeStr = mimetype[i].getString();
-                    final BigInteger len = new BigInteger(premisSize[1].getString());
-
-                    final LinkType link = oreFactory.createLinkType();
-                    link.setRel("http://www.openarchives.org/ore/terms/aggregates");
-                    if (titleStr != null ) {
-                        link.setTitle(titleStr);
-                    }
-                    if (hrefStr != null ) {
-                        link.setHref(hrefStr);
-                    }
-                    if (hrefStr != null ) {
-                        link.setType(mimetypeStr);
-                    }
-                    if (len != null ) {
-                        link.setLength(len);
-                    }
-                    et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(link));
-                }
-            }
-            */
-
             // <!-- Aggregated Resources -->
             // <!-- info:fedora/fedora-system:def/model#downloadFilename |
             // premis:hasOriginalName | fedora:mimetype | premis:hasSize -->
@@ -653,12 +617,12 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 final String titleStr = findLastPropertyValue(obj.getProperty("dcterms:title")).getString();
                 linkOai.setTitle(titleStr);
             }
-            linkOai.setHref(String.format(oaiUrlFormat, URLEncoder.encode(identifier, "UTF-8")));
+            linkOai.setHref(oaiHref);
             linkOai.setType("application/xml");
             et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(linkOai));
 
         } catch (final UnsupportedEncodingException e) {
-            throw new RepositoryException(e);
+            throw new ValueFormatException(e);
         }
     }
 
@@ -682,49 +646,18 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory
                 = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory();
 
-
-        // <!-- Properties pertaining to aggregation -->
-        /*
-        final Description description = oreRdfFactory.createDescription();
-        description.setAbout(oreHref);
-        final Type rdfType = oreRdfFactory.createType();
-        rdfType.setResource("http://fedora.info/definitions/v4/repository#Resource");
-        if (obj.hasProperty("dcterms:modified")) {
-            try {
-                final String modifiedDate = findLastPropertyValue(obj.getProperty("dcterms:modified")).getString();
-                final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(modifiedDate);
-                description.setModified(xgc);
-            } catch (DatatypeConfigurationException e) {
-                throw new ValueFormatException(e);
-            } catch (Exception e) {
-                   throw new ValueFormatException(e);
-            }
-        }
-        if (obj.hasProperty("dcterms:license")) {
-            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
-        } else if (obj.hasProperty("dcterms:rights")) {
-            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:rights")).getString());
-        }
-        if (obj.hasProperty("dcterms:isVersionOf")) {
-            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:isVersionOf")).getString());
-        }
-*/
-
-        //dctermsFactory.create
-
-
-
-
-
         final Triples triples = oreAtomFactory.createTriples();
 
+        // <!-- Properties pertaining to aggregation -->
         addTriplePropAgg(et, obj, oreRdfFactory, oreHref, triples);
+        // <!-- Properties pertaining to the aggregated binary (can be repeated for multifile resources) -->
         addTriplePropAggBinary(et, obj, oreRdfFactory, triples, name);
+        // <!-- Properties pertaining to the aggregated resource splash page-->
         addTriplePropSplashPage(et, oreRdfFactory, htmlHref, triples);
-        addTriplePropOreRecord(et, oreRdfFactory, oreHref, triples);
+        // <!-- asserts the relationship between the oai_pmh record and the ore record -->
+        addTriplePropOreRecord(et, oreRdfFactory, oaiHref, triples);
 
         et.getAuthorOrCategoryOrContent().add(triples);
-
     }
 
     /**
@@ -744,9 +677,15 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         description.setType(rdfType);
         if (obj.hasProperty("dcterms:modified")) {
             try {
-                final String modifiedDate = findLastPropertyValue(obj.getProperty("dcterms:modified")).getString();
-                //final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(modifiedDate);
-                //description.setModified(xgc);
+                final String modifiedDate =
+                        findLastPropertyValue(obj.getProperty("dcterms:modified")).getString();
+                // Todo: is there a better way?
+                // dcterms:modified is a String in the form
+                // "YYYY-MM-DDTHH:MM:SS:xxxZ ^^http://www.w3.org/2001/XMLSchema#dateTime"
+                final String trimmedDate =
+                        modifiedDate.replaceAll("....http://www.w3.org/2001/XMLSchema#dateTime", "");
+                final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(trimmedDate);
+                description.setModified(xgc);
             } catch (Exception e) {
                 throw new ValueFormatException(e);
             }
@@ -789,7 +728,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
             triples.getDescription().add(description);
         } catch (final UnsupportedEncodingException e) {
-            throw new RepositoryException(e);
+            throw new ValueFormatException(e);
         }
     }
 
@@ -848,7 +787,6 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         description.setConformsTo(conformsTo);
         triples.getDescription().add(description);
 
-
         final Description descMeta = oreRdfFactory.createDescription();
         descMeta.setAbout("info:eu-repo/semantics/descriptiveMetadata");
         descMeta.setLabel("descriptiveMetadata");
@@ -857,7 +795,6 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         descMeta.setIsDefinedBy(isDefinedBy);
         triples.getDescription().add(descMeta);
     }
-
 
 
 
@@ -961,8 +898,6 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     public final void setHtmlUrlFormat(final String htmlUrlFormat) {
         this.htmlUrlFormat = htmlUrlFormat;
     }
-
-
 
 
 }
