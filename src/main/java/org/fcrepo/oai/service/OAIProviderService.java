@@ -297,7 +297,9 @@ public class OAIProviderService {
         dataFactory = DatatypeFactory.newInstance();
         final JAXBContext ctx = JAXBContext.newInstance(
             OAIPMHtype.class, IdentifyType.class, SetType.class,
-            org.w3._2005.atom.EntryType.class, org.w3._2005.atom.IdType.class);
+            org.w3._2005.atom.EntryType.class, org.w3._2005.atom.IdType.class,
+            org.openarchives.ore.atom.Triples.class
+        );
         ctx.createUnmarshaller();
     }
 
@@ -508,7 +510,8 @@ public class OAIProviderService {
               final JAXBContext context = JAXBContext.newInstance
                   (
                    OAIPMHtype.class, IdentifyType.class, SetType.class,
-                   org.w3._2005.atom.EntryType.class, org.w3._2005.atom.IdType.class
+                   org.w3._2005.atom.EntryType.class, org.w3._2005.atom.IdType.class,
+                   org.openarchives.ore.atom.Triples.class
                    );
               final javax.xml.bind.Marshaller m = context.createMarshaller();
               m.setProperty("jaxb.formatted.output",Boolean.TRUE);

@@ -19,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
-//import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -51,9 +50,15 @@ import org.w3._2005.atom.IdType;
 import org.w3._2005.atom.LinkType;
 import org.w3._2005.atom.ObjectFactory;
 import org.w3._2005.atom.PersonType;
-//import org.w3._2005.atom.SourceType;
 import org.w3._2005.atom.TextType;
 import org.w3._2005.atom.UriType;
+
+import org.openarchives.ore.atom.Triples;
+import org.purl.dc.terms.ConformsTo;
+import org.w3._1999._02._22_rdf_syntax_ns_.Description;
+import org.w3._1999._02._22_rdf_syntax_ns_.Type;
+import org.w3._2000._01.rdf_schema_.IsDefinedBy;
+
 
 
 /**
@@ -188,14 +193,23 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
         }
 
-        addIdentifier(entry, name);
-        addEraIdentifier(entry, name);
+        // get href values used repetedly
+        try {
+            final String htmlHref = String.format(htmlUrlFormat, URLEncoder.encode(name, "UTF-8"));
+            final String oreHref  = htmlHref.concat("/ore.xml");
+            final String oaiHref  = String.format(oaiUrlFormat, URLEncoder.encode(name, "UTF-8"));
 
-        addAtomCategory(entry, obj);
-        addAtomPublishedDate(entry, obj);
-        addAtomSource(entry, obj.getProperty("ualid:doi").getValues());
-        addAggregatedResources(entry, obj, name, identifier);
-        //addAtomTriples(entry, obj, name, identifier);
+            addIdentifier(entry, name);
+            addEraIdentifier(entry, name);
+
+            addAtomCategory(entry, obj);
+            addAtomPublishedDate(entry, obj);
+            addAtomSource(entry, obj.getProperty("ualid:doi").getValues());
+            addAggregatedResources(entry, obj, name, identifier);
+            addAtomTriples(entry, obj, name, identifier, htmlHref, oreHref, oaiHref);
+        } catch (final UnsupportedEncodingException e) {
+            throw new RepositoryException(e);
+        }
 
         return oreFactory.createEntry(entry);
     }
@@ -410,7 +424,6 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         authorUri.setValue(oreSourceAuthorUri);
         author.getNameOrUriOrEmail().add(oreFactory.createPersonTypeUri(authorUri));
         // add author name
-        final JAXBElement<String> authorName = oreFactory.createPersonTypeName(oreSourceAuthorName);
         author.getNameOrUriOrEmail().add(oreFactory.createPersonTypeName(oreSourceAuthorName));
         source.getContent().add(oreFactory.createSourceTypeAuthor(author));
 
@@ -660,11 +673,193 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @throws ValueFormatException
      */
     private void addAtomTriples(final EntryType et, final Container obj, final String name,
-            final String identifier)
+            final String identifier, final String htmlHref, final String oreHref, final String oaiHref)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
+        final org.openarchives.ore.atom.ObjectFactory oreAtomFactory
+                = new org.openarchives.ore.atom.ObjectFactory();
+
+        final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory
+                = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory();
+
+
+        // <!-- Properties pertaining to aggregation -->
+        /*
+        final Description description = oreRdfFactory.createDescription();
+        description.setAbout(oreHref);
+        final Type rdfType = oreRdfFactory.createType();
+        rdfType.setResource("http://fedora.info/definitions/v4/repository#Resource");
+        if (obj.hasProperty("dcterms:modified")) {
+            try {
+                final String modifiedDate = findLastPropertyValue(obj.getProperty("dcterms:modified")).getString();
+                final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(modifiedDate);
+                description.setModified(xgc);
+            } catch (DatatypeConfigurationException e) {
+                throw new ValueFormatException(e);
+            } catch (Exception e) {
+                   throw new ValueFormatException(e);
+            }
+        }
+        if (obj.hasProperty("dcterms:license")) {
+            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
+        } else if (obj.hasProperty("dcterms:rights")) {
+            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:rights")).getString());
+        }
+        if (obj.hasProperty("dcterms:isVersionOf")) {
+            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:isVersionOf")).getString());
+        }
+*/
+
+        //dctermsFactory.create
+
+
+
+
+
+        final Triples triples = oreAtomFactory.createTriples();
+
+        addTriplePropAgg(et, obj, oreRdfFactory, oreHref, triples);
+        addTriplePropAggBinary(et, obj, oreRdfFactory, triples, name);
+        addTriplePropSplashPage(et, oreRdfFactory, htmlHref, triples);
+        addTriplePropOreRecord(et, oreRdfFactory, oreHref, triples);
+
+        et.getAuthorOrCategoryOrContent().add(triples);
 
     }
+
+    /**
+     * Add triple properties pertaining to aggregation
+     *
+     *
+     */
+    private void addTriplePropAgg(
+        final EntryType et, final Container obj, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
+        final String oreHref, final Triples triples)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+        final Description description = oreRdfFactory.createDescription();
+        description.setAbout(oreHref);
+        final Type rdfType = oreRdfFactory.createType();
+        rdfType.setResource("http://fedora.info/definitions/v4/repository#Resource");
+        description.setType(rdfType);
+        if (obj.hasProperty("dcterms:modified")) {
+            try {
+                final String modifiedDate = findLastPropertyValue(obj.getProperty("dcterms:modified")).getString();
+                //final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(modifiedDate);
+                //description.setModified(xgc);
+            } catch (Exception e) {
+                throw new ValueFormatException(e);
+            }
+        }
+        if (obj.hasProperty("dcterms:license")) {
+            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
+        } else if (obj.hasProperty("dcterms:rights")) {
+            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:rights")).getString());
+        }
+        if (obj.hasProperty("dcterms:isVersionOf")) {
+            description.setIsVersionOf(findLastPropertyValue(obj.getProperty("dcterms:isVersionOf")).getString());
+        }
+
+        triples.getDescription().add(description);
+    }
+
+    /**
+     * Properties pertaining to the aggregated binary (can be repeated for multifile resources)
+     *
+     *
+     */
+    private void addTriplePropAggBinary(
+        final EntryType et, final Container obj, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
+        final Triples triples, final String name)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+        try {
+            final Description description = oreRdfFactory.createDescription();
+
+            if (obj.hasProperty("model:downloadFilename")) {
+                final String fileStr = findLastPropertyValue(obj.getProperty("model:downloadFilename")).getString();
+                final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
+                description.setAbout(hrefStr);
+            }
+
+            final Type rdfType = oreRdfFactory.createType();
+            rdfType.setResource("http://fedora.info/definitions/v4/repository#Binary");
+            description.setType(rdfType);
+            description.setDescription("ORIGINAL");
+
+            triples.getDescription().add(description);
+        } catch (final UnsupportedEncodingException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    /**
+     * Properties pertaining to the aggregated resource splash page
+     *
+     *
+     */
+    private void addTriplePropSplashPage(
+        final EntryType et, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
+        final String href, final Triples triples)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+        final org.w3._2000._01.rdf_schema_.ObjectFactory oreRdfsFactory
+                = new org.w3._2000._01.rdf_schema_.ObjectFactory();
+
+        final Description description = oreRdfFactory.createDescription();
+        description.setAbout(href);
+        final Type rdfType = oreRdfFactory.createType();
+        description.setType(rdfType);
+        rdfType.setResource("info:eu-repo/semantics/humanStartPage");
+        triples.getDescription().add(description);
+
+        final Description descStart = oreRdfFactory.createDescription();
+        descStart.setAbout("info:eu-repo/semantics/humanStartPage");
+        descStart.setLabel("humanStartPage");
+        final IsDefinedBy isDefinedBy = oreRdfsFactory.createIsDefinedBy();
+        isDefinedBy.setResource("info:eu-repo/semantics/");
+        descStart.setIsDefinedBy(isDefinedBy);
+        triples.getDescription().add(descStart);
+    }
+
+    /**
+     * asserts the relationship between the oai_pmh record and the ore record
+     *
+     *
+     */
+    private void addTriplePropOreRecord(
+        final EntryType et, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
+        final String href, final Triples triples)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+
+        final org.w3._2000._01.rdf_schema_.ObjectFactory oreRdfsFactory
+                = new org.w3._2000._01.rdf_schema_.ObjectFactory();
+
+        final org.purl.dc.terms.ObjectFactory dctermsFactory
+                = new org.purl.dc.terms.ObjectFactory();
+
+        final Description description = oreRdfFactory.createDescription();
+        description.setAbout(href);
+        final Type rdfType = oreRdfFactory.createType();
+        rdfType.setResource("info:eu-repo/semantics/descriptiveMetadata");
+        description.setType(rdfType);
+        final ConformsTo conformsTo = dctermsFactory.createConformsTo();
+        conformsTo.setResource("http://www.openarchives.org/OAI/2.0/oai_dc/");
+        description.setConformsTo(conformsTo);
+        triples.getDescription().add(description);
+
+
+        final Description descMeta = oreRdfFactory.createDescription();
+        descMeta.setAbout("info:eu-repo/semantics/descriptiveMetadata");
+        descMeta.setLabel("descriptiveMetadata");
+        final IsDefinedBy isDefinedBy = oreRdfsFactory.createIsDefinedBy();
+        isDefinedBy.setResource("info:eu-repo/semantics/");
+        descMeta.setIsDefinedBy(isDefinedBy);
+        triples.getDescription().add(descMeta);
+    }
+
+
+
 
     /**
      * The isThesis method.

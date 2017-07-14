@@ -56,6 +56,10 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
                 put("http://purl.org/dc/elements/1.1/", "dc");
                 put("http://www.ndltd.org/standards/metadata/etdms/1.0/", "etd_ms");
                 put("http://www.w3.org/2005/Atom", "atom");
+                put("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "rdf");
+                put("http://www.w3.org/2000/01/rdf-schema#", "rdfs");
+                put("http://www.openarchives.org/ore/atom/", "oreatom");
+                put("http://purl.org/dc/terms/", "dcterms");
             }
         });
     }
@@ -67,7 +71,8 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
             + "    http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\n"
             + "    http://www.ndltd.org/standards/metadata/etdms/1.0/ "
             + "    http://www.ndltd.org/standards/metadata/etdms/1.0/etdms.xsd"
-            + "    http://www.w3.org/2005/Atom";
+            + "    http://www.w3.org/2005/Atom"
+            ;
 
     private final Marshaller marshaller;
 
@@ -80,7 +85,8 @@ public class OaiJaxbProvider implements ContextResolver<Marshaller> {
         this.marshaller = JAXBContext
             .newInstance(
                     OaiDcType.class, OaiIdentifierType.class, OAIPMHtype.class, Thesis.class,
-                    org.w3._2005.atom.EntryType.class, org.w3._2005.atom.IdType.class
+                    org.w3._2005.atom.EntryType.class, org.w3._2005.atom.IdType.class,
+                    org.openarchives.ore.atom.Triples.class
                     ).createMarshaller();
 
         this.marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CharacterEscapeHandler() {
