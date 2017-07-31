@@ -15,21 +15,18 @@
  */
 package org.fcrepo.oai.generator;
 
-
+import com.google.common.xml.XmlEscapers;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
 import java.time.ZoneOffset;
-//import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
-//import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.jcr.Property;
-//import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -278,7 +275,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final TextType title = oreFactory.createTextType();
-                title.getContent().add(v.getString());
+                title.getContent().add(XmlEscapers.xmlAttributeEscaper().escape(v.getString()));
                 et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeTitle(title));
             }
         }
@@ -399,7 +396,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         // <!-- this ReM is serialized in Atom -->
         final LinkType atomLink = oreFactory.createLinkType();
         atomLink.setHref(oreHref.concat("#atom"));
-        atomLink.setRel("rel");
+        atomLink.setRel("self");
         atomLink.setType("application/atom+xml");
         entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(atomLink));
 
@@ -605,7 +602,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             linkHtml.setType("text/html");
             if (obj.hasProperty("dcterms:title")) {
                 final String titleStr = findLastPropertyValue(obj.getProperty("dcterms:title")).getString();
-                linkHtml.setTitle(titleStr);
+                linkHtml.setTitle(XmlEscapers.xmlAttributeEscaper().escape(titleStr));
             }
             linkHtml.setHref(String.format(htmlUrlFormat, URLEncoder.encode(name, "UTF-8")));
             et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(linkHtml));
@@ -615,7 +612,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             linkOai.setRel("http://www.openarchives.org/ore/terms/aggregates");
             if (obj.hasProperty("dcterms:title")) {
                 final String titleStr = findLastPropertyValue(obj.getProperty("dcterms:title")).getString();
-                linkOai.setTitle(titleStr);
+                linkOai.setTitle(XmlEscapers.xmlAttributeEscaper().escape(titleStr));
             }
             linkOai.setHref(oaiHref);
             linkOai.setType("application/xml");
@@ -683,7 +680,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 // dcterms:modified is a String in the form
                 // "YYYY-MM-DDTHH:MM:SS:xxxZ ^^http://www.w3.org/2001/XMLSchema#dateTime"
                 final String trimmedDate =
-                        modifiedDate.replaceAll("....http://www.w3.org/2001/XMLSchema#dateTime", "");
+                        modifiedDate.replaceAll(".{4,4}http://www.w3.org/2001/XMLSchema#dateTime", "");
                 final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(trimmedDate);
                 description.setModified(xgc);
             } catch (Exception e) {
