@@ -117,7 +117,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             addAtomIdentifiers(entry, obj, name);
 
             // <!-- Resource map metadata -->
-            addResourceMapMetadata(entry, obj, oreHref);
+            addResourceMapMetadata(entry, obj, oaiHref);
 
             // <!-- Aggregation metadata -->
             addAggregationMetadata(entry, obj);
@@ -275,7 +275,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final TextType title = oreFactory.createTextType();
-                title.getContent().add(XmlEscapers.xmlAttributeEscaper().escape(v.getString()));
+                title.getContent().add(v.getString());
                 et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeTitle(title));
             }
         }
@@ -367,13 +367,15 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         }
 
         // atom:source/atom:id - <!-- identifier -->
-        final int len = java.lang.Math.toIntExact(values.length);
-        if (len > 0) {
-            final Value lastValue = (len > 0) ? values[len - 1] : null;
-            if (StringUtils.isNotEmpty(lastValue.getString())) {
-                final IdType id = oreFactory.createIdType();
-                id.setValue(formatUalidDoi(lastValue.getString()));
-                source.getContent().add(oreFactory.createSourceTypeId(id));
+        if (values != null) {
+            final int len = java.lang.Math.toIntExact(values.length);
+            if (len > 0) {
+                final Value lastValue = (len > 0) ? values[len - 1] : null;
+                if (StringUtils.isNotEmpty(lastValue.getString())) {
+                    final IdType id = oreFactory.createIdType();
+                    id.setValue(formatUalidDoi(lastValue.getString()));
+                    source.getContent().add(oreFactory.createSourceTypeId(id));
+                }
             }
         }
 
@@ -395,7 +397,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         // metadata link
         // <!-- this ReM is serialized in Atom -->
         final LinkType atomLink = oreFactory.createLinkType();
-        atomLink.setHref(oreHref.concat("#atom"));
+        atomLink.setHref(oreHref);
         atomLink.setRel("self");
         atomLink.setType("application/atom+xml");
         entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(atomLink));
@@ -407,7 +409,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(oreLink));
 
         // add atom:source
-        addAtomSource(entry, obj.getProperty("ualid:doi").getValues());
+        final Value[] dois = obj.hasProperty("ualid:doi") ? obj.getProperty("ualid:doi").getValues() : null;
+        addAtomSource(entry, dois);
 
         // atom:published
         Value[] values;
@@ -427,11 +430,14 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         for (final Value v : values) {
             final DateTimeType dateTime = oreFactory.createDateTimeType();
             try {
-                final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
-                dateTime.setValue(xgc);
-                entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypePublished(dateTime));
-            } catch (DatatypeConfigurationException e) {
-                throw new ValueFormatException(e);
+                if (StringUtils.isNotEmpty(v.getString())) {
+                    final XMLGregorianCalendar xgc
+                            = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
+                    dateTime.setValue(xgc);
+                    entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypePublished(dateTime));
+                }
+            } catch (Exception e) {
+                // throw new ValueFormatException();
             }
         }
     }
@@ -484,16 +490,27 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             if (obj.hasProperty("dcterms:creator")) {
                 addAtomAuthor(entry, obj.getProperty("dcterms:creator"));
             }
+            // marcrel:dis maps to creator
+            if (obj.hasProperty("marcrel:dis")) {
+                addAtomAuthor(entry, obj.getProperty("marcrel:dis"));
+            }
             // <!-- dcterms:contributor (optional)-->/
             if (obj.hasProperty("dcterms:contributor")) {
                 addAtomContributor(entry, obj.getProperty("dcterms:contributor"));
+            }
+            // supervisor
+//            if (obj.hasProperty("marcrel:ths")) {
+//                addAtomContributor(entry, obj.getProperty("marcrel:ths"));
+//            }
+            // committee - assume include "marcrel:ths" value
+            if (obj.hasProperty("ualrole:thesiscommitteemember")) {
+                addAtomContributor(entry, obj.getProperty("ualrole:thesiscommitteemember"));
             }
             // <!-- dcterms:title -->
             if (obj.hasProperty("dcterms:title")) {
                 addAtomTitle(entry, obj.getProperty("dcterms:title"));
             }
     }
-
 
     /**
      * The add Category method.
@@ -510,8 +527,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final CategoryType category = oreFactory.createCategoryType();
-                category.setTerm(v.getString());
-                category.setLabel(v.getString());
+                final String tmp = XmlEscapers.xmlAttributeEscaper().escape(v.getString());
+                category.setTerm(tmp);
+                category.setLabel(tmp);
                 category.setScheme("http://purl.org/ontology/bibo/");
                 et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(category));
             }
@@ -581,9 +599,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 linkFile.setHref(hrefStr);
             }
             if (obj.hasProperty("premis:hasOriginalName")) {
-                linkFile.setTitle(findLastPropertyValue(obj.getProperty("premis:hasOriginalName")).getString());
-            } else {
-                linkFile.setTitle(fileStr);
+                linkFile.setTitle(
+                        XmlEscapers.xmlAttributeEscaper().escape(
+                                findLastPropertyValue(obj.getProperty("premis:hasOriginalName")).getString()
+                        )
+                );
+            } else if (fileStr != null) {
+                linkFile.setTitle(XmlEscapers.xmlAttributeEscaper().escape(fileStr));
             }
             if (obj.hasProperty("premis:hasSize")) {
                 final BigInteger len
@@ -679,18 +701,21 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 // Todo: is there a better way?
                 // dcterms:modified is a String in the form
                 // "YYYY-MM-DDTHH:MM:SS:xxxZ ^^http://www.w3.org/2001/XMLSchema#dateTime"
-                final String trimmedDate =
-                        modifiedDate.replaceAll(".{4,4}http://www.w3.org/2001/XMLSchema#dateTime", "");
-                final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(trimmedDate);
-                description.setModified(xgc);
+                if (StringUtils.isNotEmpty(modifiedDate)) {
+                    final String trimmedDate =
+                            modifiedDate.replaceAll(".{4,4}http://www.w3.org/2001/XMLSchema#dateTime", "");
+                    final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(trimmedDate);
+                    description.setModified(xgc);
+                }
             } catch (Exception e) {
                 throw new ValueFormatException(e);
             }
         }
-        if (obj.hasProperty("dcterms:license")) {
-            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
-        } else if (obj.hasProperty("dcterms:rights")) {
+
+        if (obj.hasProperty("dcterms:rights")) {
             description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:rights")).getString());
+        } else if (obj.hasProperty("dcterms:license")) {
+            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
         }
         if (obj.hasProperty("dcterms:isVersionOf")) {
             description.setIsVersionOf(findLastPropertyValue(obj.getProperty("dcterms:isVersionOf")).getString());
@@ -792,8 +817,6 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         descMeta.setIsDefinedBy(isDefinedBy);
         triples.getDescription().add(descMeta);
     }
-
-
 
     /**
      * The isThesis method.

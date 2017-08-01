@@ -503,24 +503,6 @@ public class OAIProviderService {
             record = createRecord(session, format, obj.getPath(), noid, uriInfo);
             getRecord.setRecord(record);
             oai.setGetRecord(getRecord);
-
-            try {
-              final java.io.StringWriter sw = new java.io.StringWriter();
-              final JAXBElement<OAIPMHtype> a = oaiFactory.createOAIPMH(oai);
-              final JAXBContext context = JAXBContext.newInstance
-                  (
-                   OAIPMHtype.class, IdentifyType.class, SetType.class,
-                   org.w3._2005.atom.EntryType.class, org.w3._2005.atom.IdType.class,
-                   org.openarchives.ore.atom.Triples.class
-                   );
-              final javax.xml.bind.Marshaller m = context.createMarshaller();
-              m.setProperty("jaxb.formatted.output",Boolean.TRUE);
-              m.marshal(a,sw);
-              log.debug("Marshalled Object: " + sw.toString());
-            } catch (final Exception e) {
-                log.error("Unable to create OAI record for object: " + obj.getPath(), e);
-            }
-
             return oaiFactory.createOAIPMH(oai);
         } catch (final IOException e) {
             log.error("Unable to create OAI record for object " + obj.getPath());
