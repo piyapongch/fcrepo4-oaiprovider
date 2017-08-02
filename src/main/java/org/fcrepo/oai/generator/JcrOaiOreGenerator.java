@@ -43,6 +43,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.fcrepo.kernel.models.Container;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // generated-sources
 import org.w3._2005.atom.CategoryType;
@@ -78,6 +80,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private static final ObjectFactory oreFactory = new ObjectFactory();
 
     private static final Pattern slashPattern = Pattern.compile("\\/");
+
+    private static final Logger log = LoggerFactory.getLogger(JcrOaiOreGenerator.class);
 
     private String lacIdFormat;
 
@@ -124,7 +128,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             addAggregationMetadata(entry, obj);
 
             //<!-- Categories for the Aggregation (rdf:type) (repeatable for multifile resources) -->
-            addAtomCategory(entry, obj);
+            addAtomCategory(entry, obj, name);
 
             // <!-- Aggregated Resources -->
             addAggregatedResources(entry, obj, name, oaiHref);
@@ -372,7 +376,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final int len = java.lang.Math.toIntExact(values.length);
             if (len > 0) {
                 final Value lastValue = (len > 0) ? values[len - 1] : null;
-                if (StringUtils.isNotEmpty(lastValue.getString())) {
+                if (lastValue != null && StringUtils.isNotEmpty(lastValue.getString())) {
                     final IdType id = oreFactory.createIdType();
                     id.setValue(formatUalidDoi(lastValue.getString()));
                     source.getContent().add(oreFactory.createSourceTypeId(id));
@@ -414,25 +418,14 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         addAtomSource(entry, dois);
 
         // atom:published
-        Value[] values;
-
-        // get date depending on dc:type
-        final Value[] dcType = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type").getValues() : null;
-        final boolean isThesis = isThesis(dcType);
-
-        //  <!-- dcterms:created | dcterms:dateAccepted (thesis)  -->
-        if (isThesis) {
-            values = obj.hasProperty("dcterms:dateAccepted")
-                    ? obj.getProperty("dcterms:dateAccepted").getValues() : null;
-        } else {
-            values = obj.hasProperty("dcterms:created") ? obj.getProperty("dcterms:created").getValues() : null;
-        }
+        final Value[] values = returnDateValues(obj);
 
         for (final Value v : values) {
             try {
                 if (StringUtils.isNotEmpty(v.getString())) {
                     final XMLGregorianCalendar xgc
                             = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
+                    // atom:published is a xs:dateTime thus only populate is data and time present
                     if (xgc.getXMLSchemaType() == DatatypeConstants.DATETIME) {
                         final DateTimeType dateTime = oreFactory.createDateTimeType();
                         dateTime.setValue(xgc);
@@ -550,16 +543,29 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @throws IllegalStateException
      * @throws ValueFormatException
      */
-    private void addAtomCategory(final EntryType et, final Container obj)
+    private void addAtomCategory(final EntryType et, final Container obj, final String name)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
         // <!-- Creation and Modification date/time of the Aggregation (rdf literals) -->
-        final DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
-        final String dateStr = formatter.format(java.time.Instant.now());
-        final CategoryType modified = oreFactory.createCategoryType();
-        modified.setTerm(dateStr);
-        modified.setScheme("http://www.openarchives.org/ore/atom/modified");
-        et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(modified));
+        final Value[] values = returnDateValues(obj);
+
+        // get last date
+        final int len = (values != null) ? java.lang.Math.toIntExact(values.length) : 0;
+        final Value v = (len > 0) ? values[len - 1] : null;
+        try {
+            if (v != null && StringUtils.isNotEmpty(v.getString())) {
+                final XMLGregorianCalendar xgc
+                        = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
+                final CategoryType modified = oreFactory.createCategoryType();
+                modified.setTerm(v.getString());
+                modified.setScheme("http://www.openarchives.org/ore/atom/modified");
+                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(modified));
+            }
+        } catch (Exception e) {
+            // disregard malformed dates
+            log.warn("Invalid date on object: " + name + " - value: " + v.getString());
+            // throw new ValueFormatException();
+        }
 
         // <!-- Categories for the Aggregation (rdf:type) (repeatable for multifile resources) -->
         final CategoryType catAgg = oreFactory.createCategoryType();
@@ -845,6 +851,33 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             });
         }
         return false;
+    }
+
+    /**
+     * Find the date Value
+     * 
+     * @param obj Container
+     * 
+     * @return Value array or null if none found
+     */
+    public final Value[] returnDateValues(final Container obj)
+        throws ValueFormatException, RepositoryException {
+
+        Value[] values;
+
+        // get date depending on dc:type
+        final Value[] dcType = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type").getValues() : null;
+        final boolean isThesis = isThesis(dcType);
+
+        //  <!-- dcterms:created | dcterms:dateAccepted (thesis)  -->
+        if (isThesis) {
+            values = obj.hasProperty("dcterms:dateAccepted")
+                    ? obj.getProperty("dcterms:dateAccepted").getValues() : null;
+        } else {
+            values = obj.hasProperty("dcterms:created") ? obj.getProperty("dcterms:created").getValues() : null;
+        }
+
+        return values;
     }
 
     /**
