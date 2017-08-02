@@ -37,6 +37,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
@@ -428,13 +429,17 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         }
 
         for (final Value v : values) {
-            final DateTimeType dateTime = oreFactory.createDateTimeType();
             try {
                 if (StringUtils.isNotEmpty(v.getString())) {
                     final XMLGregorianCalendar xgc
                             = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
-                    dateTime.setValue(xgc);
-                    entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypePublished(dateTime));
+                    if (xgc.getXMLSchemaType() == DatatypeConstants.DATETIME) {
+                        final DateTimeType dateTime = oreFactory.createDateTimeType();
+                        dateTime.setValue(xgc);
+                        entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypePublished(dateTime));
+                    } else {
+                        throw new ValueFormatException();
+                    }
                 }
             } catch (Exception e) {
                 // throw new ValueFormatException();
