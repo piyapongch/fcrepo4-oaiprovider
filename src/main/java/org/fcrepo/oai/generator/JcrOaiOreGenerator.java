@@ -102,8 +102,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      *
      * @param session
      * @param obj
+     * @param name Name of the object (id)
      * @param uriInfo
-     * @return
+     * @param identifier
+     * 
+     * @return JAXB element containing the metadata
      * @throws RepositoryException
      */
     public JAXBElement<EntryType> generate
@@ -146,10 +149,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add multi-valued identifier method.
      *
      * @param et entryType class
-     * @param prop JCR property output
-     * @throws RepositoryException
-     * @throws IllegalStateException
-     * @throws ValueFormatException
+     * @param prop JCR/Fedora property
      */
     private void addIdentifier(final EntryType et, final String identifier) {
         if (StringUtils.isNotEmpty(identifier)) {
@@ -163,7 +163,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add multi-valued identifier method.
      *
      * @param et entryType class
-     * @param prop JCR property output
+     * @param prop JCR/Fedora property
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -179,7 +179,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add multi-valued UAL DOI method.
      *
      * @param et entryType class
-     * @param prop JCR property output
+     * @param prop JCR/Fedora property
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -195,7 +195,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add multi-valued Filename Id method.
      *
      * @param et entryType class
-     * @param prop JCR property output
+     * @param prop JCR/Fedora property
+     * @param name Name of the object (id)
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -220,7 +221,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add ERA Id method.
      *
      * @param et entryType class
-     * @param name
+     * @param name Name of the object (id)
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -239,7 +240,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add multi-valued LAC Id method.
      *
      * @param et entryType class
-     * @param prop JCR property output
+     * @param prop JCR/Fedora property
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -269,7 +270,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add Title method.
      *
      * @param et entryType class
-     * @param prop
+     * @param prop JCR/Fedora property
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -290,7 +291,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add Author method.
      *
      * @param et entryType class
-     * @param prop
+     * @param prop JCR/Fedora property
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -312,7 +313,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add Contributor method.
      *
      * @param et entryType class
-     * @param prop
+     * @param prop JCR/Fedora property
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -354,7 +355,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         author.getNameOrUriOrEmail().add(oreFactory.createPersonTypeName(oreSourceAuthorName));
         source.getContent().add(oreFactory.createSourceTypeAuthor(author));
 
-        // atom:source/atom:generator - <!-- publisher of recod -->
+        // atom:source/atom:generator - <!-- publisher of record -->
         final GeneratorType generator = oreFactory.createGeneratorType();
         generator.setValue(oreSourceGenerator);
         source.getContent().add(oreFactory.createSourceTypeGenerator(generator));
@@ -383,7 +384,6 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 }
             }
         }
-
         et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeSource(source));
     }
 
@@ -391,7 +391,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add Atom published data method
      *
      * @param et entryType class
-     * @param obj JCR object properties
+     * @param obj JCR object properties in a container
+     * @param oreHref url for the ORE endpoint
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -445,7 +446,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      *
      * @param et entryType class
      * @param obj JCR object properties
-     * @param name
+     * @param name Name of the object (id)
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -514,7 +515,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add Category method.
      *
      * @param et entryType class
-     * @param prop
+     * @param prop JCR object properties
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -539,6 +540,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      *
      * @param et entryType class
      * @param obj JCR object properties
+     * @param name Name of the object (id)
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -706,7 +708,12 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * Add triple properties pertaining to aggregation
      *
-     *
+     * @param et entryType class
+     * @param obj JCR/Fedora object
+     * @param oreRdfFactory Object to create ORE RDF metadata
+     * @param oreHref URL for the ORE 
+     * @param triples Object to create the ORE Triples section
+     * 
      */
     private void addTriplePropAgg(
         final EntryType et, final Container obj, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
@@ -751,7 +758,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * Properties pertaining to the aggregated binary (can be repeated for multifile resources)
      *
-     *
+     * @param et EntryType class instance
+     * @param name Name of the object (id)
+     * @param oreRdfFactory Object to create ORE RDF metadata
+     * @param oreHref URL for the ORE 
+     * @param triples Object to create the ORE Triples section
      */
     private void addTriplePropAggBinary(
         final EntryType et, final Container obj, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
@@ -781,7 +792,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * Properties pertaining to the aggregated resource splash page
      *
-     *
+     * @param et EntryType class instance
+     * @param oreRdfFactory Object to create ORE RDF metadata
+     * @param href URL for the splash page 
+     * @param triples Object to create the ORE Triples section
      */
     private void addTriplePropSplashPage(
         final EntryType et, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
@@ -810,7 +824,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * asserts the relationship between the oai_pmh record and the ore record
      *
-     *
+     * @param et EntryType class instance
+     * @param oreRdfFactory Object to create ORE RDF metadata
+     * @param href URL for the object 
+     * @param triples Object to create the ORE Triples section
      */
     private void addTriplePropOreRecord(
         final EntryType et, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
@@ -845,8 +862,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * The isThesis method.
      *
-     * @param values
-     * @return
+     * @param values type of object
+     * 
+     * @return true if Thesis otherwise false or null
      */
     private boolean isThesis(final Value[] values) {
         if (values != null) {
