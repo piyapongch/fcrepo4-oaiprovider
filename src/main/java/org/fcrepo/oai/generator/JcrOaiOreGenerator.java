@@ -486,21 +486,20 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
             // <!-- dcterms:creator / http://id.loc.gov/vocabulary/relators/dis (thesis) -->
-            if (obj.hasProperty("dcterms:creator")) {
-                addAtomAuthor(entry, obj.getProperty("dcterms:creator"));
-            }
             // marcrel:dis maps to creator
             if (obj.hasProperty("marcrel:dis")) {
                 addAtomAuthor(entry, obj.getProperty("marcrel:dis"));
+            } else if (obj.hasProperty("dcterms:creator")) {
+                addAtomAuthor(entry, obj.getProperty("dcterms:creator"));
             }
             // <!-- dcterms:contributor (optional)-->/
             if (obj.hasProperty("dcterms:contributor")) {
                 addAtomContributor(entry, obj.getProperty("dcterms:contributor"));
             }
             // supervisor
-//            if (obj.hasProperty("marcrel:ths")) {
-//                addAtomContributor(entry, obj.getProperty("marcrel:ths"));
-//            }
+            //  if (obj.hasProperty("marcrel:ths")) {
+            //      addAtomContributor(entry, obj.getProperty("marcrel:ths"));
+            //  }
             // committee - assume include "marcrel:ths" value
             if (obj.hasProperty("ualrole:thesiscommitteemember")) {
                 addAtomContributor(entry, obj.getProperty("ualrole:thesiscommitteemember"));
