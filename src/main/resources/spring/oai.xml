@@ -28,7 +28,7 @@
         <property name="htmlUrlFormat" value="https://era.library.ualberta.ca/files/%1$s" />
         <property name="oreSourceGenerator" value="University of Alberta Education &amp; Research Archive" />
         <property name="oreSourceAuthorName" value="University of Alberta Education &amp; Research Archive" />
-        <property name="oreSourceAuthorUri" value="http://era.library.ualberta.ca" />
+        <property name="oreSourceAuthorUri" value="https://era.library.ualberta.ca" />
 	</bean>
 
 	<bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
