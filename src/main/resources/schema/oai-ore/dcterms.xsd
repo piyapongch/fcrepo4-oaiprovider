@@ -12,5 +12,6 @@
   <xs:element name="description" type="xs:NCName"/>
   <xs:element name="modified" type="xs:dateTime"/>
   <xs:element name="license" type="xs:string"/>
+  <xs:element name="rights" type="xs:string"/>
   <xs:element name="isVersionOf" type="xs:string"/>
 </xs:schema>

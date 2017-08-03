@@ -711,7 +711,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param et entryType class
      * @param obj JCR/Fedora object
      * @param oreRdfFactory Object to create ORE RDF metadata
-     * @param oreHref URL for the ORE 
+     * @param oreHref URL for the ORE
      * @param triples Object to create the ORE Triples section
      * 
      */
@@ -745,8 +745,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
         if (obj.hasProperty("dcterms:rights")) {
             description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:rights")).getString());
-        } else if (obj.hasProperty("dcterms:license")) {
-            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
+        }
+        if (obj.hasProperty("dcterms:license")) {
+            description.setRights(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
         }
         if (obj.hasProperty("dcterms:isVersionOf")) {
             description.setIsVersionOf(findLastPropertyValue(obj.getProperty("dcterms:isVersionOf")).getString());
@@ -761,7 +762,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param et EntryType class instance
      * @param name Name of the object (id)
      * @param oreRdfFactory Object to create ORE RDF metadata
-     * @param oreHref URL for the ORE 
+     * @param oreHref URL for the ORE
      * @param triples Object to create the ORE Triples section
      */
     private void addTriplePropAggBinary(
@@ -794,7 +795,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      *
      * @param et EntryType class instance
      * @param oreRdfFactory Object to create ORE RDF metadata
-     * @param href URL for the splash page 
+     * @param href URL for the splash page
      * @param triples Object to create the ORE Triples section
      */
     private void addTriplePropSplashPage(
@@ -826,7 +827,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      *
      * @param et EntryType class instance
      * @param oreRdfFactory Object to create ORE RDF metadata
-     * @param href URL for the object 
+     * @param href URL for the object
      * @param triples Object to create the ORE Triples section
      */
     private void addTriplePropOreRecord(

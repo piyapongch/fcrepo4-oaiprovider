@@ -18,6 +18,7 @@
           <xs:sequence>
             <xs:element ref="dcterms:modified"/>
             <xs:element ref="dcterms:license"/>
+            <xs:element ref="dcterms:rights"/>
             <xs:element ref="dcterms:isVersionOf"/>
           </xs:sequence>
         </xs:choice>
