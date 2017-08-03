@@ -425,7 +425,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 if (StringUtils.isNotEmpty(v.getString())) {
                     final XMLGregorianCalendar xgc
                             = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
-                    // atom:published is a xs:dateTime thus only populate is data and time present
+                    // atom:published is a xs:dateTime thus only populate if data and time present
                     if (xgc.getXMLSchemaType() == DatatypeConstants.DATETIME) {
                         final DateTimeType dateTime = oreFactory.createDateTimeType();
                         dateTime.setValue(xgc);
@@ -552,19 +552,19 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         // get last date
         final int len = (values != null) ? java.lang.Math.toIntExact(values.length) : 0;
         final Value v = (len > 0) ? values[len - 1] : null;
-        try {
-            if (v != null && StringUtils.isNotEmpty(v.getString())) {
+        if (v != null && StringUtils.isNotEmpty(v.getString())) {
+            try {
                 final XMLGregorianCalendar xgc
                         = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
-                final CategoryType modified = oreFactory.createCategoryType();
-                modified.setTerm(v.getString());
-                modified.setScheme("http://www.openarchives.org/ore/atom/modified");
-                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(modified));
+                addModifiedDate(v.getString(), et);
+            } catch (Exception e) {
+                // disregard malformed dates
+                log.warn("Invalid date on object: " + name + " - value: " + v.getString());
+                // kludge to fix date in format of "[1999]", "c1999", or "[1999?]"
+                final String modDate = v.getString().replaceAll("[^\\d.]", "");
+                addModifiedDate(modDate, et);
+                // throw new ValueFormatException();
             }
-        } catch (Exception e) {
-            // disregard malformed dates
-            log.warn("Invalid date on object: " + name + " - value: " + v.getString());
-            // throw new ValueFormatException();
         }
 
         // <!-- Categories for the Aggregation (rdf:type) (repeatable for multifile resources) -->
@@ -582,6 +582,19 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         // <!-- dcterms:type -->
         final Property prop = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type") : null;
         addAtomCategory(et, prop);
+    }
+
+    /**
+     * add modified date
+     * 
+     * @param v String representation of a valid date
+     * @param et And EntryType container object
+     */
+    private void addModifiedDate(final String v, final EntryType et) {
+        final CategoryType modified = oreFactory.createCategoryType();
+        modified.setTerm(v);
+        modified.setScheme("http://www.openarchives.org/ore/atom/modified");
+        et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(modified));
     }
 
     /**
