@@ -95,6 +95,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
     private String oaiUrlFormat;
 
+    private String etdmsUrlFormat;
+
     private String htmlUrlFormat;
 
     /**
@@ -120,6 +122,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final String htmlHref = String.format(htmlUrlFormat, URLEncoder.encode(name, "UTF-8"));
             final String oreHref  = htmlHref.concat("/ore.xml");
             final String oaiHref  = String.format(oaiUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
+            final String etdmsHref  = String.format(etdmsUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
 
             // <!-- Atom Specific; No ORE Semantics -->
             addAtomIdentifiers(entry, obj, name);
@@ -137,7 +140,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             addAggregatedResources(entry, obj, name, oaiHref);
 
             // <!-- Additional properties pertaining to Aggregated Resources and Aggregation -->
-            addAtomTriples(entry, obj, name, identifier, htmlHref, oreHref, oaiHref);
+            addAtomTriples(entry, obj, name, identifier, htmlHref, oreHref, oaiHref, etdmsHref);
         } catch (final UnsupportedEncodingException e) {
             throw new RepositoryException(e);
         }
@@ -681,7 +684,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @throws ValueFormatException
      */
     private void addAtomTriples(final EntryType et, final Container obj, final String name,
-            final String identifier, final String htmlHref, final String oreHref, final String oaiHref)
+            final String identifier,
+            final String htmlHref, final String oreHref, final String oaiHref,
+            final String etdmsHref
+            )
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
         final org.openarchives.ore.atom.ObjectFactory oreAtomFactory
@@ -699,7 +705,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         // <!-- Properties pertaining to the aggregated resource splash page-->
         addTriplePropSplashPage(et, oreRdfFactory, htmlHref, triples);
         // <!-- asserts the relationship between the oai_pmh record and the ore record -->
-        addTriplePropOreRecord(et, oreRdfFactory, oaiHref, triples);
+        addTriplePropOreRecord(et, oreRdfFactory, oaiHref, etdmsHref, triples);
 
         et.getAuthorOrCategoryOrContent().add(triples);
     }
@@ -831,24 +837,37 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      */
     private void addTriplePropOreRecord(
         final EntryType et, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
-        final String href, final Triples triples)
+        final String href_dc,
+        final String href_etdms,
+        final Triples triples)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
+        // link to DC record
         final org.w3._2000._01.rdf_schema_.ObjectFactory oreRdfsFactory
                 = new org.w3._2000._01.rdf_schema_.ObjectFactory();
 
         final org.purl.dc.terms.ObjectFactory dctermsFactory
                 = new org.purl.dc.terms.ObjectFactory();
 
-        final Description description = oreRdfFactory.createDescription();
-        description.setAbout(href);
-        final Type rdfType = oreRdfFactory.createType();
-        rdfType.setResource("info:eu-repo/semantics/descriptiveMetadata");
-        description.setType(rdfType);
-        final ConformsTo conformsTo = dctermsFactory.createConformsTo();
-        conformsTo.setResource("http://www.openarchives.org/OAI/2.0/oai_dc/");
-        description.setConformsTo(conformsTo);
-        triples.getDescription().add(description);
+        final Description description_dc = oreRdfFactory.createDescription();
+        description_dc.setAbout(href_dc);
+        final Type rdfType_dc = oreRdfFactory.createType();
+        rdfType_dc.setResource("info:eu-repo/semantics/descriptiveMetadata");
+        description_dc.setType(rdfType_dc);
+        final ConformsTo conformsTo_dc = dctermsFactory.createConformsTo();
+        conformsTo_dc.setResource("http://www.openarchives.org/OAI/2.0/oai_dc/");
+        description_dc.setConformsTo(conformsTo_dc);
+        triples.getDescription().add(description_dc);
+
+        final Description description_etdms = oreRdfFactory.createDescription();
+        description_etdms.setAbout(href_etdms);
+        final Type rdfType_etdms = oreRdfFactory.createType();
+        rdfType_etdms.setResource("info:eu-repo/semantics/descriptiveMetadata");
+        description_etdms.setType(rdfType_etdms);
+        final ConformsTo conformsTo_etdms = dctermsFactory.createConformsTo();
+        conformsTo_etdms.setResource("http://www.ndltd.org/standards/metadata/etdms/1.0/");
+        description_etdms.setConformsTo(conformsTo_etdms);
+        triples.getDescription().add(description_etdms);
 
         final Description descMeta = oreRdfFactory.createDescription();
         descMeta.setAbout("info:eu-repo/semantics/descriptiveMetadata");
@@ -980,6 +999,15 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     }
 
     /**
+     * The etdmsUrlFormat setter method - from Bean.
+     *
+     * @param etdmsUrlFormat the OreSourceAuthorUri to set
+     */
+    public final void setEtdmsUrlFormat(final String etdmsUrlFormat) {
+        this.etdmsUrlFormat = etdmsUrlFormat;
+    }
+
+    /**
      * The htmlUrlFormat setter method - from Bean.
      *
      * @param htmlUrlFormat
@@ -987,6 +1015,5 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     public final void setHtmlUrlFormat(final String htmlUrlFormat) {
         this.htmlUrlFormat = htmlUrlFormat;
     }
-
 
 }
