@@ -5,14 +5,19 @@
     <parent>
         <groupId>org.fcrepo</groupId>
         <artifactId>fcrepo</artifactId>
-        <version>4.2.0</version>
+        <version>4.7.4</version>
     </parent>
 
     <artifactId>fcrepo-oaiprovider</artifactId>
     <description>The Fedora Commons repository OAI provider.</description>
     <packaging>bundle</packaging>
-    <version>4.2.5</version>
-    
+    <version>4.7.1</version>
+
+    <properties>
+      <fcrepo-build-tools.version>4.7.0</fcrepo-build-tools.version>
+      <fcrepo.version>4.7.4</fcrepo.version>
+    </properties>
+
     <repositories>
         <repository>
             <id>snapshots-repo</id>
@@ -31,7 +36,7 @@
             <dependency>
                 <groupId>org.fcrepo</groupId>
                 <artifactId>fcrepo-jcr-bom</artifactId>
-                <version>4.2.0</version>
+                <version>${fcrepo.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -42,28 +47,7 @@
         <dependency>
             <groupId>org.fcrepo</groupId>
             <artifactId>fcrepo-http-commons</artifactId>
-            <version>4.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.fcrepo</groupId>
-            <artifactId>fcrepo-transform</artifactId>
-            <version>4.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.fcrepo</groupId>
-            <artifactId>fcrepo-kernel</artifactId>
-            <version>4.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.fcrepo</groupId>
-            <artifactId>fcrepo-kernel-impl</artifactId>
-            <version>4.2.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>${fcrepo.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -98,12 +82,12 @@
         <dependency>
             <groupId>org.fcrepo</groupId>
             <artifactId>fcrepo-http-api</artifactId>
-            <version>4.2.0</version>
+            <version>${fcrepo.version}</version>
         </dependency>
         <dependency>
             <groupId>org.fcrepo</groupId>
             <artifactId>fcrepo-http-api</artifactId>
-            <version>4.2.0</version>
+            <version>${fcrepo.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
@@ -111,20 +95,20 @@
         <dependency>
             <groupId>org.fcrepo</groupId>
             <artifactId>fcrepo-configs</artifactId>
-            <version>4.2.0</version>
+            <version>${fcrepo.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.fcrepo</groupId>
             <artifactId>fcrepo-http-commons</artifactId>
-            <version>4.2.0</version>
+            <version>${fcrepo.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>org.fcrepo</groupId>
             <artifactId>fcrepo-auth-common</artifactId>
-            <version>4.2.0</version>
+            <version>${fcrepo.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -191,6 +175,11 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
+          </dependency>
+        <dependency>
+          <groupId>joda-time</groupId>
+          <artifactId>joda-time</artifactId>
+          <version>2.3</version>
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
@@ -325,7 +314,7 @@
                     <dependency>
                         <groupId>org.fcrepo</groupId>
                         <artifactId>fcrepo-build-tools</artifactId>
-                        <version>4.2.0</version>
+                        <version>${fcrepo-build-tools.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -364,7 +353,7 @@
                     <dependency>
                         <groupId>org.fcrepo</groupId>
                         <artifactId>fcrepo-build-tools</artifactId>
-                        <version>4.2.0</version>
+                        <version>${fcrepo-build-tools.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -378,7 +367,7 @@
                             <tasks>
                                 <echo message="Building ${project.artifactId}-${project.version}.war..." />
                                 <get
-                                    src="https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-4.2.0/fcrepo-webapp-${fcrepo.version}.war"
+                                  src="https://github.com/fcrepo4/fcrepo4/releases/download/fcrepo-${fcrepo.version}/fcrepo-webapp-${fcrepo.version}.war"
                                     dest="target/fcrepo-webapp-${fcrepo.version}.war"/>
                                 <unzip src="target/fcrepo-webapp-${fcrepo.version}.war" dest="target/fcrepo-webapp-${fcrepo.version}" />
                                 <echo message="Copying libraries and configurations..." />
