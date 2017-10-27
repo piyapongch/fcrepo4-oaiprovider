@@ -15,7 +15,7 @@
  */
 package org.fcrepo.oai.rdf;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 
