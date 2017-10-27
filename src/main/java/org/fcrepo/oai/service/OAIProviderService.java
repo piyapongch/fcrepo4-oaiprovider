@@ -677,7 +677,7 @@ public class OAIProviderService {
                     h.setIdentifier(createId(converter.asString(sub)));
 
                     final Container obj = containerService.find(fedoraSession, path);
-                    h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
+                    h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
                     triples = obj.getTriples(converter, PropertiesRdfContext.class)
                             .filter(new PropertyPredicate(propertyHasCollectionId));
                     while (triples.hasNext()) {
@@ -1017,7 +1017,7 @@ public class OAIProviderService {
         h.setIdentifier(createId(path));
 
         final Container obj = containerService.find(fedoraSession, path);
-        h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getTime()));
+        h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
 
         // set setSpecs
         final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
