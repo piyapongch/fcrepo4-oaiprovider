@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.jcr.Node;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -42,7 +43,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.fcrepo.kernel.models.Container;
+import org.fcrepo.kernel.api.models.Container;
+import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -403,6 +405,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addResourceMapMetadata(final EntryType entry, final Container obj, final String oreHref)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
+        Node node = getJcrNode(obj);
+        
         // metadata link
         // <!-- this ReM is serialized in Atom -->
         final LinkType atomLink = oreFactory.createLinkType();
@@ -418,7 +422,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(oreLink));
 
         // add atom:source
-        final Value[] dois = obj.hasProperty("ualid:doi") ? obj.getProperty("ualid:doi").getValues() : null;
+        final Value[] dois = obj.hasProperty("ualid:doi") ? node.getProperty("ualid:doi").getValues() : null;
         addAtomSource(entry, dois);
 
         // atom:published
@@ -457,22 +461,24 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addAtomIdentifiers(final EntryType entry, final Container obj, final String name)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
+            Node node = getJcrNode(obj);
+
            // identifiers
             addIdentifier(entry, name);
             addEraIdentifier(entry, name);
             if (obj.hasProperty("dcterms:identifier")) {
-                addIdentifier(entry, obj.getProperty("dcterms:identifier"));
+                addIdentifier(entry, node.getProperty("dcterms:identifier"));
             }
             if (obj.hasProperty("model:downloadFilename")) {
-                addFilenameIdentifier(entry, obj.getProperty("model:downloadFilename"), name);
+                addFilenameIdentifier(entry, node.getProperty("model:downloadFilename"), name);
             }
             if (obj.hasProperty("ualid:doi")) {
-                addIdentifier(entry, obj.getProperty("ualid:doi"));
-                addUalidDoiIdentifier(entry, obj.getProperty("ualid:doi"));
+                addIdentifier(entry, node.getProperty("ualid:doi"));
+                addUalidDoiIdentifier(entry, node.getProperty("ualid:doi"));
             }
             if (obj.hasProperty("ualid:fedora3handle")) {
-                addIdentifier(entry, obj.getProperty("ualid:fedora3handle"));
-                addLacIdentifier(entry, obj.getProperty("ualid:fedora3handle"));
+                addIdentifier(entry, node.getProperty("ualid:fedora3handle"));
+                addLacIdentifier(entry, node.getProperty("ualid:fedora3handle"));
             }
     }
 
@@ -488,16 +494,18 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addAggregationMetadata(final EntryType entry, final Container obj)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
+            Node node = getJcrNode(obj);
+        
             // <!-- dcterms:creator / http://id.loc.gov/vocabulary/relators/dis (thesis) -->
             // marcrel:dis maps to creator
             if (obj.hasProperty("marcrel:dis")) {
-                addAtomAuthor(entry, obj.getProperty("marcrel:dis"));
+                addAtomAuthor(entry, node.getProperty("marcrel:dis"));
             } else if (obj.hasProperty("dcterms:creator")) {
-                addAtomAuthor(entry, obj.getProperty("dcterms:creator"));
+                addAtomAuthor(entry, node.getProperty("dcterms:creator"));
             }
             // <!-- dcterms:contributor (optional)-->/
             if (obj.hasProperty("dcterms:contributor")) {
-                addAtomContributor(entry, obj.getProperty("dcterms:contributor"));
+                addAtomContributor(entry, node.getProperty("dcterms:contributor"));
             }
             // supervisor
             //  if (obj.hasProperty("marcrel:ths")) {
@@ -505,11 +513,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             //  }
             // committee - assume include "marcrel:ths" value
             if (obj.hasProperty("ualrole:thesiscommitteemember")) {
-                addAtomContributor(entry, obj.getProperty("ualrole:thesiscommitteemember"));
+                addAtomContributor(entry, node.getProperty("ualrole:thesiscommitteemember"));
             }
             // <!-- dcterms:title -->
             if (obj.hasProperty("dcterms:title")) {
-                addAtomTitle(entry, obj.getProperty("dcterms:title"));
+                addAtomTitle(entry, node.getProperty("dcterms:title"));
             }
     }
 
@@ -553,6 +561,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         // <!-- Creation and Modification date/time of the Aggregation (rdf literals) -->
         final Value[] values = returnDateValues(obj);
 
+        Node node = getJcrNode(obj);
+       
         // get last date
         final int len = (values != null) ? java.lang.Math.toIntExact(values.length) : 0;
         final Value v = (len > 0) ? values[len - 1] : null;
@@ -584,7 +594,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         catFedora.setLabel("Fedora Resource");
         et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(catFedora));
         // <!-- dcterms:type -->
-        final Property prop = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type") : null;
+        final Property prop = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type") : null;
         addAtomCategory(et, prop);
     }
 
@@ -615,6 +625,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final String oaiHref)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
+        Node node = getJcrNode(obj);
+
         try {
             // <!-- Aggregated Resources -->
             // <!-- info:fedora/fedora-system:def/model#downloadFilename |
@@ -622,14 +634,14 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final LinkType linkFile = oreFactory.createLinkType();
             String fileStr = null;
             if (obj.hasProperty("model:downloadFilename")) {
-                fileStr = findLastPropertyValue(obj.getProperty("model:downloadFilename")).getString();
+                fileStr = findLastPropertyValue(node.getProperty("model:downloadFilename")).getString();
                 final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
                 linkFile.setHref(hrefStr);
             }
             if (obj.hasProperty("premis:hasOriginalName")) {
                 linkFile.setTitle(
                         XmlEscapers.xmlAttributeEscaper().escape(
-                                findLastPropertyValue(obj.getProperty("premis:hasOriginalName")).getString()
+                                findLastPropertyValue(node.getProperty("premis:hasOriginalName")).getString()
                         )
                 );
             } else if (fileStr != null) {
@@ -637,11 +649,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             }
             if (obj.hasProperty("premis:hasSize")) {
                 final BigInteger len
-                        = new BigInteger(findLastPropertyValue(obj.getProperty("dcterms:title")).getString());
+                        = new BigInteger(findLastPropertyValue(node.getProperty("dcterms:title")).getString());
                 linkFile.setLength(len);
             }
             if (obj.hasProperty("fedora:mimeType")) {
-                linkFile.setType(findLastPropertyValue(obj.getProperty("dcterms:title")).getString());
+                linkFile.setType(findLastPropertyValue(node.getProperty("dcterms:title")).getString());
             }
             linkFile.setRel("http://www.openarchives.org/ore/terms/aggregates");
             et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(linkFile));
@@ -651,7 +663,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             linkHtml.setRel("http://www.openarchives.org/ore/terms/aggregates");
             linkHtml.setType("text/html");
             if (obj.hasProperty("dcterms:title")) {
-                final String titleStr = findLastPropertyValue(obj.getProperty("dcterms:title")).getString();
+                final String titleStr = findLastPropertyValue(node.getProperty("dcterms:title")).getString();
                 linkHtml.setTitle(XmlEscapers.xmlAttributeEscaper().escape(titleStr));
             }
             linkHtml.setHref(String.format(htmlUrlFormat, URLEncoder.encode(name, "UTF-8")));
@@ -661,7 +673,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final LinkType linkOai = oreFactory.createLinkType();
             linkOai.setRel("http://www.openarchives.org/ore/terms/aggregates");
             if (obj.hasProperty("dcterms:title")) {
-                final String titleStr = findLastPropertyValue(obj.getProperty("dcterms:title")).getString();
+                final String titleStr = findLastPropertyValue(node.getProperty("dcterms:title")).getString();
                 linkOai.setTitle(XmlEscapers.xmlAttributeEscaper().escape(titleStr));
             }
             linkOai.setHref(oaiHref);
@@ -725,6 +737,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final String oreHref, final Triples triples)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
+        Node node = getJcrNode(obj);
+
         final Description description = oreRdfFactory.createDescription();
         description.setAbout(oreHref);
         final Type rdfType = oreRdfFactory.createType();
@@ -733,7 +747,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         if (obj.hasProperty("dcterms:modified")) {
             try {
                 final String modifiedDate =
-                        findLastPropertyValue(obj.getProperty("dcterms:modified")).getString();
+                        findLastPropertyValue(node.getProperty("dcterms:modified")).getString();
                 // Todo: is there a better way?
                 // dcterms:modified is a String in the form
                 // "YYYY-MM-DDTHH:MM:SS:xxxZ ^^http://www.w3.org/2001/XMLSchema#dateTime"
@@ -749,13 +763,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         }
 
         if (obj.hasProperty("dcterms:rights")) {
-            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:rights")).getString());
+            description.setLicense(findLastPropertyValue(node.getProperty("dcterms:rights")).getString());
         }
         if (obj.hasProperty("dcterms:license")) {
-            description.setRights(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
+            description.setRights(findLastPropertyValue(node.getProperty("dcterms:license")).getString());
         }
         if (obj.hasProperty("dcterms:isVersionOf")) {
-            description.setIsVersionOf(findLastPropertyValue(obj.getProperty("dcterms:isVersionOf")).getString());
+            description.setIsVersionOf(findLastPropertyValue(node.getProperty("dcterms:isVersionOf")).getString());
         }
 
         triples.getDescription().add(description);
@@ -775,11 +789,14 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final Triples triples, final String name)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
+        Node node = getJcrNode(obj);
+
+        
         try {
             final Description description = oreRdfFactory.createDescription();
 
             if (obj.hasProperty("model:downloadFilename")) {
-                final String fileStr = findLastPropertyValue(obj.getProperty("model:downloadFilename")).getString();
+                final String fileStr = findLastPropertyValue(node.getProperty("model:downloadFilename")).getString();
                 final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
                 description.setAbout(hrefStr);
             }
@@ -914,17 +931,18 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         throws ValueFormatException, RepositoryException {
 
         Value[] values;
+        Node node = getJcrNode(obj);
 
         // get date depending on dc:type
-        final Value[] dcType = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type").getValues() : null;
+        final Value[] dcType = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
         final boolean isThesis = isThesis(dcType);
 
         //  <!-- dcterms:created | dcterms:dateAccepted (thesis)  -->
         if (isThesis) {
             values = obj.hasProperty("dcterms:dateAccepted")
-                    ? obj.getProperty("dcterms:dateAccepted").getValues() : null;
+                    ? node.getProperty("dcterms:dateAccepted").getValues() : null;
         } else {
-            values = obj.hasProperty("dcterms:created") ? obj.getProperty("dcterms:created").getValues() : null;
+            values = obj.hasProperty("dcterms:created") ? node.getProperty("dcterms:created").getValues() : null;
         }
 
         return values;

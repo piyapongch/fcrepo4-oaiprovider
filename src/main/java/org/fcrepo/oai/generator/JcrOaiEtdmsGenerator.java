@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.regex.Pattern;
+import javax.jcr.Node;
 
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -32,7 +33,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.fcrepo.kernel.models.Container;
+import org.fcrepo.kernel.api.models.Container;
+import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.ndltd.standards.metadata.etdms._1.AuthorityType;
 import org.ndltd.standards.metadata.etdms._1.ControlledTextType;
 import org.ndltd.standards.metadata.etdms._1.FreeTextType;
@@ -69,13 +71,16 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      */
     public Thesis generate(final Session session, final Container obj, final String name, final UriInfo uriInfo)
         throws RepositoryException {
+        
         String handle = null;
+        Node node = getJcrNode(obj);
+        
         final Thesis thesis = etdmsFactory.createThesis();
 
         // degree element
         final Degree degree = etdmsFactory.createThesisDegree();
 
-        final PropertyIterator props = obj.getNode().getProperties();
+        final PropertyIterator props = node.getProperties();
         while (props.hasNext()) {
             final Property prop = (Property) props.next();
             switch (prop.getName()) {

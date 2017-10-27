@@ -16,8 +16,8 @@
 package org.fcrepo.oai.rdf;
 
 import com.google.common.base.Predicate;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.Triple;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 
 /**
  * The type Property predicate.

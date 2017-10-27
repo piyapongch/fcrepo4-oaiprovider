@@ -17,6 +17,7 @@ package org.fcrepo.oai.generator;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.jcr.Node;
 
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -28,7 +29,8 @@ import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang3.StringUtils;
-import org.fcrepo.kernel.models.Container;
+import org.fcrepo.kernel.api.models.Container;
+import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
 import org.purl.dc.elements._1.ObjectFactory;
 import org.purl.dc.elements._1.SimpleLiteral;
@@ -62,36 +64,37 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
         final OaiDcType oaidc = oaiDcFactory.createOaiDcType();
         Value[] values;
+        Node node = getJcrNode(obj);
 
-        // dc:type
-        values = obj.hasProperty("dcterms:type") ? obj.getProperty("dcterms:type").getValues() : null;
+                // dc:type
+        values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
         addType(oaidc, values);
         final boolean isThesis = isThesis(values);
         if (isThesis) {
 
             // thesis dc:creator
-            values = obj.hasProperty("marcrel:dis") ? obj.getProperty("marcrel:dis").getValues() : null;
+            values = obj.hasProperty("marcrel:dis") ? node.getProperty("marcrel:dis").getValues() : null;
             addCreator(oaidc, values);
 
             // thesis dc:date
             values =
-                obj.hasProperty("dcterms:dateAccepted") ? obj.getProperty("dcterms:dateAccepted").getValues() : null;
+                obj.hasProperty("dcterms:dateAccepted") ? node.getProperty("dcterms:dateAccepted").getValues() : null;
             addDate(oaidc, values);
         } else {
 
             // non-thesis dc:creator
-            values = obj.hasProperty("dcterms:creator") ? obj.getProperty("dcterms:creator").getValues() : null;
+            values = obj.hasProperty("dcterms:creator") ? node.getProperty("dcterms:creator").getValues() : null;
             addCreator(oaidc, values);
 
             // non-thesis dc:date
-            values = obj.hasProperty("dcterms:created") ? obj.getProperty("dcterms:created").getValues() : null;
+            values = obj.hasProperty("dcterms:created") ? node.getProperty("dcterms:created").getValues() : null;
             addDate(oaidc, values);
         }
 
         // dc:publisher (concatenate grantor and discipline/department contents)
         final Value[] depts =
-            obj.hasProperty("vivo:AcademicDepartment") ? obj.getProperty("vivo:AcademicDepartment").getValues() : null;
-        final Value[] ddgs = obj.hasProperty("marcrel:dgg") ? obj.getProperty("marcrel:dgg").getValues() : null;
+            obj.hasProperty("vivo:AcademicDepartment") ? node.getProperty("vivo:AcademicDepartment").getValues() : null;
+        final Value[] ddgs = obj.hasProperty("marcrel:dgg") ? node.getProperty("marcrel:dgg").getValues() : null;
         final StringBuilder pub = new StringBuilder();
 
         // If both marcrel:dgg and vivo:AcademicDepartment are present
@@ -125,7 +128,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         simple.getContent().add(String.format(eraIdFormat, name));
         oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
 
-        final PropertyIterator props = obj.getNode().getProperties();
+        final PropertyIterator props = node.getProperties();
         while (props.hasNext()) {
             final Property prop = (Property) props.next();
             switch (prop.getName()) {
