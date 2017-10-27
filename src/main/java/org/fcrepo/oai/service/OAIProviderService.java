@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Stream;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
@@ -67,6 +68,7 @@ import org.fcrepo.kernel.api.FedoraTypes;
 import org.fcrepo.kernel.api.RdfLexicon;
 import org.fcrepo.kernel.api.RequiredRdfContext;
 import static org.fcrepo.kernel.modeshape.FedoraSessionImpl.getJcrSession;
+import org.fcrepo.kernel.modeshape.FedoraResourceImpl;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.fcrepo.kernel.modeshape.RdfJcrLexicon;
 import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
@@ -344,24 +346,23 @@ public class OAIProviderService {
         id.setEarliestDatestamp(dateFormat.print(root.getCreatedDate().getEpochSecond()));
         id.setProtocolVersion("2.0");
 
-        // repository name, project version
+        java.util.function.Predicate<Triple> predicate;
+        Stream<Triple> triples;
         
-        java.util.function.Predicate<Triple> tmp;
-        tmp = new PropertyPredicate(propertyOaiRepositoryName);
-                
-        RdfStream triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).  .filter(tmp);
+        // repository name, project version
+        predicate = new PropertyPredicate(propertyOaiRepositoryName);
+        triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
         id.setRepositoryName(triples.iterator().next().getObject().getLiteralValue().toString());
-
         
         // base url
-        triples
-                = root.getTriples(converter, PropertiesRdfContext.class).filter(new PropertyPredicate(propertyOaiBaseUrl));
+        predicate = new PropertyPredicate(propertyOaiBaseUrl);
+        triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
         final String baseUrl = triples.iterator().next().getObject().getLiteralValue().toString();
         id.setBaseURL(baseUrl);
 
         // admin email
-        triples
-                = root.getTriples(converter, PropertiesRdfContext.class).filter(new PropertyPredicate(propertyOaiAdminEmail));
+        predicate = new PropertyPredicate(propertyOaiAdminEmail);
+        triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
         id.getAdminEmail().add(0, triples.iterator().next().getObject().getLiteralValue().toString());
 
         // granularity
@@ -444,8 +445,10 @@ public class OAIProviderService {
                         listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                     } else {
                         // FIXME: should check on dcterms:type == 'Thesis' ? oai_dc and oai_etdms : oai_dc
-                        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                                .filter(new PropertyPredicate(mdf.getPropertyName()));
+                        java.util.function.Predicate<Triple> predicate;
+                        Stream<Triple> triples;
+                        predicate = new PropertyPredicate(mdf.getPropertyName());
+                        triples = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
                         if (triples.iterator().hasNext()) {
                             listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                         }
@@ -563,8 +566,11 @@ public class OAIProviderService {
 
         final HttpResourceConverter converter
                 = new HttpResourceConverter(httpSession, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                .filter(new PropertyPredicate(format.getPropertyName()));
+        
+        java.util.function.Predicate<Triple> predicate 
+                = new PropertyPredicate(format.getPropertyName());
+        Stream<Triple> triples 
+                = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);        
 
         if (!triples.iterator().hasNext()) {
             log.error("There is no OAI record of type " + format.getPrefix() + " associated with the object "
@@ -671,6 +677,12 @@ public class OAIProviderService {
             oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
             final ListIdentifiersType ids = oaiFactory.createListIdentifiersType();
 
+            
+            java.util.function.Predicate<Triple> predicate;
+            Stream<Triple> triples;
+        
+
+            
             while (result.hasNext()) {
                 // workaround JCR-SQL2 LIMIT bug in 4.2.0
                 if (result.getPosition() < maxListSize) {
@@ -681,14 +693,15 @@ public class OAIProviderService {
 
                     // get base url
                     final FedoraResource root = nodeService.find(fedoraSession, rootPath);
-                    RdfStream triples = root.getTriples(converter, PropertiesRdfContext.class)
-                            .filter(new PropertyPredicate(propertyOaiBaseUrl));
+                    predicate = new PropertyPredicate(propertyOaiBaseUrl);
+                    triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);                                
                     h.setIdentifier(createId(converter.asString(sub)));
 
                     final Container obj = containerService.find(fedoraSession, path);
                     h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
-                    triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                            .filter(new PropertyPredicate(propertyHasCollectionId));
+                    predicate = new PropertyPredicate(propertyHasCollectionId);
+                    triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);                                
+
                     while (triples.iterator().hasNext()) {
                         h.getSetSpec().add(triples.iterator().next().getObject().getLiteralValue().toString());
                     }
@@ -1029,8 +1042,10 @@ public class OAIProviderService {
         h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
 
         // set setSpecs
-        final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
-                .filter(new PropertyPredicate(propertyHasCollectionId));
+        java.util.function.Predicate<Triple> predicate 
+                = new PropertyPredicate(propertyHasCollectionId);
+        Stream<Triple> triples 
+                = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
         while (triples.iterator().hasNext()) {
             h.getSetSpec().add(triples.iterator().next().getObject().getLiteralValue().toString());
         }
@@ -1532,5 +1547,5 @@ public class OAIProviderService {
     public void setSearchEnabled(final boolean searchEnabled) {
         this.searchEnabled = searchEnabled;
     }
-
+   
 }

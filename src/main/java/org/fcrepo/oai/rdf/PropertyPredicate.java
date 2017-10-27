@@ -37,9 +37,14 @@ public class PropertyPredicate implements Predicate<Triple> {
         this.property = property;
     }
 
-    @Override
     public boolean apply(final Triple triple) {
         final Node node = triple.getPredicate();
         return node.getURI().equals(property);
     }
+    
+    public boolean test(final Triple triple) {
+        final Node node = triple.getPredicate();
+        return node.getURI().equals(property);
+    }
+    
 }

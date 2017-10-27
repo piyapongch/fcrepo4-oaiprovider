@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
@@ -51,7 +52,16 @@ public class MetadataHttpResponseWrapper extends HttpServletResponseWrapper {
             @Override
             public void write(final int b) throws IOException {
                 bos.write(b);
+                
             }
+            
+            @Override
+            public void setWriteListener(WriteListener wl) {
+            }
+            
+            @Override
+            public boolean isReady() { return false; }
+            
         };
     }
 
