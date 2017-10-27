@@ -84,12 +84,15 @@ import org.fcrepo.oai.generator.JcrOaiOreGenerator;
 import org.fcrepo.oai.http.ResumptionToken;
 import org.fcrepo.oai.jersey.XmlDeclarationStrippingInputStream;
 import org.fcrepo.oai.rdf.PropertyPredicate;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+
 import org.modeshape.jcr.api.NamespaceRegistry;
 import org.modeshape.jcr.api.query.QueryResult;
+
 import org.ndltd.standards.metadata.etdms._1.Thesis;
 import org.openarchives.oai._2.DeletedRecordType;
 import org.openarchives.oai._2.DescriptionType;
@@ -114,13 +117,16 @@ import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2.VerbType;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Stopwatch;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.graph.Triple;
 
 
 /**
@@ -340,20 +346,23 @@ public class OAIProviderService {
 
         // repository name, project version
         
-        RdfStream triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES)
-                .filter(new PropertyPredicate(propertyOaiRepositoryName));
-        id.setRepositoryName(triples.next().getObject().getLiteralValue().toString());
+        java.util.function.Predicate<Triple> tmp;
+        tmp = new PropertyPredicate(propertyOaiRepositoryName);
+                
+        RdfStream triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).  .filter(tmp);
+        id.setRepositoryName(triples.iterator().next().getObject().getLiteralValue().toString());
 
+        
         // base url
         triples
                 = root.getTriples(converter, PropertiesRdfContext.class).filter(new PropertyPredicate(propertyOaiBaseUrl));
-        final String baseUrl = triples.next().getObject().getLiteralValue().toString();
+        final String baseUrl = triples.iterator().next().getObject().getLiteralValue().toString();
         id.setBaseURL(baseUrl);
 
         // admin email
         triples
                 = root.getTriples(converter, PropertiesRdfContext.class).filter(new PropertyPredicate(propertyOaiAdminEmail));
-        id.getAdminEmail().add(0, triples.next().getObject().getLiteralValue().toString());
+        id.getAdminEmail().add(0, triples.iterator().next().getObject().getLiteralValue().toString());
 
         // granularity
         id.setGranularity(GranularityType.YYYY_MM_DD_THH_MM_SS_Z);
@@ -437,7 +446,7 @@ public class OAIProviderService {
                         // FIXME: should check on dcterms:type == 'Thesis' ? oai_dc and oai_etdms : oai_dc
                         final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
                                 .filter(new PropertyPredicate(mdf.getPropertyName()));
-                        if (triples.hasNext()) {
+                        if (triples.iterator().hasNext()) {
                             listMetadataFormats.getMetadataFormat().add(mdf.asMetadataFormatType());
                         }
                     }
@@ -557,13 +566,13 @@ public class OAIProviderService {
         final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
                 .filter(new PropertyPredicate(format.getPropertyName()));
 
-        if (!triples.hasNext()) {
+        if (!triples.iterator().hasNext()) {
             log.error("There is no OAI record of type " + format.getPrefix() + " associated with the object "
                     + obj.getPath());
             return null;
         }
 
-        final String recordPath = triples.next().getObject().getLiteralValue().toString();
+        final String recordPath = triples.iterator().next().getObject().getLiteralValue().toString();
         final FedoraBinary bin = binaryService.findOrCreate(fedoraSession, "/" + recordPath);
 
         try (final InputStream src = new XmlDeclarationStrippingInputStream(bin.getContent())) {
@@ -680,8 +689,8 @@ public class OAIProviderService {
                     h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
                     triples = obj.getTriples(converter, PropertiesRdfContext.class)
                             .filter(new PropertyPredicate(propertyHasCollectionId));
-                    while (triples.hasNext()) {
-                        h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
+                    while (triples.iterator().hasNext()) {
+                        h.getSetSpec().add(triples.iterator().next().getObject().getLiteralValue().toString());
                     }
                     ids.getHeader().add(h);
                 } else {
@@ -1022,8 +1031,8 @@ public class OAIProviderService {
         // set setSpecs
         final RdfStream triples = obj.getTriples(converter, PropertiesRdfContext.class)
                 .filter(new PropertyPredicate(propertyHasCollectionId));
-        while (triples.hasNext()) {
-            h.getSetSpec().add(triples.next().getObject().getLiteralValue().toString());
+        while (triples.iterator().hasNext()) {
+            h.getSetSpec().add(triples.iterator().next().getObject().getLiteralValue().toString());
         }
 
         // get the metadata record from fcrepo
