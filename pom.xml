@@ -14,8 +14,8 @@
     <version>4.7.1</version>
 
     <properties>
-      <fcrepo-build-tools.version>4.7.0</fcrepo-build-tools.version>
       <fcrepo.version>4.7.4</fcrepo.version>
+      <fcrepo-build-tools.version>${fcrepo.version}</fcrepo-build-tools.version>
     </properties>
 
     <repositories>
@@ -242,11 +242,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
+                <version>3.0.0-M1</version>
                 <configuration>
                     <linksource>true</linksource>
                     <excludePackageNames>org.openarchives.oai.*:org.purl.*</excludePackageNames>
                     <sourcepath>src/main/java:target/generated-sources</sourcepath>
+                    <sourcepath>src/main/java</sourcepath>
                 </configuration>
             </plugin>
             <plugin>

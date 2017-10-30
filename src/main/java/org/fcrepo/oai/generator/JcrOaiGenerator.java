@@ -39,7 +39,7 @@ public class JcrOaiGenerator {
     /**
      * Given the JCR DOI (doi:10.7939/FEXDSF) convert to the full DOI URI https://doi.org/10.7939/FEXDSF
      *
-     * @param ualidDoi the ualid:doi field within JCR
+     * @param ualibDoi the ualid:doi field within JCR
      *
      */
     protected final String formatUalidDoi(final String ualibDoi) {

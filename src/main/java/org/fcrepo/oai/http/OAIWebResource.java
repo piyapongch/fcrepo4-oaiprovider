@@ -266,7 +266,7 @@ public class OAIWebResource {
 
     /**
      * The delete method.
-     * 
+     *
      * @param path
      * @return
      * @throws RepositoryException

@@ -65,6 +65,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      *
      * @param session
      * @param obj
+     * @param name 
      * @param uriInfo
      * @return
      * @throws RepositoryException
@@ -286,7 +287,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      *
      * @param thesis
      * @param prop
-     * @param string
+     * @param prefix
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -375,6 +376,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      *
      * @param v
      * @param contributor
+     * @param role
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -395,7 +397,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      * The addAuthorityType method.
      *
      * @param v
-     * @param creator
+     * @param auths
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -413,7 +415,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      * The addFreeTextType method.
      *
      * @param v
-     * @param type
+     * @param texts
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException

@@ -109,7 +109,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param name Name of the object (id)
      * @param uriInfo
      * @param identifier
-     * 
+     *
      * @return JAXB element containing the metadata
      * @throws RepositoryException
      */
@@ -395,7 +395,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * The add Atom published data method
      *
-     * @param et entryType class
+     * @param entry entryType class
      * @param obj JCR object properties in a container
      * @param oreHref url for the ORE endpoint
      * @throws RepositoryException
@@ -406,7 +406,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
         Node node = getJcrNode(obj);
-        
+
         // metadata link
         // <!-- this ReM is serialized in Atom -->
         final LinkType atomLink = oreFactory.createLinkType();
@@ -451,7 +451,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * Identifiers
      *
-     * @param et entryType class
+     * @param entry entryType class
      * @param obj JCR object properties
      * @param name Name of the object (id)
      * @throws RepositoryException
@@ -485,7 +485,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * Aggregation metadata
      *
-     * @param et entryType class
+     * @param entry entryType class
      * @param obj JCR object properties
      * @throws RepositoryException
      * @throws IllegalStateException
@@ -495,7 +495,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
             Node node = getJcrNode(obj);
-        
+
             // <!-- dcterms:creator / http://id.loc.gov/vocabulary/relators/dis (thesis) -->
             // marcrel:dis maps to creator
             if (obj.hasProperty("marcrel:dis")) {
@@ -562,7 +562,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final Value[] values = returnDateValues(obj);
 
         Node node = getJcrNode(obj);
-       
+
         // get last date
         final int len = (values != null) ? java.lang.Math.toIntExact(values.length) : 0;
         final Value v = (len > 0) ? values[len - 1] : null;
@@ -600,7 +600,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
     /**
      * add modified date
-     * 
+     *
      * @param v String representation of a valid date
      * @param et And EntryType container object
      */
@@ -615,8 +615,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add aggregated resource section method
      *
      * @param et entryType class
-     * @param values array of property values
+     * @param obj container object
      * @param name identifier of the object
+     * @param oaiHref
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -689,8 +690,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add Atom triple section method
      *
      * @param et entryType class
-     * @param values array of property values
+     * @param obj Container
      * @param name identifier of the object
+     * @param identifier
+     * @param htmlHref
+     * @param oreHref
+     * @param oaiHref
+     * @param etdmsHref
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -730,7 +736,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param oreRdfFactory Object to create ORE RDF metadata
      * @param oreHref URL for the ORE
      * @param triples Object to create the ORE Triples section
-     * 
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     *
      */
     private void addTriplePropAgg(
         final EntryType et, final Container obj, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
@@ -779,10 +788,14 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * Properties pertaining to the aggregated binary (can be repeated for multifile resources)
      *
      * @param et EntryType class instance
-     * @param name Name of the object (id)
+     * @param obj
      * @param oreRdfFactory Object to create ORE RDF metadata
      * @param oreHref URL for the ORE
      * @param triples Object to create the ORE Triples section
+     * @param name Name of the object (id)
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
      */
     private void addTriplePropAggBinary(
         final EntryType et, final Container obj, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
@@ -791,7 +804,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
         Node node = getJcrNode(obj);
 
-        
+
         try {
             final Description description = oreRdfFactory.createDescription();
 
@@ -819,6 +832,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param oreRdfFactory Object to create ORE RDF metadata
      * @param href URL for the splash page
      * @param triples Object to create the ORE Triples section
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
      */
     private void addTriplePropSplashPage(
         final EntryType et, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
@@ -849,7 +865,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      *
      * @param et EntryType class instance
      * @param oreRdfFactory Object to create ORE RDF metadata
-     * @param href URL for the object
+     * @param href_dc URL for the object
+     * @param href_etdms URL for the object
      * @param triples Object to create the ORE Triples section
      */
     private void addTriplePropOreRecord(
@@ -899,7 +916,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The isThesis method.
      *
      * @param values type of object
-     * 
+     *
      * @return true if Thesis otherwise false or null
      */
     private boolean isThesis(final Value[] values) {
@@ -922,9 +939,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
     /**
      * Find the date Value
-     * 
+     *
      * @param obj Container
-     * 
+     *
      * @return Value array or null if none found
      */
     public final Value[] returnDateValues(final Container obj)

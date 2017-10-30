@@ -229,7 +229,7 @@ public class OAIProviderService {
     /**
      * Service initialization
      *
-     * @throws RepositoryException the repository exception
+     * 
      */
     @PostConstruct
     public void init() {
@@ -1513,7 +1513,7 @@ public class OAIProviderService {
     }
 
     /**
-     * Sets metadata formats.
+     * Sets metadata for     * @param href URL for the objectmats.
      *
      * @param metadataFormats the metadata formats
      */

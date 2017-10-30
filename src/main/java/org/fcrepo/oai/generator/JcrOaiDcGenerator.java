@@ -54,6 +54,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      *
      * @param session the session
      * @param obj the obj
+     * @param name 
      * @param uriInfo the uri info
      * @return the jAXB element
      * @throws RepositoryException if repository exception occurred
@@ -358,6 +359,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      *
      * @param oaidc
      * @param prop
+     * @param dcFactory
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -398,7 +400,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      *
      * @param oaidc
      * @param prop
-     * @param string
+     * @param prefix
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
@@ -428,7 +430,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      *
      * @param oaidc
      * @param prop
-     * @param string
+     * @param prefix
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
