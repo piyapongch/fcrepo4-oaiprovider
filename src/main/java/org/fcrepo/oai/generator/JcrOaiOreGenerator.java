@@ -405,7 +405,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addResourceMapMetadata(final EntryType entry, final Container obj, final String oreHref)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
-        Node node = getJcrNode(obj);
+        final Node node = getJcrNode(obj);
 
         // metadata link
         // <!-- this ReM is serialized in Atom -->
@@ -461,7 +461,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addAtomIdentifiers(final EntryType entry, final Container obj, final String name)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
-            Node node = getJcrNode(obj);
+            final Node node = getJcrNode(obj);
 
            // identifiers
             addIdentifier(entry, name);
@@ -494,7 +494,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addAggregationMetadata(final EntryType entry, final Container obj)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
-            Node node = getJcrNode(obj);
+            final Node node = getJcrNode(obj);
 
             // <!-- dcterms:creator / http://id.loc.gov/vocabulary/relators/dis (thesis) -->
             // marcrel:dis maps to creator
@@ -561,7 +561,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         // <!-- Creation and Modification date/time of the Aggregation (rdf literals) -->
         final Value[] values = returnDateValues(obj);
 
-        Node node = getJcrNode(obj);
+        final Node node = getJcrNode(obj);
 
         // get last date
         final int len = (values != null) ? java.lang.Math.toIntExact(values.length) : 0;
@@ -626,7 +626,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final String oaiHref)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
-        Node node = getJcrNode(obj);
+        final Node node = getJcrNode(obj);
 
         try {
             // <!-- Aggregated Resources -->
@@ -746,7 +746,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final String oreHref, final Triples triples)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
-        Node node = getJcrNode(obj);
+        final Node node = getJcrNode(obj);
 
         final Description description = oreRdfFactory.createDescription();
         description.setAbout(oreHref);
@@ -802,7 +802,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final Triples triples, final String name)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
-        Node node = getJcrNode(obj);
+        final Node node = getJcrNode(obj);
 
 
         try {
@@ -948,7 +948,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         throws ValueFormatException, RepositoryException {
 
         Value[] values;
-        Node node = getJcrNode(obj);
+        final Node node = getJcrNode(obj);
 
         // get date depending on dc:type
         final Value[] dcType = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;

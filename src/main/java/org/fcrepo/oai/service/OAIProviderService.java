@@ -68,18 +68,15 @@ import org.fcrepo.kernel.api.FedoraTypes;
 import org.fcrepo.kernel.api.RdfLexicon;
 import org.fcrepo.kernel.api.RequiredRdfContext;
 import static org.fcrepo.kernel.modeshape.FedoraSessionImpl.getJcrSession;
-import org.fcrepo.kernel.modeshape.FedoraResourceImpl;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.fcrepo.kernel.modeshape.RdfJcrLexicon;
 import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
-import org.fcrepo.kernel.modeshape.rdf.impl.PropertiesRdfContext;
 import org.fcrepo.kernel.api.models.Container;
 import org.fcrepo.kernel.api.models.FedoraBinary;
 import org.fcrepo.kernel.api.models.FedoraResource;
 import org.fcrepo.kernel.api.services.BinaryService;
 import org.fcrepo.kernel.api.services.ContainerService;
 import org.fcrepo.kernel.api.services.NodeService;
-import org.fcrepo.kernel.api.RdfStream;
 import org.fcrepo.oai.generator.JcrOaiDcGenerator;
 import org.fcrepo.oai.generator.JcrOaiEtdmsGenerator;
 import org.fcrepo.oai.generator.JcrOaiOreGenerator;
@@ -229,7 +226,7 @@ public class OAIProviderService {
     /**
      * Service initialization
      *
-     * 
+     *
      */
     @PostConstruct
     public void init() {
@@ -282,7 +279,7 @@ public class OAIProviderService {
             sampleIdentifier = descriptiveContent.get("sampleIdentifier");
 
             // save data in oai node
-            Node rootNode = getJcrNode(root);
+            final Node rootNode = getJcrNode(root);
             rootNode.setProperty(getPropertyName(session, createProperty(propertyOaiRepositoryName)),
                     repositoryName);
             rootNode.setProperty(getPropertyName(session, createProperty(propertyOaiDescription)), description);
@@ -333,10 +330,10 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> identify(final Session session, final UriInfo uriInfo)
             throws RepositoryException, JAXBException {
-        
+
         final FedoraSession fedoraSession = sessionFactory.getInternalSession();
         final HttpSession httpSession = new HttpSession(fedoraSession);
-        
+
         final HttpResourceConverter converter
                 = new HttpResourceConverter(httpSession, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
 
@@ -348,12 +345,12 @@ public class OAIProviderService {
 
         java.util.function.Predicate<Triple> predicate;
         Stream<Triple> triples;
-        
+
         // repository name, project version
         predicate = new PropertyPredicate(propertyOaiRepositoryName);
         triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
         id.setRepositoryName(triples.iterator().next().getObject().getLiteralValue().toString());
-        
+
         // base url
         predicate = new PropertyPredicate(propertyOaiBaseUrl);
         triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
@@ -406,7 +403,7 @@ public class OAIProviderService {
 
         final FedoraSession fedoraSession = sessionFactory.getInternalSession();
         final HttpSession httpSession = new HttpSession(fedoraSession);
-        
+
         final ListMetadataFormatsType listMetadataFormats = oaiFactory.createListMetadataFormatsType();
         final HttpResourceConverter converter
                 = new HttpResourceConverter(httpSession, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
@@ -496,7 +493,7 @@ public class OAIProviderService {
             final String metadataPrefix) throws RepositoryException {
 
         final FedoraSession fedoraSession = sessionFactory.getInternalSession();
-        
+
         final MetadataFormat format = metadataFormats.get(metadataPrefix);
 
         if (identifier == null || metadataPrefix == null) {
@@ -555,7 +552,9 @@ public class OAIProviderService {
         return jcrOaiEtdmsGenerator.generate(session, obj, name, uriInfo);
     }
 
-    private JAXBElement<org.w3._2005.atom.EntryType> generateOaiOre(final Session session, final Container obj, final String name, final UriInfo uriInfo, final String identifier)
+    private JAXBElement<org.w3._2005.atom.EntryType> generateOaiOre(
+            final Session session, final Container obj, final String name,
+            final UriInfo uriInfo, final String identifier)
             throws RepositoryException {
         return jcrOaiOreGenerator.generate(session, obj, name, uriInfo, identifier);
     }
@@ -566,11 +565,11 @@ public class OAIProviderService {
 
         final HttpResourceConverter converter
                 = new HttpResourceConverter(httpSession, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
-        
-        java.util.function.Predicate<Triple> predicate 
+
+        final java.util.function.Predicate<Triple> predicate
                 = new PropertyPredicate(format.getPropertyName());
-        Stream<Triple> triples 
-                = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);        
+        final Stream<Triple> triples
+                = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
 
         if (!triples.iterator().hasNext()) {
             log.error("There is no OAI record of type " + format.getPrefix() + " associated with the object "
@@ -632,7 +631,7 @@ public class OAIProviderService {
 
         final FedoraSession fedoraSession = sessionFactory.getInternalSession();
         final HttpSession httpSession = new HttpSession(fedoraSession);
-        
+
         if (metadataPrefix == null) {
             return error(VerbType.LIST_IDENTIFIERS, null, null, OAIPMHerrorcodeType.BAD_ARGUMENT,
                     "metadataprefix is invalid");
@@ -677,12 +676,12 @@ public class OAIProviderService {
             oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
             final ListIdentifiersType ids = oaiFactory.createListIdentifiersType();
 
-            
+
             java.util.function.Predicate<Triple> predicate;
             Stream<Triple> triples;
-        
 
-            
+
+
             while (result.hasNext()) {
                 // workaround JCR-SQL2 LIMIT bug in 4.2.0
                 if (result.getPosition() < maxListSize) {
@@ -694,13 +693,13 @@ public class OAIProviderService {
                     // get base url
                     final FedoraResource root = nodeService.find(fedoraSession, rootPath);
                     predicate = new PropertyPredicate(propertyOaiBaseUrl);
-                    triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);                                
+                    triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
                     h.setIdentifier(createId(converter.asString(sub)));
 
                     final Container obj = containerService.find(fedoraSession, path);
                     h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
                     predicate = new PropertyPredicate(propertyHasCollectionId);
-                    triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);                                
+                    triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
 
                     while (triples.iterator().hasNext()) {
                         h.getSetSpec().add(triples.iterator().next().getObject().getLiteralValue().toString());
@@ -807,8 +806,8 @@ public class OAIProviderService {
             throws RepositoryException {
 
         final FedoraSession fedoraSession = sessionFactory.getInternalSession();
-        final HttpSession httpSession = new HttpSession(fedoraSession);        
-        
+        final HttpSession httpSession = new HttpSession(fedoraSession);
+
         final HttpResourceConverter converter
                 = new HttpResourceConverter(httpSession, uriInfo.getBaseUriBuilder().clone().path(FedoraLdp.class));
         final ValueConverter valueConverter = new ValueConverter(session, converter);
@@ -899,7 +898,8 @@ public class OAIProviderService {
             if (sets.getSet().size() == maxListSize) {
                 final ResumptionTokenType token = oaiFactory.createResumptionTokenType();
                 token.setValue(
-                        encodeResumptionToken(VerbType.LIST_SETS.value(), null, null, null, null, offset + maxListSize));
+                        encodeResumptionToken(VerbType.LIST_SETS.value(), null, null, null, null, offset + maxListSize)
+                        );
                 token.setCursor(new BigInteger(String.valueOf(offset)));
                 token.setCompleteListSize(new BigInteger(String.valueOf(result.getSize() + offset)));
                 sets.setResumptionToken(token);
@@ -946,8 +946,8 @@ public class OAIProviderService {
             throws RepositoryException {
 
         final FedoraSession fedoraSession = sessionFactory.getInternalSession();
-        final HttpSession httpSession = new HttpSession(fedoraSession);        
-        
+        final HttpSession httpSession = new HttpSession(fedoraSession);
+
         final HttpResourceConverter converter
                 = new HttpResourceConverter(httpSession, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
         final ValueConverter valueConverter = new ValueConverter(session, converter);
@@ -1030,7 +1030,7 @@ public class OAIProviderService {
 
         final FedoraSession fedoraSession = sessionFactory.getInternalSession();
         final HttpSession httpSession = new HttpSession(fedoraSession);
-        
+
         final HttpResourceConverter converter
                 = new HttpResourceConverter(httpSession, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
         final HeaderType h = oaiFactory.createHeaderType();
@@ -1042,9 +1042,9 @@ public class OAIProviderService {
         h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
 
         // set setSpecs
-        java.util.function.Predicate<Triple> predicate 
+        final java.util.function.Predicate<Triple> predicate
                 = new PropertyPredicate(propertyHasCollectionId);
-        Stream<Triple> triples 
+        final Stream<Triple> triples
                 = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
         while (triples.iterator().hasNext()) {
             h.getSetSpec().add(triples.iterator().next().getObject().getLiteralValue().toString());
@@ -1253,10 +1253,10 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> search(final Session session, final UriInfo uriInfo, final String metadataPrefix,
             final String property, final String value, final int offset) throws RepositoryException {
-        
+
         final FedoraSession fedoraSession = sessionFactory.getInternalSession();
         final HttpSession httpSession = new HttpSession(fedoraSession);
-        
+
         if (!searchEnabled) {
             return error(VerbType.LIST_RECORDS, null, null, OAIPMHerrorcodeType.NO_SET_HIERARCHY,
                     "Search is not enabled");
@@ -1331,7 +1331,7 @@ public class OAIProviderService {
      */
     public JAXBElement<OAIPMHtype> delete(final String path) throws RepositoryException {
         final FedoraSession session = sessionFactory.getInternalSession();
-        
+
         try {
             if (nodeService.exists(session, path)) {
                 log.trace("Deleting resource {} ...", path);
@@ -1513,7 +1513,7 @@ public class OAIProviderService {
     }
 
     /**
-     * Sets metadata for     * @param href URL for the objectmats.
+     * Sets metadata for
      *
      * @param metadataFormats the metadata formats
      */
@@ -1547,5 +1547,5 @@ public class OAIProviderService {
     public void setSearchEnabled(final boolean searchEnabled) {
         this.searchEnabled = searchEnabled;
     }
-   
+
 }

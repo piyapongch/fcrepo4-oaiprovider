@@ -52,16 +52,17 @@ public class MetadataHttpResponseWrapper extends HttpServletResponseWrapper {
             @Override
             public void write(final int b) throws IOException {
                 bos.write(b);
-                
             }
-            
+
             @Override
-            public void setWriteListener(WriteListener wl) {
+            public void setWriteListener(final WriteListener wl) {
             }
-            
+
             @Override
-            public boolean isReady() { return false; }
-            
+            public boolean isReady() {
+                return false;
+            }
+
         };
     }
 

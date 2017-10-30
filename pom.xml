@@ -15,7 +15,7 @@
 
     <properties>
       <fcrepo.version>4.7.4</fcrepo.version>
-      <fcrepo-build-tools.version>${fcrepo.version}</fcrepo-build-tools.version>
+      <fcrepo-build-tools.version>4.2.0</fcrepo-build-tools.version>
     </properties>
 
     <repositories>

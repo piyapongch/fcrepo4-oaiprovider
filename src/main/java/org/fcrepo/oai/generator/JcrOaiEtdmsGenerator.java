@@ -65,17 +65,17 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      *
      * @param session
      * @param obj
-     * @param name 
+     * @param name
      * @param uriInfo
      * @return
      * @throws RepositoryException
      */
     public Thesis generate(final Session session, final Container obj, final String name, final UriInfo uriInfo)
         throws RepositoryException {
-        
+
         String handle = null;
-        Node node = getJcrNode(obj);
-        
+        final Node node = getJcrNode(obj);
+
         final Thesis thesis = etdmsFactory.createThesis();
 
         // degree element

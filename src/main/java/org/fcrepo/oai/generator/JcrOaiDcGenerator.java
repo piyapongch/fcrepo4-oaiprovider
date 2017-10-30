@@ -54,7 +54,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      *
      * @param session the session
      * @param obj the obj
-     * @param name 
+     * @param name
      * @param uriInfo the uri info
      * @return the jAXB element
      * @throws RepositoryException if repository exception occurred
@@ -65,7 +65,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
         final OaiDcType oaidc = oaiDcFactory.createOaiDcType();
         Value[] values;
-        Node node = getJcrNode(obj);
+        final Node node = getJcrNode(obj);
 
                 // dc:type
         values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
