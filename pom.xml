@@ -245,9 +245,8 @@
                 <version>3.0.0-M1</version>
                 <configuration>
                     <linksource>true</linksource>
-                    <excludePackageNames>org.openarchives.oai.*:org.purl.*</excludePackageNames>
+                    <excludePackageNames>org.openarchives.oai.*:org.purl.*:org.ndltd.*:org.w3.*:org.openarchives.ore.*</excludePackageNames>
                     <sourcepath>src/main/java:target/generated-sources</sourcepath>
-                    <sourcepath>src/main/java</sourcepath>
                 </configuration>
             </plugin>
             <plugin>
@@ -265,7 +264,9 @@
                         <project.version>${fcrepo.version}</project.version>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin>
+              </plugin>
+
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
