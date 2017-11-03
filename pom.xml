@@ -10,7 +10,7 @@
 
     <artifactId>fcrepo-oaiprovider</artifactId>
     <description>The Fedora Commons repository OAI provider.</description>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <version>4.7.1</version>
 
     <properties>
