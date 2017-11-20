@@ -36,6 +36,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBException;
 
+import org.fcrepo.kernel.api.FedoraRepository;
+import static org.fcrepo.kernel.modeshape.FedoraSessionImpl.getJcrSession;
+
 import org.fcrepo.oai.service.OAIProviderService;
 import org.openarchives.oai._2.OAIPMHerrorcodeType;
 import org.openarchives.oai._2.VerbType;
@@ -51,7 +54,13 @@ import org.springframework.context.annotation.Scope;
 @Path("/oai")
 public class OAIWebResource {
 
+//    @Inject
+//    private Session session;
+
     @Inject
+    private FedoraRepository repo;
+
+
     private Session session;
 
     @Autowired
@@ -141,6 +150,8 @@ public class OAIWebResource {
         final String set;
         final String metadataPrefix;
         final String identifier;
+
+        this.session = getJcrSession(this.repo.login());
 
         if (resumptionToken != null && !resumptionToken.isEmpty()) {
             /*
