@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import java.util.regex.Pattern;
 
@@ -680,8 +681,6 @@ public class OAIProviderService {
             java.util.function.Predicate<Triple> predicate;
             Stream<Triple> triples;
 
-
-
             while (result.hasNext()) {
                 // workaround JCR-SQL2 LIMIT bug in 4.2.0
                 if (result.getPosition() < maxListSize) {
@@ -699,11 +698,10 @@ public class OAIProviderService {
                     final Container obj = containerService.find(fedoraSession, path);
                     h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
                     predicate = new PropertyPredicate(propertyHasCollectionId);
-                    triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
+                    triples = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
+                    final List<Triple> tl = triples.collect(toList());
+                    tl.forEach((tmp) -> { h.getSetSpec().add(tmp.getObject().getLiteralValue().toString()); });
 
-                    while (triples.iterator().hasNext()) {
-                        h.getSetSpec().add(triples.iterator().next().getObject().getLiteralValue().toString());
-                    }
                     ids.getHeader().add(h);
                 } else {
                     break;
@@ -1046,9 +1044,8 @@ public class OAIProviderService {
                 = new PropertyPredicate(propertyHasCollectionId);
         final Stream<Triple> triples
                 = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
-        while (triples.iterator().hasNext()) {
-            h.getSetSpec().add(triples.iterator().next().getObject().getLiteralValue().toString());
-        }
+        final List<Triple> tl = triples.collect(toList());
+        tl.forEach((tmp) -> { h.getSetSpec().add(tmp.getObject().getLiteralValue().toString()); });
 
         // get the metadata record from fcrepo
         final MetadataType md = oaiFactory.createMetadataType();
