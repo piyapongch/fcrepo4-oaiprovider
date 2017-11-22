@@ -721,7 +721,7 @@ public class OAIProviderService {
             }
 
             // request
-            oai.setRequest(createRequest(VerbType.IDENTIFY, uriInfo));
+            oai.setRequest(createRequest(VerbType.LIST_IDENTIFIERS, uriInfo));
 
             // response
             oai.setListIdentifiers(ids);

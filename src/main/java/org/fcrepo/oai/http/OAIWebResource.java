@@ -54,12 +54,8 @@ import org.springframework.context.annotation.Scope;
 @Path("/oai")
 public class OAIWebResource {
 
-//    @Inject
-//    private Session session;
-
     @Inject
     private FedoraRepository repo;
-
 
     private Session session;
 
