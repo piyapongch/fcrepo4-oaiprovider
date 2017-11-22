@@ -63,12 +63,12 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
     /**
      * The generate method.
      *
-     * @param session
-     * @param obj
-     * @param name
-     * @param uriInfo
-     * @return
-     * @throws RepositoryException
+     * @param session repository session object
+     * @param obj object container
+     * @param name name
+     * @param uriInfo uri of the object
+     * @return a JaxB Thesis root object
+     * @throws RepositoryException general repository exception
      */
     public Thesis generate(final Session session, final Container obj, final String name, final UriInfo uriInfo)
         throws RepositoryException {

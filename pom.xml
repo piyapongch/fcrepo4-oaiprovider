@@ -245,7 +245,7 @@
                 <version>3.0.0-M1</version>
                 <configuration>
                     <linksource>true</linksource>
-                    <excludePackageNames>org.openarchives.oai.*:org.purl.*:org.ndltd.*:org.w3.*:org.openarchives.ore.*</excludePackageNames>
+                    <excludePackageNames>org.openarchives.oai.*:org.purl.*:org.ndltd.*:org.w3.*:org.openarchives.ore.*:ca.ualberta.library.terms.oai_qdc.ObjectFactory</excludePackageNames>
                     <sourcepath>src/main/java:target/generated-sources</sourcepath>
                 </configuration>
             </plugin>

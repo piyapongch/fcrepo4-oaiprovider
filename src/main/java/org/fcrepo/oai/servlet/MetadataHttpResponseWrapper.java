@@ -26,7 +26,7 @@ public class MetadataHttpResponseWrapper extends HttpServletResponseWrapper {
 
     /**
      * The MetadataHttpResponseWrapper class constructor.
-     * @param response
+     * @param response http servlet response
      */
     public MetadataHttpResponseWrapper(final HttpServletResponse response) {
         super(response);
@@ -35,7 +35,7 @@ public class MetadataHttpResponseWrapper extends HttpServletResponseWrapper {
 
     /**
      * The getOutput method.
-     * @return
+     * @return buffer byte array
      */
     public byte[] getBuffer() {
         return bos.toByteArray();

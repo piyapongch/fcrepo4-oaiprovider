@@ -54,11 +54,11 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      *
      * @param session the session
      * @param obj the obj
-     * @param name
+     * @param name name
      * @param uriInfo the uri info
      * @return the jAXB element
      * @throws RepositoryException if repository exception occurred
-     * @throws IllegalStateException
+     * @throws IllegalStateException illegal state exception
      */
     public JAXBElement<OaiDcType> generate(final Session session, final Container obj, final String name,
         final UriInfo uriInfo) throws RepositoryException, IllegalStateException {
@@ -337,11 +337,10 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
     /**
      * The addIdentifier method.
      *
-     * @param oaidc
-     * @param prop
-     * @throws RepositoryException
-     * @throws IllegalStateException
-     * @throws ValueFormatException
+     * @param oaidc root of the OAI DC response
+     * @param prop list of properties to add to the DC response
+     * @throws RepositoryException general repository exception
+     * @throws IllegalStateException illegal state exception
      */
     private void addIdentifier(final OaiDcType oaidc, final Property prop)
         throws ValueFormatException, IllegalStateException, RepositoryException {
@@ -357,12 +356,12 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
     /**
      * The addIdentifier method - modify the string to include the full DOI URL.
      *
-     * @param oaidc
-     * @param prop
-     * @param dcFactory
-     * @throws RepositoryException
-     * @throws IllegalStateException
-     * @throws ValueFormatException
+     * @param oaidc root of the OAI DC response
+     * @param prop list of properties to add to the DC response
+     * @param dcFactory factory to build the DC formatted response
+     * @throws RepositoryException general repository exception
+     * @throws IllegalStateException illegal state exception
+     * @throws ValueFormatException content format exception
      */
     protected void addIdentifierDoi(final OaiDcType oaidc, final Property prop, final ObjectFactory dcFactory)
         throws ValueFormatException, IllegalStateException, RepositoryException {

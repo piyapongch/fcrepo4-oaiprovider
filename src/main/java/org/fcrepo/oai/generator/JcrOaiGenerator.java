@@ -31,6 +31,7 @@ public class JcrOaiGenerator {
     /**
      * The setFullDoiUrl setter method.
      *
+     * @param s the DIO full uri format
      */
     public final void setDoiFullUriFormat(final String s) {
         this.doiFullUriFormat = s;
@@ -40,7 +41,7 @@ public class JcrOaiGenerator {
      * Given the JCR DOI (doi:10.7939/FEXDSF) convert to the full DOI URI https://doi.org/10.7939/FEXDSF
      *
      * @param ualibDoi the ualid:doi field within JCR
-     *
+     * @return the full DOI uri
      */
     protected final String formatUalidDoi(final String ualibDoi) {
         String fullDoiUrl = null;

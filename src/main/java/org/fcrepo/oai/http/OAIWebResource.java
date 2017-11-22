@@ -73,6 +73,8 @@ public class OAIWebResource {
      * @param setParam the set
      * @param resumptionToken the resumption token
      * @param uriInfo the uri info
+     * @param property property to search
+     * @param value value to search for in property
      * @return the oAI response
      * @throws RepositoryException the repository exception
      */
@@ -83,10 +85,10 @@ public class OAIWebResource {
         final @QueryParam("metadataPrefix") String metadataPrefixParam, final @QueryParam("from") String fromParam,
         final @QueryParam("until") String untilParam, final @QueryParam("set") String setParam,
         final @QueryParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
-        final @QueryParam("property") String propery, final @QueryParam("value") String value)
+        final @QueryParam("property") String property, final @QueryParam("value") String value)
         throws RepositoryException {
         return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
-            resumptionToken, uriInfo, propery, value);
+            resumptionToken, uriInfo, property, value);
     }
 
     /**
@@ -100,6 +102,8 @@ public class OAIWebResource {
      * @param setParam the set
      * @param resumptionToken the resumption token
      * @param uriInfo the uri info
+     * @param property property to search
+     * @param value value to search for in property
      * @return the oAI response
      * @throws RepositoryException the repository exception
      */
@@ -110,10 +114,10 @@ public class OAIWebResource {
         final @FormParam("metadataPrefix") String metadataPrefixParam, final @FormParam("from") String fromParam,
         final @FormParam("until") String untilParam, final @FormParam("set") String setParam,
         final @FormParam("resumptionToken") String resumptionToken, final @Context UriInfo uriInfo,
-        final @FormParam("property") String propery, final @FormParam("value") String value)
+        final @FormParam("property") String property, final @FormParam("value") String value)
         throws RepositoryException {
         return createOAIResponse(verbParam, identifierParam, metadataPrefixParam, fromParam, untilParam, setParam,
-            resumptionToken, uriInfo, propery, value);
+            resumptionToken, uriInfo, property, value);
     }
 
     /**
@@ -274,9 +278,9 @@ public class OAIWebResource {
     /**
      * The delete method.
      *
-     * @param path
-     * @return
-     * @throws RepositoryException
+     * @param path to the object
+     * @return object
+     * @throws RepositoryException general repository exception
      */
     @GET
     @Path("/delete")

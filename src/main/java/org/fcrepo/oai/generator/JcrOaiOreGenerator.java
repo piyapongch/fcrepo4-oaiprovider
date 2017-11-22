@@ -104,14 +104,14 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * The generate method.
      *
-     * @param session
-     * @param obj
+     * @param session session
+     * @param obj container object
      * @param name Name of the object (id)
-     * @param uriInfo
-     * @param identifier
+     * @param uriInfo uri of the object
+     * @param identifier object identifier
      *
      * @return JAXB element containing the metadata
-     * @throws RepositoryException
+     * @throws RepositoryException general repository exception
      */
     public JAXBElement<EntryType> generate
         (final Session session, final Container obj, final String name, final UriInfo uriInfo, final String identifier)
@@ -943,6 +943,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param obj Container
      *
      * @return Value array or null if none found
+     * @throws ValueFormatException value format exception
+     * @throws RepositoryException general repository exception
      */
     public final Value[] returnDateValues(final Container obj)
         throws ValueFormatException, RepositoryException {
@@ -969,6 +971,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The find last value method.
      *
      * @param prop a property
+     * 
+     * @return value property value
+     * 
+     * @throws ValueFormatException value format exception
+     * @throws RepositoryException general repository exception
      */
     public final Value findLastPropertyValue(final Property prop)
         throws ValueFormatException, RepositoryException {
@@ -1045,7 +1052,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * The htmlUrlFormat setter method - from Bean.
      *
-     * @param htmlUrlFormat
+     * @param htmlUrlFormat html formatted url
      */
     public final void setHtmlUrlFormat(final String htmlUrlFormat) {
         this.htmlUrlFormat = htmlUrlFormat;

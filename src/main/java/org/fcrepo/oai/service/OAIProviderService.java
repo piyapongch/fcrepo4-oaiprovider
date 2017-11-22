@@ -1182,7 +1182,7 @@ public class OAIProviderService {
      * @param session
      * @param predicate
      * @return property name from the given predicate
-     * @throws RepositoryException
+     * @throws RepositoryException general repository exception
      */
     private String getPropertyName(final Session session, final Property predicate) throws RepositoryException {
 
@@ -1242,9 +1242,9 @@ public class OAIProviderService {
      * @param session the session
      * @param uriInfo the uri info
      * @param metadataPrefix the metadata prefix
-     * @param property
-     * @param value
-     * @param offset
+     * @param property query property
+     * @param value value of the query property
+     * @param offset query offset
      * @return the jAXB element
      * @throws RepositoryException the repository exception
      */
@@ -1322,9 +1322,9 @@ public class OAIProviderService {
     /**
      * The delete method.
      *
-     * @param path
-     * @return
-     * @throws RepositoryException
+     * @param path to the container
+     * @return jaxb element in the OAI-PMH Type as the root
+     * @throws RepositoryException general repository exception
      */
     public JAXBElement<OAIPMHtype> delete(final String path) throws RepositoryException {
         final FedoraSession session = sessionFactory.getInternalSession();
@@ -1351,10 +1351,12 @@ public class OAIProviderService {
     /**
      * get path given an noid identifier vai a jcr query
      *
+     * @param session the session
      * @param noid identifier
      * @param metadataPrefix string indicating the type of metadata
      *
      * @return Fedora path or null if identifier not found
+     * @throws RepositoryException the repository exception
      */
     protected String getPathFromNoid(final Session session, final String noid, final String metadataPrefix)
             throws RepositoryException {
@@ -1388,6 +1390,7 @@ public class OAIProviderService {
      * @param identifier id passed (e.g., oai:era.library.ualberta.ca:1/)
      *
      * @return noid String or null if not valid
+     * @throws Exception the exception for a malformed identifier
      */
     protected String getNoidFromIdentifier(final String identifier) throws Exception {
         // whitelist noid to avoid JCR injections

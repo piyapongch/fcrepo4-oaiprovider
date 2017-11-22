@@ -40,8 +40,8 @@ public class PropertyPredicate implements Predicate<Triple> {
     /**
      * Override
      *
-     * @param triple
-     * @return
+     * @param triple triple object to test
+     * @return true if property predicate equals the property
      */
     public boolean apply(final Triple triple) {
         final Node node = triple.getPredicate();
@@ -51,8 +51,8 @@ public class PropertyPredicate implements Predicate<Triple> {
     /**
      * Override
      *
-     * @param triple
-     * @return
+     * @param triple triple object to test
+     * @return true if property predicate equals the property
      */
     public boolean test(final Triple triple) {
         final Node node = triple.getPredicate();
