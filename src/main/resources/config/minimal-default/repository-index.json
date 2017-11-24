@@ -32,7 +32,7 @@
         "initialTime" : "00:00",
         "intervalInHours" : 24
     },
-    "node-types" : ["fedora-node-types.cnd"],
+    "node-types" : ["fedora-node-types.cnd", "${fcrepo.node-types.ual}"],
 
     "indexProviders" : {
         "local" : {

@@ -46,29 +46,39 @@
         <property name="propertyOaiBaseUrl" value="http://www.openarchives.org/OAI/2.0/baseUrl" />
         <property name="namespaces">
             <map>
-                <entry key="oai" value="http://www.openarchives.org/OAI/2.0/" />
-                <entry key="oaiid" value="http://www.openarchives.org/OAI/2.0/oai-identifier" />
-                <entry key="dcterms" value="http://purl.org/dc/terms/" />
-                <entry key="marcrel" value="http://id.loc.gov/vocabulary/relators/" />
-                <entry key="vivo" value="http://vivoweb.org/ontology/core#" />
-                <entry key="bibo" value="http://purl.org/ontology/bibo/" />
-                <entry key="webacl" value="http://www.w3.org/ns/auth/acl#" />
+                <!-- ToDo: 2017-11-24 - is this necessary -->
                 <entry key="model" value="info:fedora/fedora-system:def/model#" />
-                <entry key="relsext" value="info:fedora/fedora-system:def/relations-external#" />
-                <entry key="hydragroup" value="http://projecthydra.org/ns/auth/group#" />
-                <entry key="hydraacl" value="http://projecthydra.org/ns/auth/acl#" />
-                <entry key="scholarsphere" value="http://scholarsphere.psu.edu/ns#" />
-                <entry key="ualrole" value="http://terms.library.ualberta.ca/role/" />
-                <entry key="ualid" value="http://terms.library.ualberta.ca/id/" />
-                <entry key="ualsubj" value="http://terms.library.ualberta.ca/subject/" />
+                <!-- -->
+                <entry key="bibo" value="http://purl.org/ontology/bibo/" />
+                <entry key="cc" value="http://creativecommons.org/ns#" />
+                <entry key="dc" value="http://purl.org/dc/elements/1.1/" />
+                <entry key="dcterms" value="http://purl.org/dc/terms/" />
+                <entry key="fabio" value="http://purl.org/spar/fabio/"/>
+                <entry key="foaf" value="http://xmlns.com/foaf/0.1/" />
+                <entry key="lang" value="http://id.loc.gov/vocabulary/iso639-2/" />
+                
+                <entry key="mrel" value="http://id.loc.gov/vocabulary/relators/" />
+                <entry key="naf" value="http://id.loc.gov/authorities/names/" />
+                <entry key="obo" value="http://purl.obolibrary.org/obo/" />
+                <entry key="owl" value="http://www.w3.org/2002/07/owl#" />
+                <entry key="ore" value="http://www.openarchives.org/ore/terms/" />
+                <entry key="pcdm" value="http://pcdm.org/models#" />
+                <entry key="prism" value="http://prismstandard.org/namespaces/basic/3.0/" />
+                <entry key="rdf" value="http://www.w3.org/1999/02/22-rdf-syntax-ns#" />
+                <entry key="rdfs" value="http://www.w3.org/2000/01/rdf-schema#" />
+                <entry key="schema" value="http://schema.org/" />  
+                <entry key="scholar" value="http://scholarsphere.psu.edu/ns#" />
+                <entry key="skos" value="http://www.w3.org/2004/02/skos/core#" />
+                <entry key="status" value="http://www.w3.org/2003/06/sw-vocab-status/ns#" />
+                <entry key="swrc" value="http://ontoware.org/swrc/ontology#" />
+                <entry key="ual" value="http://terms.library.ualberta.ca/" />
                 <entry key="ualdate" value="http://terms.library.ualberta.ca/date/" />
-                <entry key="ualtitle" value="http://terms.library.ualberta.ca/title/" />
-                <entry key="ualname" value="http://terms.library.ualberta.ca/name/" />
-                <entry key="ualplace" value="http://terms.library.ualberta.ca/place/" />
+                <entry key="ualid" value="http://terms.library.ualberta.ca/id/" />
+                <entry key="ualids" value="http://terms.library.ualberta.ca/identifiers/" />
+                <entry key="ualrole" value="http://terms.library.ualberta.ca/role/" />
                 <entry key="ualthesis" value="http://terms.library.ualberta.ca/thesis/" />
-                <entry key="ualterms" value="http://terms.library.ualberta.ca/" />
-                <entry key="ualidentifier" value="http://terms.library.ualberta.ca/identifiers/" />
-                <entry key="uatermsid" value="http://terms.library.library.ca/identifiers/" />
+                <entry key="works" value="http://pcdm.org/works#" />
+                <entry key="vivo" value="http://vivoweb.org/ontology/core#" />
             </map>
         </property>
         <property name="metadataFormats">

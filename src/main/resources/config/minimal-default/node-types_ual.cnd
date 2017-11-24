@@ -1,0 +1,71 @@
+/*
+ * UAL Namespaces:
+ * list based off: 
+ *   https://github.com/ualbertalib/metadata/tree/master/data_dictionary
+ * update in tandem:
+ *   src/main/resources/spring/oai.xml
+ * documentation:
+ *   https://wiki.duraspace.org/display/FEDORA4x/Best+Practices+-+RDF+Namespaces
+*/
+
+/* previous Fedora 4.2 ERA */
+<oai = 'http://www.openarchives.org/OAI/2.0/' >
+<oaiid = 'http://www.openarchives.org/OAI/2.0/oai-identifier' >
+<dcterms = 'http://purl.org/dc/terms/' >
+<marcrel = 'http://id.loc.gov/vocabulary/relators/' >
+<vivo = 'http://vivoweb.org/ontology/core#' >
+<bibo = 'http://purl.org/ontology/bibo/' >                
+<webacl = 'http://www.w3.org/ns/auth/acl#' >
+<model = 'info:fedora/fedora-system:def/model#' >
+<relsext = 'info:fedora/fedora-system:def/relations-external#' >
+<hydragroup = 'http://projecthydra.org/ns/auth/group#' >
+<hydraacl = 'http://projecthydra.org/ns/auth/acl#' >
+<scholarsphere = 'http://scholarsphere.psu.edu/ns#' >
+<ualrole = 'http://terms.library.ualberta.ca/role/' >
+<ualid = 'http://terms.library.ualberta.ca/id/' >
+<ualsubj = 'http://terms.library.ualberta.ca/subject/' >
+<ualdate = 'http://terms.library.ualberta.ca/date/' >
+<ualtitle = 'http://terms.library.ualberta.ca/title/' >
+<ualname = 'http://terms.library.ualberta.ca/name/' >
+<ualplace = 'http://terms.library.ualberta.ca/place/' >
+<ualthesis = 'http://terms.library.ualberta.ca/thesis/' >
+<ualterms = 'http://terms.library.ualberta.ca/' >
+<ualidentifier = 'http://terms.library.ualberta.ca/identifiers/' >
+<uatermsid = 'http://terms.library.library.ca/identifiers/' >
+*/
+
+/* ToDo: not in data dictionary */
+<model = 'info:fedora/fedora-system:def/model#' >
+
+
+/* as per: 2017-11-23 - https://github.com/ualbertalib/metadata/tree/master/data_dictionary */
+
+<bibo = 'http://purl.org/ontology/bibo/' >
+<cc = 'http://creativecommons.org/ns#' >
+<dc = 'http://purl.org/dc/elements/1.1/' >
+<dcterms = 'http://purl.org/dc/terms/' >
+<fabio = 'http://purl.org/spar/fabio/' >
+<foaf = 'http://xmlns.com/foaf/0.1/' >
+<lang = 'http://id.loc.gov/vocabulary/iso639-2/' >
+<mrel = 'http://id.loc.gov/vocabulary/relators/' >
+<naf = 'http://id.loc.gov/authorities/names/' >
+<obo = 'http://purl.obolibrary.org/obo/' >
+<owl = 'http://www.w3.org/2002/07/owl#' >
+<ore = 'http://www.openarchives.org/ore/terms/' >
+<pcdm = 'http://pcdm.org/models#' >
+<prism = 'http://prismstandard.org/namespaces/basic/3.0/' >
+<rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' >
+<rdfs = 'http://www.w3.org/2000/01/rdf-schema#' >
+<schema = 'http://schema.org/' >
+<scholar = 'http://scholarsphere.psu.edu/ns#' >
+<skos = 'http://www.w3.org/2004/02/skos/core#' >
+<status = 'http://www.w3.org/2003/06/sw-vocab-status/ns#' >
+<swrc = 'http://ontoware.org/swrc/ontology#' >
+<ual = 'http://terms.library.ualberta.ca/' >
+<ualdate = 'http://terms.library.ualberta.ca/date/' >
+<ualid = 'http://terms.library.ualberta.ca/id/' >
+<ualids = 'http://terms.library.ualberta.ca/identifiers/' >
+<ualrole = 'http://terms.library.ualberta.ca/role/' >
+<ualthesis = 'http://terms.library.ualberta.ca/thesis/' >
+<works = 'http://pcdm.org/works#' >
+<vivo = 'http://vivoweb.org/ontology/core#' >
