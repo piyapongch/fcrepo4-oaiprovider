@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<context:annotation-config />
+    <context:annotation-config />
 
-	<context:component-scan base-package="org.fcrepo" />
+    <context:component-scan base-package="org.fcrepo" />
  
-	<bean name="jcrOaiGenerator" class="org.fcrepo.oai.generator.JcrOaiGenerator">
+    <bean name="jcrOaiGenerator" class="org.fcrepo.oai.generator.JcrOaiGenerator">
         <property name="eraIdFormat" value="https://era.library.ualberta.ca/files/%1$s" />
         <property name="doiFullUriFormat" value="https://doi.org/%1$s" />
-	</bean>
+    </bean>
 
-	<bean name="jcrOaiDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator" parent="jcrOaiGenerator">
-	</bean>
+    <bean name="jcrOaiDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator" parent="jcrOaiGenerator">
+    </bean>
 
-	<bean name="jcrOaiEtdmsGenerator" class="org.fcrepo.oai.generator.JcrOaiEtdmsGenerator" parent="jcrOaiGenerator">
+    <bean name="jcrOaiEtdmsGenerator" class="org.fcrepo.oai.generator.JcrOaiEtdmsGenerator" parent="jcrOaiGenerator">
         <property name="lacIdFormat" value="TC-AEU-%1$s" />
         <property name="pdfUrlFormat" value="https://era.library.ualberta.ca/files/%1$s/%2$s" />
-	</bean>
+    </bean>
 
-	<bean name="jcrOaiOreGenerator" class="org.fcrepo.oai.generator.JcrOaiOreGenerator" parent="jcrOaiGenerator">
+    <bean name="jcrOaiOreGenerator" class="org.fcrepo.oai.generator.JcrOaiOreGenerator" parent="jcrOaiGenerator">
         <property name="lacIdFormat" value="TC-AEU-%1$s" />
         <property name="pdfUrlFormat" value="https://era.library.ualberta.ca/files/%1$s/%2$s" />
         <property name="oaiUrlFormat" value="https://era.library.ualberta.ca/oai?verb=GetRecord&amp;metadataPrefix=oai_dc&amp;identifier=%1$s" />
@@ -30,28 +30,28 @@
         <property name="oreSourceGenerator" value="University of Alberta Education &amp; Research Archive" />
         <property name="oreSourceAuthorName" value="University of Alberta Education &amp; Research Archive" />
         <property name="oreSourceAuthorUri" value="https://era.library.ualberta.ca" />
-	</bean>
+    </bean>
 
-	<bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
-		<property name="maxListSize" value="300" />
-		<property name="setsEnabled" value="true" />
-		<property name="searchEnabled" value="true" />
-		<property name="rootPath" value="/oai" />
-		<property name="idFormat" value="oai:era.library.ualberta.ca:1/%1$s" />
-		<property name="propertyHasCollectionId" value="http://terms.library.ualberta.ca/identifiers/hasCollectionId" />
-		<property name="propertyHasModel" value="info:fedora/fedora-system:def/model#hasModel" />
-		<property name="propertyOaiRepositoryName" value="http://www.openarchives.org/OAI/2.0/repositoryName" />
-		<property name="propertyOaiDescription" value="http://www.openarchives.org/OAI/2.0/description" />
-		<property name="propertyOaiAdminEmail" value="http://www.openarchives.org/OAI/2.0/adminEmail" />
-		<property name="propertyOaiBaseUrl" value="http://www.openarchives.org/OAI/2.0/baseUrl" />
-		<property name="namespaces">
-			<map>
-				<entry key="oai" value="http://www.openarchives.org/OAI/2.0/" />
-				<entry key="oaiid" value="http://www.openarchives.org/OAI/2.0/oai-identifier" />
-				<entry key="dcterms" value="http://purl.org/dc/terms/" />
-				<entry key="marcrel" value="http://id.loc.gov/vocabulary/relators/" />
-				<entry key="vivo" value="http://vivoweb.org/ontology/core#" />
-				<entry key="bibo" value="http://purl.org/ontology/bibo/" />
+    <bean name="oaiProviderService" class="org.fcrepo.oai.service.OAIProviderService">
+        <property name="maxListSize" value="300" />
+        <property name="setsEnabled" value="true" />
+        <property name="searchEnabled" value="true" />
+        <property name="rootPath" value="/oai" />
+        <property name="idFormat" value="oai:era.library.ualberta.ca:1/%1$s" />
+        <property name="propertyHasCollectionId" value="http://terms.library.ualberta.ca/identifiers/hasCollectionId" />
+        <property name="propertyHasModel" value="info:fedora/fedora-system:def/model#hasModel" />
+        <property name="propertyOaiRepositoryName" value="http://www.openarchives.org/OAI/2.0/repositoryName" />
+        <property name="propertyOaiDescription" value="http://www.openarchives.org/OAI/2.0/description" />
+        <property name="propertyOaiAdminEmail" value="http://www.openarchives.org/OAI/2.0/adminEmail" />
+        <property name="propertyOaiBaseUrl" value="http://www.openarchives.org/OAI/2.0/baseUrl" />
+        <property name="namespaces">
+            <map>
+                <entry key="oai" value="http://www.openarchives.org/OAI/2.0/" />
+                <entry key="oaiid" value="http://www.openarchives.org/OAI/2.0/oai-identifier" />
+                <entry key="dcterms" value="http://purl.org/dc/terms/" />
+                <entry key="marcrel" value="http://id.loc.gov/vocabulary/relators/" />
+                <entry key="vivo" value="http://vivoweb.org/ontology/core#" />
+                <entry key="bibo" value="http://purl.org/ontology/bibo/" />
                 <entry key="webacl" value="http://www.w3.org/ns/auth/acl#" />
                 <entry key="model" value="info:fedora/fedora-system:def/model#" />
                 <entry key="relsext" value="info:fedora/fedora-system:def/relations-external#" />
@@ -69,53 +69,53 @@
                 <entry key="ualterms" value="http://terms.library.ualberta.ca/" />
                 <entry key="ualidentifier" value="http://terms.library.ualberta.ca/identifiers/" />
                 <entry key="uatermsid" value="http://terms.library.library.ca/identifiers/" />
-			</map>
-		</property>
-		<property name="metadataFormats">
-			<map>
-				<entry key="oai_dc" value-ref="oaiDcFormat" />
-				<entry key="oai_etdms" value-ref="oaiEtdmsFormat" />
-				<entry key="ore" value-ref="oaiOreFormat" />
-			</map>
-		</property>
-		<property name="descriptiveContent">
-			<map>
-				<entry key="repositoryName" value="ERA: Education and Research Archive" />
-				<entry key="adminEmail" value="eraadmi@ualberta.ca" />
-				<entry key="baseUrl" value="https://era.library.ualberta.ca/oai" />
-				<entry key="scheme" value="oai" />
-				<entry key="repositoryIdentifier" value="era.library.ualberta.ca" />
-				<entry key="delimiter" value=":" />
-				<entry key="sampleIdentifier" value="oai:era.library.ualberta.ca:1/b8515q959" />
-			</map>
-		</property>
-	</bean>
+            </map>
+        </property>
+        <property name="metadataFormats">
+            <map>
+                <entry key="oai_dc" value-ref="oaiDcFormat" />
+                <entry key="oai_etdms" value-ref="oaiEtdmsFormat" />
+                <entry key="ore" value-ref="oaiOreFormat" />
+            </map>
+        </property>
+        <property name="descriptiveContent">
+            <map>
+                <entry key="repositoryName" value="ERA: Education and Research Archive" />
+                <entry key="adminEmail" value="eraadmi@ualberta.ca" />
+                <entry key="baseUrl" value="https://era.library.ualberta.ca/oai" />
+                <entry key="scheme" value="oai" />
+                <entry key="repositoryIdentifier" value="era.library.ualberta.ca" />
+                <entry key="delimiter" value=":" />
+                <entry key="sampleIdentifier" value="oai:era.library.ualberta.ca:1/b8515q959" />
+            </map>
+        </property>
+    </bean>
 
-	<bean name="oaiDcFormat" class="org.fcrepo.oai.service.MetadataFormat">
-		<property name="prefix" value="oai_dc" />
-		<property name="schemaUrl" value="http://www.openarchives.org/OAI/2.0/oai_dc.xsd" />
-		<property name="namespace" value="http://www.openarchives.org/OAI/2.0/oai_dc/" />
-		<property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiDCRecord" />
-	</bean>
+    <bean name="oaiDcFormat" class="org.fcrepo.oai.service.MetadataFormat">
+        <property name="prefix" value="oai_dc" />
+        <property name="schemaUrl" value="http://www.openarchives.org/OAI/2.0/oai_dc.xsd" />
+        <property name="namespace" value="http://www.openarchives.org/OAI/2.0/oai_dc/" />
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiDCRecord" />
+    </bean>
 
-	<bean name="oaiQdcFormat" class="org.fcrepo.oai.service.MetadataFormat">
-		<property name="prefix" value="oai_qdc" />
-		<property name="schemaUrl" value="http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcterms.xsd" />
-		<property name="namespace" value="http://purl.org/dc/terms/" />
-		<property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiQDCRecord" />
-	</bean>
+    <bean name="oaiQdcFormat" class="org.fcrepo.oai.service.MetadataFormat">
+        <property name="prefix" value="oai_qdc" />
+        <property name="schemaUrl" value="http://dublincore.org/schemas/xmls/qdc/2006/01/06/dcterms.xsd" />
+        <property name="namespace" value="http://purl.org/dc/terms/" />
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiQDCRecord" />
+    </bean>
 
-	<bean name="oaiEtdmsFormat" class="org.fcrepo.oai.service.MetadataFormat">
-		<property name="prefix" value="oai_etdms" />
-		<property name="schemaUrl" value="http://www.ndltd.org/standards/metadata/etdms/1.0/etdms.xsd" />
-		<property name="namespace" value="http://www.ndltd.org/standards/metadata/etdms/1.0/" />
-		<property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiETDMSRecord" />
-	</bean>
+    <bean name="oaiEtdmsFormat" class="org.fcrepo.oai.service.MetadataFormat">
+        <property name="prefix" value="oai_etdms" />
+        <property name="schemaUrl" value="http://www.ndltd.org/standards/metadata/etdms/1.0/etdms.xsd" />
+        <property name="namespace" value="http://www.ndltd.org/standards/metadata/etdms/1.0/" />
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiETDMSRecord" />
+    </bean>
 	
-	<bean name="oaiOreFormat" class="org.fcrepo.oai.service.MetadataFormat">
-		<property name="prefix" value="ore" />
-		<property name="schemaUrl" value="http://www.kbcafe.com/rss/atom.xsd.xml" />
-		<property name="namespace" value="http://www.w3.org/2005/Atom" />
-		<property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiOreRecord" />
-	</bean>
+    <bean name="oaiOreFormat" class="org.fcrepo.oai.service.MetadataFormat">
+        <property name="prefix" value="ore" />
+        <property name="schemaUrl" value="http://www.kbcafe.com/rss/atom.xsd.xml" />
+        <property name="namespace" value="http://www.w3.org/2005/Atom" />
+        <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiOreRecord" />
+    </bean>
 </beans>
