@@ -9,6 +9,7 @@
 */
 
 /* previous Fedora 4.2 ERA */
+/*
 <oai = 'http://www.openarchives.org/OAI/2.0/' >
 <oaiid = 'http://www.openarchives.org/OAI/2.0/oai-identifier' >
 <dcterms = 'http://purl.org/dc/terms/' >
@@ -37,6 +38,7 @@
 /* ToDo: not in data dictionary */
 <model = 'info:fedora/fedora-system:def/model#' >
 <mode = 'http://www.modeshape.org/1.0' >
+<oai = 'http://www.openarchives.org/OAI/2.0/' >
 <webacl = 'http://www.w3.org/ns/auth/acl#' >
 
 /* as per: 2017-11-23 - https://github.com/ualbertalib/metadata/tree/master/data_dictionary */

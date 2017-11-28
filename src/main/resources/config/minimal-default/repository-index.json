@@ -32,7 +32,7 @@
         "initialTime" : "00:00",
         "intervalInHours" : 24
     },
-    "node-types" : ["fedora-node-types.cnd", "${fcrepo.node-types.ual}"],
+    "node-types" : ["fedora-node-types.cnd", "/config/minimal-default/node-types_ual.cnd"],
 
     "indexProviders" : {
         "local" : {
@@ -80,21 +80,21 @@
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "ualidentifier:hasCollectionId(STRING)"
+            "columns" : "ualids:hasCollectionId(STRING)"
         },
         "isCommunity" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "ualidentifier:is_community(STRING)"
+            "columns" : "ualids:is_community(STRING)"
         },
         "isOfficial" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "ualidentifier:is_official(STRING)"
+            "columns" : "ualids:is_official(STRING)"
         },
         "localName" : {
             "kind" : "value",

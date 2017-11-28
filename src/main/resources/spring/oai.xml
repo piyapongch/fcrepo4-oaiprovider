@@ -48,6 +48,10 @@
             <map>
                 <!-- ToDo: 2017-11-24 - is this necessary -->
                 <entry key="model" value="info:fedora/fedora-system:def/model#" />
+                <entry key="mode" value="http://www.modeshape.org/1.0" />
+                <entry key="oai" value="http://www.openarchives.org/OAI/2.0/" />
+                <entry key="webacl" value="http://www.w3.org/ns/auth/acl#" />
+
                 <!-- -->
                 <entry key="bibo" value="http://purl.org/ontology/bibo/" />
                 <entry key="cc" value="http://creativecommons.org/ns#" />
