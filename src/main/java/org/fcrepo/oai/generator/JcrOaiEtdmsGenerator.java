@@ -92,43 +92,43 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "marcrel:dis":
+            case "ual:dissertant":
                 for (final Value v : prop.getValues()) {
                     addAuthorityType(v, thesis.getCreator());
                 }
                 break;
 
-            case "dcterms:contributor":
+            case "dc:contributor":
                 for (final Value v : prop.getValues()) {
                     addContributor(v, thesis.getContributor(), null);
                 }
                 break;
 
-            case "marcrel:ths":
+            case "ual:supervisor":
                 for (final Value v : prop.getValues()) {
                     addContributor(v, thesis.getContributor(), "advisor");
                 }
                 break;
 
-            case "ualrole:thesiscommitteemember":
+            case "ual:commiteeMember":
                 for (final Value v : prop.getValues()) {
                     addContributor(v, thesis.getContributor(), "committeemember");
                 }
                 break;
 
-            case "marcrel:dgg":
+            case "swrc:institution":
                 for (final Value v : prop.getValues()) {
                     addAuthorityType(v, degree.getGrantor());
                 }
                 break;
 
-            case "vivo:AcademicDepartment":
+            case "ual:department":
                 for (final Value v : prop.getValues()) {
                     addFreeTextType(v, degree.getDiscipline());
                 }
                 break;
 
-            case "dcterms:subject":
+            case "dc:subject":
                 for (final Value v : prop.getValues()) {
                     addControlledTextType(v, thesis.getSubject());
                 }
@@ -146,7 +146,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "ualthesis:specialization":
+            case "ual:specialization":
                 for (final Value v : prop.getValues()) {
                     addDescription(v, thesis.getDescription(), "Specialization: ");
                 }
@@ -170,13 +170,13 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "bibo:ThesisDegree":
+            case "bibo:degree":
                 for (final Value v : prop.getValues()) {
                     addFreeTextType(v, degree.getName());
                 }
                 break;
 
-            case "ualthesis:thesislevel":
+            case "ual:thesisLevel":
                 for (final Value v : prop.getValues()) {
                     addString(v, degree.getLevel());
                 }
@@ -188,7 +188,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "ualid:doi":
+            case "prism:doi":
                 for (final Value v : prop.getValues()) {
                     addString(v, thesis.getIdentifier());
                     addString(formatUalidDoi(v.getString()), thesis.getIdentifier());
@@ -206,7 +206,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "ualid:fedora3handle":
+            case "ual:fedora3Handle":
                 for (final Value v : prop.getValues()) {
                     addString(v, thesis.getIdentifier());
                     handle = StringUtils.isEmpty(v.getString()) ? null : v.getString();
@@ -227,7 +227,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "dcterms:rights":
+            case "dc:rights":
                 for (final Value v : prop.getValues()) {
                     addFreeTextType(v, thesis.getRights());
                 }

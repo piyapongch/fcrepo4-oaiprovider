@@ -67,14 +67,16 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         Value[] values;
         final Node node = getJcrNode(obj);
 
-                // dc:type
+        // dc:type
         values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
         addType(oaidc, values);
+        
+        // creator and date 
         final boolean isThesis = isThesis(values);
         if (isThesis) {
 
             // thesis dc:creator
-            values = obj.hasProperty("marcrel:dis") ? node.getProperty("marcrel:dis").getValues() : null;
+            values = obj.hasProperty("ual:dissertant") ? node.getProperty("ual:dissertant").getValues() : null;
             addCreator(oaidc, values);
 
             // thesis dc:date
@@ -84,7 +86,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         } else {
 
             // non-thesis dc:creator
-            values = obj.hasProperty("dcterms:creator") ? node.getProperty("dcterms:creator").getValues() : null;
+            values = obj.hasProperty("dc:creator") ? node.getProperty("dc:creator").getValues() : null;
             addCreator(oaidc, values);
 
             // non-thesis dc:date
@@ -94,11 +96,13 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
         // dc:publisher (concatenate grantor and discipline/department contents)
         final Value[] depts =
-            obj.hasProperty("vivo:AcademicDepartment") ? node.getProperty("vivo:AcademicDepartment").getValues() : null;
-        final Value[] ddgs = obj.hasProperty("marcrel:dgg") ? node.getProperty("marcrel:dgg").getValues() : null;
+            obj.hasProperty("ual:department") ? node.getProperty("ual:department").getValues() : null;
+        // 
+        final Value[] ddgs = obj.hasProperty("swrc:institution") ? node.getProperty("swrc:institution").getValues() : null;
+
         final StringBuilder pub = new StringBuilder();
 
-        // If both marcrel:dgg and vivo:AcademicDepartment are present
+        // If both institution and department are present
         if ((ddgs != null) && (depts != null)) {
             pub.append(ddgs[0].getString() + ". ");
             for (int i = 0; i < depts.length; i++) {
@@ -106,7 +110,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             }
             pub.append(depts.length == 1 ? "." : "");
 
-            // If only vivo:AcademicDepartment is present
+            // If only department is present
         } else if ((ddgs == null) && (depts != null)) {
             pub.append(uofa);
             for (int i = 0; i < depts.length; i++) {
@@ -114,7 +118,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             }
             pub.append(depts.length == 1 ? "." : "");
 
-            // Otherwise, print only marcrel:dgg (no punctuation)
+            // Otherwise, print only institution (no punctuation)
         } else if (ddgs != null) {
             pub.append(ddgs[0].getString());
         }
@@ -134,19 +138,19 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             final Property prop = (Property) props.next();
             switch (prop.getName()) {
 
-            case "dcterms:contributor":
+            case "dc:contributor":
                 addContributor(oaidc, prop);
                 break;
 
-            case "marcrel:ths":
+            case "ual:supervisor":
                 addContributor(oaidc, prop);
                 break;
 
-            case "ualrole:thesiscommitteemember":
+            case "ual:commiteeMember":
                 addContributor(oaidc, prop);
                 break;
 
-            case "dcterms:subject":
+            case "dc:subject":
                 addSubject(oaidc, prop);
                 break;
 
@@ -158,7 +162,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addSubject(oaidc, prop);
                 break;
 
-            case "ualthesis:specialization":
+            case "ual:specialization":
                 addDescription(oaidc, prop, "Specialization: ");
                 break;
 
@@ -166,7 +170,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addTitle(oaidc, prop);
                 break;
 
-            case "bibo:ThesisDegree":
+            case "bibo:degree":
                 addDescription(oaidc, prop, "Degree: ");
                 break;
 
@@ -174,20 +178,12 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addIdentifier(oaidc, prop);
                 break;
 
-            case "ualid:doi":
+            case "prism:doi":
                 addIdentifier(oaidc, prop);
                 addIdentifierDoi(oaidc, prop, dcFactory);
                 break;
 
-            case "ualid:trid":
-                addIdentifier(oaidc, prop);
-                break;
-
-            case "ualid:ser":
-                addIdentifier(oaidc, prop);
-                break;
-
-            case "ualid:fedora3handle":
+            case "ual:fedora3Handle":
                 addIdentifier(oaidc, prop);
                 break;
 
@@ -215,7 +211,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 addSource(oaidc, prop);
                 break;
 
-            case "dcterms:rights":
+            case "dc:rights":
                 addRights(oaidc, prop);
                 break;
 

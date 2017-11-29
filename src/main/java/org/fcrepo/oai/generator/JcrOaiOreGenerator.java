@@ -472,13 +472,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             if (obj.hasProperty("model:downloadFilename")) {
                 addFilenameIdentifier(entry, node.getProperty("model:downloadFilename"), name);
             }
-            if (obj.hasProperty("ualid:doi")) {
-                addIdentifier(entry, node.getProperty("ualid:doi"));
-                addUalidDoiIdentifier(entry, node.getProperty("ualid:doi"));
+            if (obj.hasProperty("prism:doi")) {
+                addIdentifier(entry, node.getProperty("prism:doi"));
+                addUalidDoiIdentifier(entry, node.getProperty("prism:doi"));
             }
-            if (obj.hasProperty("ualid:fedora3handle")) {
-                addIdentifier(entry, node.getProperty("ualid:fedora3handle"));
-                addLacIdentifier(entry, node.getProperty("ualid:fedora3handle"));
+            if (obj.hasProperty("ual:fedora3Handle")) {
+                addIdentifier(entry, node.getProperty("ual:fedora3Handle"));
+                addLacIdentifier(entry, node.getProperty("ual:fedora3Handle"));
             }
     }
 
@@ -498,22 +498,22 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
             // <!-- dcterms:creator / http://id.loc.gov/vocabulary/relators/dis (thesis) -->
             // marcrel:dis maps to creator
-            if (obj.hasProperty("marcrel:dis")) {
-                addAtomAuthor(entry, node.getProperty("marcrel:dis"));
+            if (obj.hasProperty("ual:dissertant")) {
+                addAtomAuthor(entry, node.getProperty("ual:dissertant"));
             } else if (obj.hasProperty("dcterms:creator")) {
                 addAtomAuthor(entry, node.getProperty("dcterms:creator"));
             }
             // <!-- dcterms:contributor (optional)-->/
-            if (obj.hasProperty("dcterms:contributor")) {
-                addAtomContributor(entry, node.getProperty("dcterms:contributor"));
+            if (obj.hasProperty("dc:contributor")) {
+                addAtomContributor(entry, node.getProperty("dc:contributor"));
             }
             // supervisor
             //  if (obj.hasProperty("marcrel:ths")) {
             //      addAtomContributor(entry, obj.getProperty("marcrel:ths"));
             //  }
             // committee - assume include "marcrel:ths" value
-            if (obj.hasProperty("ualrole:thesiscommitteemember")) {
-                addAtomContributor(entry, node.getProperty("ualrole:thesiscommitteemember"));
+            if (obj.hasProperty("ual:commiteeMember")) {
+                addAtomContributor(entry, node.getProperty("ual:commiteeMember"));
             }
             // <!-- dcterms:title -->
             if (obj.hasProperty("dcterms:title")) {
@@ -771,8 +771,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             }
         }
 
-        if (obj.hasProperty("dcterms:rights")) {
-            description.setLicense(findLastPropertyValue(node.getProperty("dcterms:rights")).getString());
+        if (obj.hasProperty("dc:rights")) {
+            description.setLicense(findLastPropertyValue(node.getProperty("dc:rights")).getString());
         }
         if (obj.hasProperty("dcterms:license")) {
             description.setRights(findLastPropertyValue(node.getProperty("dcterms:license")).getString());
