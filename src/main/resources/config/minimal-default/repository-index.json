@@ -54,12 +54,12 @@
             "nodeType" : "fedora:Resource",
             "columns" : "model:hasModel(STRING)"
         },
-        "agent" : {
+        "accessRights" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "webacl:agent(STRING)"
+            "columns" : "dcterms:accessRights(STRING)"
         },
         "lastModified" : {
             "kind" : "value",

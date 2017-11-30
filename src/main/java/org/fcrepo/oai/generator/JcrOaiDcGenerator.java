@@ -70,11 +70,11 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         // dc:type
         values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
         addType(oaidc, values);
-        
-        // creator and date 
+
+        // creator and date
+        values = obj.hasProperty("model:hasModel") ? node.getProperty("model:hasModel").getValues() : null;
         final boolean isThesis = isThesis(values);
         if (isThesis) {
-
             // thesis dc:creator
             values = obj.hasProperty("ual:dissertant") ? node.getProperty("ual:dissertant").getValues() : null;
             addCreator(oaidc, values);
@@ -97,8 +97,9 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         // dc:publisher (concatenate grantor and discipline/department contents)
         final Value[] depts =
             obj.hasProperty("ual:department") ? node.getProperty("ual:department").getValues() : null;
-        // 
-        final Value[] ddgs = obj.hasProperty("swrc:institution") ? node.getProperty("swrc:institution").getValues() : null;
+        //
+        final Value[] ddgs = obj.hasProperty("swrc:institution")
+                ? node.getProperty("swrc:institution").getValues() : null;
 
         final StringBuilder pub = new StringBuilder();
 

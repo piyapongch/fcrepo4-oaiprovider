@@ -141,6 +141,8 @@ public class OAIProviderService {
     // supported metadata prefixes
     // OAI-ORE - only for Thesis
     private static final String METADATA_PREFIX_ORE = "ore";
+    private static final String METADATA_PREFIX_OAI_ETDMS = "oai_etdms";
+    private static final String METADATA_PREFIX_OAI_OAI_DC = "oai_dc";
 
     private static final Logger log = LoggerFactory.getLogger(OAIProviderService.class);
 
@@ -202,6 +204,18 @@ public class OAIProviderService {
             = new String(Base64.decodeBase64("dHJ1ZRheXhhodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYSNib29sZWFu"));
 
     private static final Pattern slashPattern = Pattern.compile("\\/");
+
+    private static final String modelIRCollection
+            = "IRCollection\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string";
+
+    private static final String modelIRCommunity
+            = "IRCommunity\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string";
+
+    private static final String modelIRItem
+            = "IRItem\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string";
+
+    private static final String modelIRThesis
+            = "IRThesis\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string";
 
     @Autowired
     private BinaryService binaryService;
@@ -829,9 +843,8 @@ public class OAIProviderService {
             // store community names in cache
             final StringBuilder cjql = new StringBuilder();
             cjql.append("SELECT com.[mode:localName] AS id, com.[dcterms:title] as name ");
-            cjql.append("FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as com ")
-                    .append("WHERE com.[ualidentifier:is_community] = CAST('" + booleanTrue + "' AS BINARY)")
-                    .append(" OR com.[ualidentifier:is_community] = 'true'");
+            cjql.append("FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as com ");
+            cjql.append("WHERE com.[model:hasModel] = '").append(modelIRCommunity).append("' ");
             final RowIterator res = executeQuery(queryManager, cjql.toString());
             final HashMap<String, String> com = new HashMap<>();
             while (res.hasNext()) {
@@ -841,14 +854,12 @@ public class OAIProviderService {
             }
 
             // query official collections
+            // assumes collection is a memberOf a community
             final StringBuilder jql = new StringBuilder();
             jql.append("SELECT col.[mode:localName] AS spec, col.[dcterms:title] AS name, ")
-                    .append("col.[ualidentifier:belongsToCommunity] as cid ");
-            jql.append("FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as col ")
-                    .append("WHERE col.[model:hasModel] = 'Collection' ")
-                    .append(" AND (col.[ualidentifier:is_official] = 'true'")
-                    .append(" OR col.[ualidentifier:is_official] = CAST('" + booleanTrue + "' AS BINARY) )")
-                    .append(" AND col.[ualidentifier:belongsToCommunity] IS NOT NULL");
+                    .append("col.[pcdm:memberOf] as cid ");
+            jql.append("FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as col ");
+            jql.append("WHERE col.[model:hasModel] = '").append(modelIRCollection).append("'");
 
             if (maxListSize > 0) {
                 // bug in 4.2.0 fixed in 4.5.0
@@ -858,7 +869,10 @@ public class OAIProviderService {
 
             final RowIterator result = executeQuery(queryManager, jql.toString());
             if (!result.hasNext()) {
-                return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH, "No record found");
+                return error(
+                        VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_RECORDS_MATCH,
+                        "Zero collection records found"
+                );
             }
             while (result.hasNext()) {
                 // workaround JCR-SQL2 LIMIT bug in 4.2.0
@@ -1049,10 +1063,10 @@ public class OAIProviderService {
 
         // get the metadata record from fcrepo
         final MetadataType md = oaiFactory.createMetadataType();
-        if (mdf.getPrefix().equals("oai_dc")) {
+        if (mdf.getPrefix().equals(METADATA_PREFIX_OAI_DC)) {
             /* generate a OAI DC reponse using the DC Generator from fcrepo4 */
             md.setAny(generateOaiDc(session, obj, name, uriInfo));
-        } else if (mdf.getPrefix().equals("oai_etdms")) {
+        } else if (mdf.getPrefix().equals(METADATA_PREFIX_OAI_ETDMS)) {
             /* generate a OAI ETDMS reponse using the DC Generator from fcrepo4 */
             md.setAny(generateOaiEtdms(session, obj, name, uriInfo));
         } else if (mdf.getPrefix().equals(METADATA_PREFIX_ORE)) {
@@ -1138,10 +1152,19 @@ public class OAIProviderService {
                     + dt.toString(dateFormatMillis) + "' AS DATE)");
         }
 
-        // etdms and orefor thesis only
-        if (metadataPrefix.equals("oai_etdms") || metadataPrefix.equals(METADATA_PREFIX_ORE)) {
-            jql.append(" AND");
-            jql.append(" res.[dcterms:type] = 'Thesis'");
+        // limit returned hasModel properties
+        if (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE)) {
+            // metadata prefix etdms and ore for thesis only
+            jql.append(" AND")
+                .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'");
+        }
+        else {
+            // include both thesis and generic items
+            jql.append(" AND (")
+                .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'")
+                .append(" OR ")
+                .append(" res.[model:hasModel] = '").append(modelIRItem).append("'")
+                .append(") ");
         }
 
         // set constraint
@@ -1368,9 +1391,22 @@ public class OAIProviderService {
             jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
             jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
             jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
-            if (metadataPrefix != null
-                    && (metadataPrefix.equals("oai_etdms") || metadataPrefix.equals(METADATA_PREFIX_ORE))) {
-                jql.append(" AND res.[dcterms:type] = 'Thesis'");
+
+            // limit returned hasModel properties
+            if (metadataPrefix != null 
+                && (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE)) 
+                ) {
+                // metadata prefix etdms and ore for thesis only
+                jql.append(" AND")
+                    .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'");
+            }
+            else {
+                // include both thesis and generic items
+                jql.append(" AND (")
+                    .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'")
+                    .append(" OR ")
+                    .append(" res.[model:hasModel] = '").append(modelIRItem).append("'")
+                    .append(") ");
             }
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();

@@ -54,12 +54,12 @@
             "nodeType" : "fedora:Resource",
             "columns" : "model:hasModel(STRING)"
         },
-        "agent" : {
+        "accessRights" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "webacl:agent(STRING)"
+            "columns" : "dcterms:accessRights(STRING)"
         },
         "lastModified" : {
             "kind" : "value",
@@ -75,26 +75,12 @@
             "nodeType" : "fedora:Resource",
             "columns" : "dcterms:type(STRING)"
         },
-        "hasCollectionId" : {
+        "memberOf" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "ualids:hasCollectionId(STRING)"
-        },
-        "isCommunity" : {
-            "kind" : "value",
-            "provider" : "local",
-            "synchronous" : "false",
-            "nodeType" : "fedora:Resource",
-            "columns" : "ualids:is_community(STRING)"
-        },
-        "isOfficial" : {
-            "kind" : "value",
-            "provider" : "local",
-            "synchronous" : "false",
-            "nodeType" : "fedora:Resource",
-            "columns" : "ualids:is_official(STRING)"
+            "columns" : "pcdm:memberOf(STRING)"
         },
         "localName" : {
             "kind" : "value",
