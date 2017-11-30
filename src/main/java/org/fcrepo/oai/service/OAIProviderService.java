@@ -142,7 +142,7 @@ public class OAIProviderService {
     // OAI-ORE - only for Thesis
     private static final String METADATA_PREFIX_ORE = "ore";
     private static final String METADATA_PREFIX_OAI_ETDMS = "oai_etdms";
-    private static final String METADATA_PREFIX_OAI_OAI_DC = "oai_dc";
+    private static final String METADATA_PREFIX_OAI_DC = "oai_dc";
 
     private static final Logger log = LoggerFactory.getLogger(OAIProviderService.class);
 
@@ -195,13 +195,6 @@ public class OAIProviderService {
 
     private String idFormat;
 
-    // public item, webacl:agent "http://projecthydra.org/ns/auth/group#public^^URI"
-    private final String publicAgent
-            = new String(Base64.decodeBase64("aHR0cDovL3Byb2plY3RoeWRyYS5vcmcvbnMvYXV0aC9ncm91cCNwdWJsaWMYXl4YVVJJ"));
-
-    // public collection, ualindentifier:is_official "true^^http://www.w3.org/2001/XMLSchema#boolean"
-    private final String booleanTrue
-            = new String(Base64.decodeBase64("dHJ1ZRheXhhodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYSNib29sZWFu"));
 
     private static final Pattern slashPattern = Pattern.compile("\\/");
 
@@ -858,8 +851,8 @@ public class OAIProviderService {
             final StringBuilder jql = new StringBuilder();
             jql.append("SELECT col.[mode:localName] AS spec, col.[dcterms:title] AS name, ")
                     .append("col.[pcdm:memberOf] as cid ");
-            jql.append("FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as col ");
-            jql.append("WHERE col.[model:hasModel] = '").append(modelIRCollection).append("'");
+            jql.append(" FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as col ");
+            jql.append(" WHERE col.[model:hasModel] = '").append(modelIRCollection).append("'");
 
             if (maxListSize > 0) {
                 // bug in 4.2.0 fixed in 4.5.0
@@ -966,7 +959,7 @@ public class OAIProviderService {
 
         if (metadataPrefix == null) {
             return error(VerbType.LIST_RECORDS, null, null, OAIPMHerrorcodeType.BAD_ARGUMENT,
-                    "metadataprefix is invalid");
+                    "metadataPrefix is invalid");
         }
         final MetadataFormat mdf = metadataFormats.get(metadataPrefix);
         if (mdf == null) {
@@ -1104,32 +1097,19 @@ public class OAIProviderService {
         final String propJcrUuid = getPropertyName(session, createProperty(RdfJcrLexicon.JCR_NAMESPACE + "uuid"));
         final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
-        final String propAccessTo
-                = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo_ref"));
-        final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
         final String propHasCollectionId = getPropertyName(session, createProperty(propertyHasCollectionId));
 
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub, res.[mode:localName] AS name ");
-        jql.append("FROM [" + FedoraTypes.FEDORA_RESOURCE + "] AS [res]");
-        jql.append(" JOIN [" + FedoraTypes.FEDORA_RESOURCE + "] AS [per]");
-        jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
-        jql.append("WHERE ");
-
-        // mixin type constraint
-        jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
-
-        // items
-        jql.append(" AND");
-        jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
+        jql.append(" FROM [" + FedoraTypes.FEDORA_RESOURCE + "] AS [res] ");
+        jql.append(" WHERE ");
 
         // permission
-        jql.append(" AND");
-        jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
+        // public only
+        jql.append(" res.[dcterms:accessRights] = CAST('ual:public' AS STRING) ");
 
-        // public item, cast to binary and compare with xs:base64binary string property
-        jql.append(" AND");
-        jql.append(" per.[" + propAgent + "] = CAST('" + publicAgent + "' AS BINARY)");
+        // mixin type constraint
+        jql.append(" AND res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
 
         // start datetime constraint
         if (StringUtils.isNotBlank(from)) {
@@ -1156,14 +1136,13 @@ public class OAIProviderService {
         if (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE)) {
             // metadata prefix etdms and ore for thesis only
             jql.append(" AND")
-                .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'");
-        }
-        else {
+                .append(" res.[" + propHasModel + "] = '").append(modelIRThesis).append("'");
+        } else {
             // include both thesis and generic items
             jql.append(" AND (")
-                .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'")
+                .append(" res.[" + propHasModel + "] = '").append(modelIRThesis).append("'")
                 .append(" OR ")
-                .append(" res.[model:hasModel] = '").append(modelIRItem).append("'")
+                .append(" res.[" + propHasModel + "] = '").append(modelIRItem).append("'")
                 .append(") ");
         }
 
@@ -1218,31 +1197,24 @@ public class OAIProviderService {
     private String searchResourceQuery(final Session session, final String mixinTypes, final String property,
             final String value, final int limit, final int offset) throws RepositoryException {
 
-        final String propHasMixinType = getPropertyName(session, RdfJcrLexicon.HAS_MIXIN_TYPE);
         final String propJcrPath = getPropertyName(session, createProperty(RdfJcrLexicon.JCR_NAMESPACE + "path"));
-        final String propJcrUuid = getPropertyName(session, createProperty(RdfJcrLexicon.JCR_NAMESPACE + "uuid"));
-        // final String propJcrLastModifiedDate = getPropertyName(session, RdfJcrLexicon.LAST_MODIFIED_DATE);
+        final String propHasMixinType = getPropertyName(session, RdfJcrLexicon.HAS_MIXIN_TYPE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
-        final String propAccessTo
-                = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#accessTo_ref"));
-        // final String propAgent = getPropertyName(session, createProperty("http://www.w3.org/ns/auth/acl#agent"));
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub ");
-        jql.append("FROM [" + FedoraTypes.FEDORA_RESOURCE + "] AS [res]");
-        jql.append(" JOIN [" + FedoraTypes.FEDORA_RESOURCE + "] AS [per]");
-        jql.append(" ON res.[" + propJcrUuid + "] = per.[" + propAccessTo + "] ");
-        jql.append("WHERE ");
+        jql.append(" FROM [" + FedoraTypes.FEDORA_RESOURCE + "] AS [res] ");
+        jql.append(" WHERE ");
+
+        // permission
+        // public only
+        jql.append(" res.[dcterms:accessRights] = CAST('ual:public' AS STRING) ");
 
         // mixin type constraint
-        jql.append("res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
+        jql.append(" AND res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
 
         // items
         jql.append(" AND");
-        jql.append(" res.[" + propHasModel + "] = 'GenericFile'");
-
-        // permission
-        jql.append(" AND");
-        jql.append(" per.[" + propHasModel + "] = 'Hydra::AccessControls::Permission'");
+        jql.append(" res.[" + propHasModel + "] = '").append(modelIRItem).append("'");
 
         // search criteria
         jql.append(" AND");
@@ -1254,7 +1226,6 @@ public class OAIProviderService {
             jql.append(" OFFSET ").append(offset);
         }
 
-        log.debug(jql.toString());
         log.debug(jql.toString());
         return jql.toString();
     }
@@ -1386,21 +1357,21 @@ public class OAIProviderService {
         String path = null;
         if (noid != null) {
             final StringBuilder jql = new StringBuilder();
-            jql.append("SELECT res.[jcr:path] AS path FROM [fedora:Resource] AS res");
-            jql.append(" JOIN [fedora:Resource] AS per ON res.[jcr:uuid] = per.[webacl:accessTo_ref] ");
-            jql.append("WHERE res.[mode:localName] = '").append(noid).append("'");
-            jql.append(" AND per.[model:hasModel] = 'Hydra::AccessControls::Permission'");
-            jql.append(" AND per.[webacl:agent] = CAST('" + publicAgent + "' AS BINARY)");
+            jql.append("SELECT res.[jcr:path] AS path ");
+            jql.append(" FROM [fedora:Resource] AS res ");
+            jql.append(" WHERE res.[mode:localName] = '").append(noid).append("'");
 
+            // permission
+            // public only
+            jql.append(" res.[dcterms:accessRights] = CAST('ual:public' AS STRING)");
             // limit returned hasModel properties
-            if (metadataPrefix != null 
-                && (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE)) 
+            if (metadataPrefix != null
+                && (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE))
                 ) {
                 // metadata prefix etdms and ore for thesis only
                 jql.append(" AND")
                     .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'");
-            }
-            else {
+            } else {
                 // include both thesis and generic items
                 jql.append(" AND (")
                     .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'")
