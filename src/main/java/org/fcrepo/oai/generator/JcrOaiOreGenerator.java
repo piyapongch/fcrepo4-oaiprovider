@@ -128,7 +128,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             addAtomIdentifiers(entry, obj, name);
 
             // <!-- Resource map metadata -->
-            addResourceMapMetadata(entry, obj, oaiHref);
+            addResourceMapMetadata(entry, obj, oreHref);
 
             // <!-- Aggregation metadata -->
             addAggregationMetadata(entry, obj);
@@ -749,10 +749,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         }
 
         if (obj.hasProperty("dcterms:rights")) {
-            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:rights")).getString());
+            description.setRights(findLastPropertyValue(obj.getProperty("dcterms:rights")).getString());
         }
         if (obj.hasProperty("dcterms:license")) {
-            description.setRights(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
+            description.setLicense(findLastPropertyValue(obj.getProperty("dcterms:license")).getString());
         }
         if (obj.hasProperty("dcterms:isVersionOf")) {
             description.setIsVersionOf(findLastPropertyValue(obj.getProperty("dcterms:isVersionOf")).getString());
