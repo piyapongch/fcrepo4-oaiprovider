@@ -689,30 +689,25 @@ public class OAIProviderService {
             Stream<Triple> triples;
 
             while (result.hasNext()) {
-                // workaround JCR-SQL2 LIMIT bug in 4.2.0
-                if (result.getPosition() < maxListSize) {
-                    final HeaderType h = oaiFactory.createHeaderType();
-                    final Row sol = result.nextRow();
-                    final Resource sub = valueConverter.convert(sol.getValue("sub")).asResource();
-                    final String path = converter.convert(sub).getPath();
+                final HeaderType h = oaiFactory.createHeaderType();
+                final Row sol = result.nextRow();
+                final Resource sub = valueConverter.convert(sol.getValue("sub")).asResource();
+                final String path = converter.convert(sub).getPath();
 
-                    // get base url
-                    final FedoraResource root = nodeService.find(fedoraSession, rootPath);
-                    predicate = new PropertyPredicate(propertyOaiBaseUrl);
-                    triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
-                    h.setIdentifier(createId(converter.asString(sub)));
+                // get base url
+                final FedoraResource root = nodeService.find(fedoraSession, rootPath);
+                predicate = new PropertyPredicate(propertyOaiBaseUrl);
+                triples = root.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
+                h.setIdentifier(createId(converter.asString(sub)));
 
-                    final Container obj = containerService.find(fedoraSession, path);
-                    h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
-                    predicate = new PropertyPredicate(propertyHasCollectionId);
-                    triples = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
-                    final List<Triple> tl = triples.collect(toList());
-                    tl.forEach((tmp) -> { h.getSetSpec().add(tmp.getObject().getLiteralValue().toString()); });
+                final Container obj = containerService.find(fedoraSession, path);
+                h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
+                predicate = new PropertyPredicate(propertyHasCollectionId);
+                triples = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
+                final List<Triple> tl = triples.collect(toList());
+                tl.forEach((tmp) -> { h.getSetSpec().add(tmp.getObject().getLiteralValue().toString()); });
 
-                    ids.getHeader().add(h);
-                } else {
-                    break;
-                }
+                ids.getHeader().add(h);
             }
 
             // resumptionToken
@@ -855,8 +850,7 @@ public class OAIProviderService {
             jql.append(" WHERE col.[model:hasModel] = '").append(modelIRCollection).append("'");
 
             if (maxListSize > 0) {
-                // bug in 4.2.0 fixed in 4.5.0
-                // jql.append(" LIMIT ").append(maxListSize);
+                jql.append(" LIMIT ").append(maxListSize);
                 jql.append(" OFFSET ").append(offset);
             }
 
@@ -868,35 +862,30 @@ public class OAIProviderService {
                 );
             }
             while (result.hasNext()) {
-                // workaround JCR-SQL2 LIMIT bug in 4.2.0
-                if (result.getPosition() < maxListSize) {
-                    final SetType set = oaiFactory.createSetType();
-                    final Row sol = result.nextRow();
-                    // create setName: community name / collection name
-                    // if there is no community name then
-                    // remove "community name" and "/"
-                    final Value cid = sol.getValue("cid");
-                    String comStr = null;
-                    if (cid != null) {
-                        comStr = com.get(valueConverter.convert(cid).asLiteral().getString());
-                    }
-                    final Value name = sol.getValue("name");
-                    String setName = null;
-                    if (comStr != null && name != null) {
-                        setName = comStr + " / " + valueConverter.convert(name).asLiteral().getString();
-                    } else if (comStr == null && name != null) {
-                        setName = valueConverter.convert(name).asLiteral().getString();
-                    } else {
-                        setName = "";
-                    }
-
-                    // spec
-                    set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
-                    set.setSetName(setName);
-                    sets.getSet().add(set);
-                } else {
-                    break;
+                final SetType set = oaiFactory.createSetType();
+                final Row sol = result.nextRow();
+                // create setName: community name / collection name
+                // if there is no community name then
+                // remove "community name" and "/"
+                final Value cid = sol.getValue("cid");
+                String comStr = null;
+                if (cid != null) {
+                    comStr = com.get(valueConverter.convert(cid).asLiteral().getString());
                 }
+                final Value name = sol.getValue("name");
+                String setName = null;
+                if (comStr != null && name != null) {
+                    setName = comStr + " / " + valueConverter.convert(name).asLiteral().getString();
+                } else if (comStr == null && name != null) {
+                    setName = valueConverter.convert(name).asLiteral().getString();
+                } else {
+                    setName = "";
+                }
+
+                // spec
+                set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
+                set.setSetName(setName);
+                sets.getSet().add(set);
             }
 
             // resumptionToken
@@ -997,16 +986,11 @@ public class OAIProviderService {
 
             final ListRecordsType records = oaiFactory.createListRecordsType();
             while (result.hasNext()) {
-                // workaround JCR-SQL2 LIMIT bug in 4.2.0
-                if (result.getPosition() < maxListSize) {
-                    final Row solution = result.nextRow();
-                    final Resource subjectUri = valueConverter.convert(solution.getValue("sub")).asResource();
-                    final String name = valueConverter.convert(solution.getValue("name")).asLiteral().getString();
-                    final RecordType record = createRecord(session, mdf, converter.asString(subjectUri), name, uriInfo);
-                    records.getRecord().add(record);
-                } else {
-                    break;
-                }
+                final Row solution = result.nextRow();
+                final Resource subjectUri = valueConverter.convert(solution.getValue("sub")).asResource();
+                final String name = valueConverter.convert(solution.getValue("name")).asLiteral().getString();
+                final RecordType record = createRecord(session, mdf, converter.asString(subjectUri), name, uriInfo);
+                records.getRecord().add(record);
             }
 
             if (records.getRecord().size() == maxListSize) {
@@ -1153,8 +1137,7 @@ public class OAIProviderService {
         }
 
         if (limit > 0) {
-            // bug in 4.2.0 fixed in 4.5.0
-            // jql.append(" LIMIT ").append(maxListSize);
+            jql.append(" LIMIT ").append(maxListSize);
             jql.append(" OFFSET ").append(offset);
         }
 
