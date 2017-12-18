@@ -99,6 +99,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
     private String etdmsUrlFormat;
 
+    private String oreUrlFormat;
+
     private String htmlUrlFormat;
 
     /**
@@ -125,12 +127,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final String oreHref  = htmlHref.concat("/ore.xml");
             final String oaiHref  = String.format(oaiUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
             final String etdmsHref  = String.format(etdmsUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
+            final String oreRef  = String.format(oreUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
 
             // <!-- Atom Specific; No ORE Semantics -->
             addAtomIdentifiers(entry, obj, name);
 
             // <!-- Resource map metadata -->
-            addResourceMapMetadata(entry, obj, oaiHref);
+            addResourceMapMetadata(entry, obj, oreRef);
 
             // <!-- Aggregation metadata -->
             addAggregationMetadata(entry, obj);
@@ -772,10 +775,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         }
 
         if (obj.hasProperty("dc:rights")) {
-            description.setLicense(findLastPropertyValue(node.getProperty("dc:rights")).getString());
+            description.setRights(findLastPropertyValue(node.getProperty("dc:rights")).getString());
         }
         if (obj.hasProperty("dcterms:license")) {
-            description.setRights(findLastPropertyValue(node.getProperty("dcterms:license")).getString());
+            description.setLicense(findLastPropertyValue(node.getProperty("dcterms:license")).getString());
         }
         if (obj.hasProperty("dcterms:isVersionOf")) {
             description.setIsVersionOf(findLastPropertyValue(node.getProperty("dcterms:isVersionOf")).getString());
@@ -1047,6 +1050,15 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      */
     public final void setEtdmsUrlFormat(final String etdmsUrlFormat) {
         this.etdmsUrlFormat = etdmsUrlFormat;
+    }
+
+    /**
+     * The oreUrlFormat setter method - from Bean.
+     *
+     * @param oreUrlFormat the OreSourceAuthorUri to set
+     */
+    public final void setOreUrlFormat(final String oreUrlFormat) {
+      this.oreUrlFormat = oreUrlFormat;
     }
 
     /**
