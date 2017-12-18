@@ -97,6 +97,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
     private String etdmsUrlFormat;
 
+    private String oreUrlFormat;
+
     private String htmlUrlFormat;
 
     /**
@@ -123,12 +125,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final String oreHref  = htmlHref.concat("/ore.xml");
             final String oaiHref  = String.format(oaiUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
             final String etdmsHref  = String.format(etdmsUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
+            final String oreRef  = String.format(oreUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
 
             // <!-- Atom Specific; No ORE Semantics -->
             addAtomIdentifiers(entry, obj, name);
 
             // <!-- Resource map metadata -->
-            addResourceMapMetadata(entry, obj, oreHref);
+            addResourceMapMetadata(entry, obj, oreRef);
 
             // <!-- Aggregation metadata -->
             addAggregationMetadata(entry, obj);
@@ -1005,6 +1008,15 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      */
     public final void setEtdmsUrlFormat(final String etdmsUrlFormat) {
         this.etdmsUrlFormat = etdmsUrlFormat;
+    }
+
+    /**
+     * The oreUrlFormat setter method - from Bean.
+     *
+     * @param oreUrlFormat the OreSourceAuthorUri to set
+     */
+    public final void setOreUrlFormat(final String oreUrlFormat) {
+        this.oreUrlFormat = oreUrlFormat;
     }
 
     /**
