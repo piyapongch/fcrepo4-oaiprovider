@@ -92,6 +92,18 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
+            case "rdf:type":
+                for (final Value v : prop.getValues()) {
+                    addFreeTextType(v, thesis.getType());
+                }
+                break;
+
+            case "dcterms:creator":
+                for (final Value v : prop.getValues()) {
+                    addAuthorityType(v, thesis.getCreator());
+                }
+                break;
+
             case "ual:dissertant":
                 for (final Value v : prop.getValues()) {
                     addAuthorityType(v, thesis.getCreator());
@@ -195,6 +207,13 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
+            case "ual:fedora3Handle":
+                for (final Value v : prop.getValues()) {
+                    addString(v, thesis.getIdentifier());
+                    handle = StringUtils.isEmpty(v.getString()) ? null : v.getString();
+                }
+                break;
+
             case "model:downloadFilename":
                 for (final Value v : prop.getValues()) {
                     try {
@@ -203,13 +222,6 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                     } catch (final UnsupportedEncodingException e) {
                         throw new RepositoryException(e);
                     }
-                }
-                break;
-
-            case "ual:fedora3Handle":
-                for (final Value v : prop.getValues()) {
-                    addString(v, thesis.getIdentifier());
-                    handle = StringUtils.isEmpty(v.getString()) ? null : v.getString();
                 }
                 break;
 
