@@ -57,8 +57,8 @@
                 <entry key="cc" value="http://creativecommons.org/ns#" />
                 <entry key="dc" value="http://purl.org/dc/elements/1.1/" />
                 <entry key="dcterms" value="http://purl.org/dc/terms/" />
-                <entry ebu="http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#" />
-                <entry etd_ms="http://www.ndltd.org/standards/metadata/etdms/1.0/" />
+                <entry key="ebu" value="http://www.ebu.ch/metadata/ontologies/ebucore/ebucore#" />
+                <entry key="etd_ms" value="http://www.ndltd.org/standards/metadata/etdms/1.0/" />
                 <entry key="fabio" value="http://purl.org/spar/fabio/"/>
                 <entry key="foaf" value="http://xmlns.com/foaf/0.1/" />
                 <entry key="lang" value="http://id.loc.gov/vocabulary/iso639-2/" />
