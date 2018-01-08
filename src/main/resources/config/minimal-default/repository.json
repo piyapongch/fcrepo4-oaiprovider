@@ -44,6 +44,12 @@
             "transactionDisable" : true,
             "asyncWrite" : true,
             "cacheSize" : 1000000
+        },
+          "lucene" : {
+            "classname" : "lucene",
+            "directory" : "${fcrepo.modeshape.index.directory}",
+            "analyzerClass" : "org.apache.lucene.analysis.standard.StandardAnalyzer",
+            "lockFactoryClass" : "org.apache.lucene.store.NoLockFactory"
         }
     },
     "indexes" : {
@@ -77,7 +83,7 @@
         },
         "memberOf" : {
             "kind" : "value",
-            "provider" : "local",
+            "provider" : "lucene",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
             "columns" : "pcdm:memberOf(STRING)"

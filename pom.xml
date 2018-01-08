@@ -387,6 +387,14 @@
                                     <fileset dir="src/main/resources/config/minimal-default" />
                                 </copy>
                                 <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib" file="target/${project.artifactId}-${project.version}.jar" verbose="true"/>
+                                <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
+                                <get
+                                  src="http://central.maven.org/maven2/org/apache/lucene/lucene-core/6.0.1/lucene-core-6.0.1.jar"
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib"/>
+                                <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
+                                <get
+                                  src="http://central.maven.org/maven2/org/apache/lucene/lucene-analyzers-common/6.0.1/lucene-analyzers-common-6.0.1.jar"
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib"/>
                                 <jar destfile="target/${project.artifactId}-${project.version}.war" basedir="target/fcrepo-webapp-${fcrepo.version}" />
                             </tasks>
                         </configuration>
