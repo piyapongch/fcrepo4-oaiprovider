@@ -196,6 +196,7 @@ public class OAIProviderService {
     private String idFormat;
 
 
+
     private static final Pattern slashPattern = Pattern.compile("\\/");
 
     private static final String modelIRCollection
@@ -209,6 +210,8 @@ public class OAIProviderService {
 
     private static final String modelIRThesis
             = "IRThesis\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string";
+
+    private static final String publicAccessRights = "http://terms.library.ualberta.ca/public";
 
     @Autowired
     private BinaryService binaryService;
@@ -671,6 +674,7 @@ public class OAIProviderService {
 
         final String jql = listResourceQuery(session, FedoraTypes.FEDORA_CONTAINER, metadataPrefix, from, until, set,
                 maxListSize, offset);
+
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final RowIterator result = executeQuery(queryManager, jql);
@@ -683,8 +687,6 @@ public class OAIProviderService {
             final OAIPMHtype oai = oaiFactory.createOAIPMHtype();
             oai.setResponseDate(dataFactory.newXMLGregorianCalendar(dateFormat.print(new Date().getTime())));
             final ListIdentifiersType ids = oaiFactory.createListIdentifiersType();
-
-
             java.util.function.Predicate<Triple> predicate;
             Stream<Triple> triples;
 
@@ -833,10 +835,16 @@ public class OAIProviderService {
             cjql.append("SELECT com.[mode:localName] AS id, com.[dcterms:title] as name ");
             cjql.append("FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as com ");
             cjql.append("WHERE com.[model:hasModel] = '").append(modelIRCommunity).append("' ");
+
+            log.debug(cjql.toString());
+
             final RowIterator res = executeQuery(queryManager, cjql.toString());
             final HashMap<String, String> com = new HashMap<>();
             while (res.hasNext()) {
                 final Row sol = res.nextRow();
+                log.debug(
+                    valueConverter.convert(sol.getValue("id")).asLiteral().getString()
+                    );
                 com.put(valueConverter.convert(sol.getValue("id")).asLiteral().getString(),
                         valueConverter.convert(sol.getValue("name")).asLiteral().getString());
             }
@@ -1090,7 +1098,7 @@ public class OAIProviderService {
 
         // permission
         // public only
-        jql.append(" res.[dcterms:accessRights] = CAST('ual:public' AS STRING) ");
+        jql.append(" res.[dcterms:accessRights] = CAST(" + publicAccessRights + " AS STRING) ");
 
         // mixin type constraint
         jql.append(" AND res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
@@ -1190,7 +1198,7 @@ public class OAIProviderService {
 
         // permission
         // public only
-        jql.append(" res.[dcterms:accessRights] = CAST('ual:public' AS STRING) ");
+        jql.append(" res.[dcterms:accessRights] = CAST(" + publicAccessRights + " AS STRING) ");
 
         // mixin type constraint
         jql.append(" AND res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
@@ -1346,7 +1354,7 @@ public class OAIProviderService {
 
             // permission
             // public only
-            jql.append(" res.[dcterms:accessRights] = CAST('ual:public' AS STRING)");
+            jql.append(" res.[dcterms:accessRights] = CAST(" + publicAccessRights + " AS STRING)");
             // limit returned hasModel properties
             if (metadataPrefix != null
                 && (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE))
@@ -1362,6 +1370,8 @@ public class OAIProviderService {
                     .append(" res.[model:hasModel] = '").append(modelIRItem).append("'")
                     .append(") ");
             }
+
+            log.debug(jql.toString());
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final RowIterator result = executeQuery(queryManager, jql.toString());

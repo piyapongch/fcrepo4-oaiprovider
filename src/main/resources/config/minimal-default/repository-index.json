@@ -75,6 +75,13 @@
             "nodeType" : "fedora:Resource",
             "columns" : "dcterms:type(STRING)"
         },
+        "memberOf" : {
+            "kind" : "value",
+            "provider" : "local",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "pcdm:memberOf(STRING)"
+        },
         "hasCollectionId" : {
             "kind" : "value",
             "provider" : "local",
