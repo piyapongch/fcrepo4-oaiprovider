@@ -1098,7 +1098,7 @@ public class OAIProviderService {
 
         // permission
         // public only
-        jql.append(" res.[dcterms:accessRights] = CAST(" + publicAccessRights + " AS STRING) ");
+        jql.append(" res.[dcterms:accessRights] = CAST('" + publicAccessRights + "' AS STRING) ");
 
         // mixin type constraint
         jql.append(" AND res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
@@ -1198,7 +1198,7 @@ public class OAIProviderService {
 
         // permission
         // public only
-        jql.append(" res.[dcterms:accessRights] = CAST(" + publicAccessRights + " AS STRING) ");
+        jql.append(" res.[dcterms:accessRights] = CAST('" + publicAccessRights + "' AS STRING) ");
 
         // mixin type constraint
         jql.append(" AND res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
@@ -1354,7 +1354,7 @@ public class OAIProviderService {
 
             // permission
             // public only
-            jql.append(" res.[dcterms:accessRights] = CAST(" + publicAccessRights + " AS STRING)");
+            jql.append(" res.[dcterms:accessRights] = CAST('" + publicAccessRights + "' AS STRING)");
             // limit returned hasModel properties
             if (metadataPrefix != null
                 && (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE))

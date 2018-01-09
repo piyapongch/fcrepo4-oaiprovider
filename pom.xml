@@ -389,6 +389,10 @@
                                 <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib" file="target/${project.artifactId}-${project.version}.jar" verbose="true"/>
                                 <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
                                 <get
+                                  src="http://central.maven.org/maven2/org/modeshape/modeshape-lucene-index-provider/5.3.0.Final/modeshape-lucene-index-provider-5.3.0.Final.jar"
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib"/>
+                                <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
+                                <get
                                   src="http://central.maven.org/maven2/org/apache/lucene/lucene-core/6.0.1/lucene-core-6.0.1.jar"
                                   dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib"/>
                                 <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
