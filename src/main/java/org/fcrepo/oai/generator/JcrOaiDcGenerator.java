@@ -80,7 +80,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             addDate(oaidc, values);
             // dc:type
             values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
-            if (!values != null) {
+            if (values != null) {
                 addType(oaidc, values);
             } else {
                 values = obj.hasProperty("rdf:type") ? node.getProperty("rdf:type").getValues() : null;

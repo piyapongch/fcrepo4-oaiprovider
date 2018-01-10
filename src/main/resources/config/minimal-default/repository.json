@@ -88,6 +88,13 @@
             "nodeType" : "fedora:Resource",
             "columns" : "pcdm:memberOf(STRING)"
         },
+        "ualPath" : {
+            "kind" : "value",
+            "provider" : "lucene",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "ual:path(STRING)"
+        },
         "localName" : {
             "kind" : "value",
             "provider" : "local",

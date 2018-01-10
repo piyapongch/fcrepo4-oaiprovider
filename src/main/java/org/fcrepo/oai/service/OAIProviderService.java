@@ -854,7 +854,7 @@ public class OAIProviderService {
             // assumes collection is a memberOf a community
             final StringBuilder jql = new StringBuilder();
             jql.append("SELECT col.[mode:localName] AS spec, col.[dcterms:title] AS name, ")
-                    .append("col.[pcdm:memberOf] as cid ");
+                    .append("col.[ual:path] as cid ");
             jql.append(" FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as col ");
             jql.append(" WHERE col.[model:hasModel] = '").append(modelIRCollection).append("'");
 
@@ -873,14 +873,19 @@ public class OAIProviderService {
             while (result.hasNext()) {
                 final SetType set = oaiFactory.createSetType();
                 final Row sol = result.nextRow();
+
+                // lookup the community via the map for the current collection
+                final Value cid = sol.getValue("cid");
+                String comStr = null;
+                String comIdStr = null;
+                if (cid != null) {
+                    comIdStr = valueConverter.convert(cid).asLiteral().getString();
+                    comStr = com.get(comIdStr);
+                }
+
                 // create setName: community name / collection name
                 // if there is no community name then
                 // remove "community name" and "/"
-                final Value cid = sol.getValue("cid");
-                String comStr = null;
-                if (cid != null) {
-                    comStr = com.get(valueConverter.convert(cid).asLiteral().getString());
-                }
                 final Value name = sol.getValue("name");
                 String setName = null;
                 if (comStr != null && name != null) {
@@ -890,9 +895,20 @@ public class OAIProviderService {
                 } else {
                     setName = "";
                 }
+                // setSpec
+                final Value id = sol.getValue("spec");
+                final String idStr = valueConverter.convert(id).asLiteral().getString();
+                String setSpec = null;
+                if (comIdStr != null && id != null) {
+                    setSpec = comIdStr + "/" + idStr;
+                } else if (comIdStr == null && idStr != null) {
+                    setSpec = idStr;
+                } else {
+                    setSpec = "";
+                }
 
                 // spec
-                set.setSetSpec(valueConverter.convert(sol.getValue("spec")).asLiteral().getString());
+                set.setSetSpec(setSpec);
                 set.setSetName(setName);
                 sets.getSet().add(set);
             }
@@ -1142,9 +1158,9 @@ public class OAIProviderService {
         // set constraint
         if (StringUtils.isNotBlank(set)) {
             jql.append(" AND");
-            jql.append(" res.[" + propHasCollectionId + "] = '" + set + "'");
+            jql.append(" res.[" + propHasCollectionId + "] = '"
+                    + set + "\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string'");
         }
-
         if (limit > 0) {
             jql.append(" LIMIT ").append(maxListSize);
             jql.append(" OFFSET ").append(offset);
