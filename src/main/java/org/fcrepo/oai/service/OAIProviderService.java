@@ -211,7 +211,8 @@ public class OAIProviderService {
     private static final String modelIRThesis
             = "IRThesis\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string";
 
-    private static final String publicAccessRights = "http://terms.library.ualberta.ca/public";
+    private static final String publicAccessRights
+            = "http://terms.library.ualberta.ca/public\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string";
 
     @Autowired
     private BinaryService binaryService;

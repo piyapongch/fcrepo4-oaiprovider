@@ -390,15 +390,15 @@
                                 <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
                                 <get
                                   src="http://central.maven.org/maven2/org/modeshape/modeshape-lucene-index-provider/5.3.0.Final/modeshape-lucene-index-provider-5.3.0.Final.jar"
-                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib"/>
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/modeshape-lucene-index-provider-5.3.0.Final.jar"/>
                                 <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
                                 <get
                                   src="http://central.maven.org/maven2/org/apache/lucene/lucene-core/6.0.1/lucene-core-6.0.1.jar"
-                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib"/>
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/lucene-core-6.0.1.jar"/>
                                 <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
                                 <get
                                   src="http://central.maven.org/maven2/org/apache/lucene/lucene-analyzers-common/6.0.1/lucene-analyzers-common-6.0.1.jar"
-                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib"/>
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/lucene-analyzers-common-6.0.1.jar"/>
                                 <jar destfile="target/${project.artifactId}-${project.version}.war" basedir="target/fcrepo-webapp-${fcrepo.version}" />
                             </tasks>
                         </configuration>
