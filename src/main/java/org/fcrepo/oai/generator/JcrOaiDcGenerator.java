@@ -67,10 +67,6 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         Value[] values;
         final Node node = getJcrNode(obj);
 
-        // dc:type
-        values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
-        addType(oaidc, values);
-
         // creator and date
         values = obj.hasProperty("model:hasModel") ? node.getProperty("model:hasModel").getValues() : null;
         final boolean isThesis = isThesis(values);
@@ -78,20 +74,28 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             // thesis dc:creator
             values = obj.hasProperty("ual:dissertant") ? node.getProperty("ual:dissertant").getValues() : null;
             addCreator(oaidc, values);
-
             // thesis dc:date
             values =
                 obj.hasProperty("dcterms:dateAccepted") ? node.getProperty("dcterms:dateAccepted").getValues() : null;
             addDate(oaidc, values);
+            // dc:type
+            values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
+            if (!values != null) {
+                addType(oaidc, values);
+            } else {
+                values = obj.hasProperty("rdf:type") ? node.getProperty("rdf:type").getValues() : null;
+                addType(oaidc, values);
+            }
         } else {
-
             // non-thesis dc:creator
             values = obj.hasProperty("dc:creator") ? node.getProperty("dc:creator").getValues() : null;
             addCreator(oaidc, values);
-
             // non-thesis dc:date
             values = obj.hasProperty("dcterms:created") ? node.getProperty("dcterms:created").getValues() : null;
             addDate(oaidc, values);
+            // dc:type
+            values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
+            addType(oaidc, values);
         }
 
         // dc:publisher (concatenate grantor and discipline/department contents)
