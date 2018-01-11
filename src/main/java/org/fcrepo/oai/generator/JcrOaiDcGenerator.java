@@ -17,20 +17,20 @@ package org.fcrepo.oai.generator;
 
 import java.util.Arrays;
 import java.util.List;
-import javax.jcr.Node;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.ws.rs.core.UriInfo;
+
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.fcrepo.kernel.api.models.Container;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
+import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
 import org.purl.dc.elements._1.ObjectFactory;
 import org.purl.dc.elements._1.SimpleLiteral;
@@ -49,19 +49,23 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         new org.openarchives.oai._2_0.oai_dc.ObjectFactory();
     private static final String uofa = "University of Alberta";
 
+    private ValueConverter valueConverter = null;
+
     /**
      * Generate dC.
      *
-     * @param session the session
      * @param obj the obj
      * @param name name
-     * @param uriInfo the uri info
+     * @param valueConverter convert triple object values to string literals
      * @return the jAXB element
      * @throws RepositoryException if repository exception occurred
      * @throws IllegalStateException illegal state exception
      */
-    public JAXBElement<OaiDcType> generate(final Session session, final Container obj, final String name,
-        final UriInfo uriInfo) throws RepositoryException, IllegalStateException {
+    public JAXBElement<OaiDcType> generate(
+        final Container obj, final String name, final ValueConverter valueConverter
+        ) throws RepositoryException, IllegalStateException {
+
+        this.valueConverter = valueConverter;
 
         final OaiDcType oaidc = oaiDcFactory.createOaiDcType();
         Value[] values;
@@ -249,7 +253,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(v.getString());
+                simple.getContent().add(valueConverter.convert(v).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createFormat(simple));
             }
         }
@@ -267,9 +271,10 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
     private void addRights(final OaiDcType oaidc, final Property prop)
         throws ValueFormatException, IllegalStateException, RepositoryException {
         for (final Value v : prop.getValues()) {
-            if (StringUtils.isNotEmpty(v.getString()) && !v.getString().equals(LICENSE_PROMPT)) {
+            final String tmp = valueConverter.convert(v).asLiteral().getString();
+            if (StringUtils.isNotEmpty(tmp) && !tmp.equals(LICENSE_PROMPT)) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(v.getString());
+                simple.getContent().add(tmp);
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRights(simple));
             }
         }
@@ -289,7 +294,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(v.getString());
+                simple.getContent().add(valueConverter.convert(v).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSource(simple));
             }
         }
@@ -309,7 +314,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(v.getString());
+                simple.getContent().add(valueConverter.convert(v).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createRelation(simple));
             }
         }
@@ -329,7 +334,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(v.getString());
+                simple.getContent().add(valueConverter.convert(v).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createLanguage(simple));
             }
         }
@@ -348,7 +353,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(v.getString());
+                simple.getContent().add(valueConverter.convert(v).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
             }
         }
@@ -369,7 +374,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(formatUalidDoi(v.getString()));
+                simple.getContent().add(formatUalidDoi(valueConverter.convert(v).asLiteral().getString()));
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
             }
         }
@@ -389,7 +394,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(v.getString());
+                simple.getContent().add(valueConverter.convert(v).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createTitle(simple));
             }
         }
@@ -410,7 +415,8 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(prefix == null ? v.getString() : prefix + v.getString());
+                final String tmp = valueConverter.convert(v).asLiteral().getString();
+                simple.getContent().add(prefix == null ? tmp : prefix + tmp);
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
             }
         }
@@ -443,7 +449,8 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             final Value lastValue = (len > 0) ? vals[len - 1] : null;
             if (StringUtils.isNotEmpty(lastValue.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(prefix == null ? lastValue.getString() : prefix + lastValue.getString());
+                final String tmp = valueConverter.convert(lastValue).asLiteral().getString();
+                simple.getContent().add(prefix == null ? tmp : prefix + tmp);
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDescription(simple));
             }
         }
@@ -463,7 +470,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(v.getString());
+                simple.getContent().add(valueConverter.convert(v).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createSubject(simple));
             }
         }
@@ -483,7 +490,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(v.getString());
+                simple.getContent().add(valueConverter.convert(v).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createContributor(simple));
             }
         }
@@ -503,7 +510,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(values[i].getString());
+                simple.getContent().add(valueConverter.convert(values[i]).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createDate(simple));
             }
         }
@@ -523,7 +530,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(values[i].getString());
+                simple.getContent().add(valueConverter.convert(values[i]).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createCreator(simple));
             }
         }
@@ -567,7 +574,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
                 final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(values[i].getString());
+                simple.getContent().add(valueConverter.convert(values[i]).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
             }
         }

@@ -25,15 +25,12 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.jcr.Node;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-
-import javax.ws.rs.core.UriInfo;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeFactory;
@@ -45,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.fcrepo.kernel.api.models.Container;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
+import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,21 +101,25 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
     private String htmlUrlFormat;
 
+    private ValueConverter valueConverter = null;
+
+
     /**
      * The generate method.
      *
-     * @param session session
      * @param obj container object
      * @param name Name of the object (id)
-     * @param uriInfo uri of the object
+     * @param valueConverter convert triple object values to string literals
      * @param identifier object identifier
      *
      * @return JAXB element containing the metadata
      * @throws RepositoryException general repository exception
      */
-    public JAXBElement<EntryType> generate
-        (final Session session, final Container obj, final String name, final UriInfo uriInfo, final String identifier)
+    public JAXBElement<EntryType> generate(
+        final Container obj, final String name, final ValueConverter valueConverter, final String identifier)
         throws RepositoryException {
+
+        this.valueConverter = valueConverter;
 
         final EntryType entry = oreFactory.createEntryType();
 
@@ -179,7 +181,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addIdentifier(final EntryType et, final Property prop)
         throws ValueFormatException, IllegalStateException, RepositoryException {
         for (final Value v : prop.getValues()) {
-            addIdentifier(et, v.getString());
+            addIdentifier(et, valueConverter.convert(v).asLiteral().getString());
         }
     }
 
@@ -195,7 +197,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     private void addUalidDoiIdentifier(final EntryType et, final Property prop)
         throws ValueFormatException, IllegalStateException, RepositoryException {
         for (final Value v : prop.getValues()) {
-            addIdentifier(et, formatUalidDoi(v.getString()));
+            addIdentifier(et, formatUalidDoi(valueConverter.convert(v).asLiteral().getString()));
         }
     }
 
@@ -215,7 +217,12 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             for (final Value v : prop.getValues()) {
                 if (StringUtils.isNotEmpty(v.getString())) {
                     final LinkType link = oreFactory.createLinkType();
-                    link.setHref(String.format(pdfUrlFormat, name, URLEncoder.encode(v.getString(), "UTF-8")));
+                    link.setHref(String.format(
+                          pdfUrlFormat, name,
+                          URLEncoder.encode(
+                            valueConverter.convert(v).asLiteral().getString()
+                            , "UTF-8")
+                          ));
                     link.setRel("alternate");
                     et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(link));
                 }
@@ -259,7 +266,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             for (final Value v : prop.getValues()) {
                 if (StringUtils.isNotEmpty(v.getString())) {
                     // LAC unique identifier
-                    final String[] h = slashPattern.split(v.getString());
+                    final String[] h = slashPattern.split(valueConverter.convert(v).asLiteral().getString());
                     // add 2000 if it is thesisdeposit handle
                     final String tmp = String.format(lacIdFormat,
                         h[4].indexOf("era.") < 0
@@ -289,7 +296,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final TextType title = oreFactory.createTextType();
-                title.getContent().add(v.getString());
+                title.getContent().add(valueConverter.convert(v).asLiteral().getString());
                 et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeTitle(title));
             }
         }
@@ -309,7 +316,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
-                final JAXBElement<String> authorName = oreFactory.createPersonTypeName(v.getString());
+                final JAXBElement<String> authorName
+                    = oreFactory.createPersonTypeName(valueConverter.convert(v).asLiteral().getString());
                 final PersonType author = oreFactory.createPersonType();
                 author.getNameOrUriOrEmail().add(authorName);
                 et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeAuthor(author));
@@ -331,7 +339,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
-                final JAXBElement<String> authorName = oreFactory.createPersonTypeName(v.getString());
+                final JAXBElement<String> authorName
+                  = oreFactory.createPersonTypeName(valueConverter.convert(v).asLiteral().getString());
                 final PersonType author = oreFactory.createPersonType();
                 author.getNameOrUriOrEmail().add(authorName);
                 et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeContributor(author));
@@ -387,7 +396,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 final Value lastValue = (len > 0) ? values[len - 1] : null;
                 if (lastValue != null && StringUtils.isNotEmpty(lastValue.getString())) {
                     final IdType id = oreFactory.createIdType();
-                    id.setValue(formatUalidDoi(lastValue.getString()));
+                    id.setValue(formatUalidDoi(valueConverter.convert(lastValue).asLiteral().getString()));
                     source.getContent().add(oreFactory.createSourceTypeId(id));
                 }
             }
@@ -539,7 +548,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
                 final CategoryType category = oreFactory.createCategoryType();
-                final String tmp = XmlEscapers.xmlAttributeEscaper().escape(v.getString());
+                final String tmp
+                  = XmlEscapers.xmlAttributeEscaper().escape(valueConverter.convert(v).asLiteral().getString());
                 category.setTerm(tmp);
                 category.setLabel(tmp);
                 category.setScheme("http://purl.org/ontology/bibo/");
@@ -573,12 +583,12 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             try {
                 final XMLGregorianCalendar xgc
                         = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
-                addModifiedDate(v.getString(), et);
+                addModifiedDate(valueConverter.convert(v).asLiteral().getString(), et);
             } catch (Exception e) {
                 // disregard malformed dates
                 log.warn("Invalid date on object: " + name + " - value: " + v.getString());
                 // kludge to fix date in format of "[1999]", "c1999", or "[1999?]"
-                final String modDate = v.getString().replaceAll("[^\\d.]", "");
+                final String modDate = valueConverter.convert(v).asLiteral().getString().replaceAll("[^\\d.]", "");
                 addModifiedDate(modDate, et);
                 // throw new ValueFormatException();
             }
@@ -945,7 +955,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      *
      * @param obj Container
      *
-     * @return Value array or null if none found
+     * @return Value array or empty array if none found
      * @throws ValueFormatException value format exception
      * @throws RepositoryException general repository exception
      */
@@ -964,7 +974,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             values = obj.hasProperty("dcterms:dateAccepted")
                     ? node.getProperty("dcterms:dateAccepted").getValues() : null;
         } else {
-            values = obj.hasProperty("dcterms:created") ? node.getProperty("dcterms:created").getValues() : null;
+            values = obj.hasProperty("dcterms:created")
+              ? node.getProperty("dcterms:created").getValues() : new Value[0];
         }
 
         return values;
@@ -986,6 +997,23 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final int len = java.lang.Math.toIntExact(vals.length);
         final Value val = (len > 0) ? vals[len - 1] : null;
         return val;
+    }
+
+    /**
+     * convert JCR property to an XML escaped String
+     * 
+     * @param prop A JCR property (literal plus datatype
+     * 
+     * @return string XML escaped
+     **/
+    private final String jcrPropertyToXMLString(final Property prop)
+        throws RepositoryException {
+
+        String ret = "";
+        if (!prop.isMultiple()) {
+            ret = "";
+        }
+        return ret;
     }
 
     /**

@@ -21,20 +21,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.jcr.Node;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.fcrepo.kernel.api.models.Container;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
+import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
 import org.ndltd.standards.metadata.etdms._1.AuthorityType;
 import org.ndltd.standards.metadata.etdms._1.ControlledTextType;
 import org.ndltd.standards.metadata.etdms._1.FreeTextType;
@@ -60,18 +59,22 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
 
     private String pdfUrlFormat;
 
+    private ValueConverter valueConverter = null;
+
     /**
      * The generate method.
      *
-     * @param session repository session object
      * @param obj object container
      * @param name name
-     * @param uriInfo uri of the object
+     * @param valueConverter convert triple object values to string literals
      * @return a JaxB Thesis root object
      * @throws RepositoryException general repository exception
      */
-    public Thesis generate(final Session session, final Container obj, final String name, final UriInfo uriInfo)
+    public Thesis generate(
+        final Container obj, final String name, final ValueConverter valueConverter)
         throws RepositoryException {
+
+        this.valueConverter = valueConverter;
 
         String handle = null;
         final Node node = getJcrNode(obj);
@@ -166,7 +169,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
 
             case "dcterms:dateAccepted":
                 for (final Value v : prop.getValues()) {
-                    thesis.setDate(StringUtils.isEmpty(v.getString()) ? null : v.getString());
+                    addDate(v, thesis);
                 }
                 break;
 
@@ -203,14 +206,15 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
             case "prism:doi":
                 for (final Value v : prop.getValues()) {
                     addString(v, thesis.getIdentifier());
-                    addString(formatUalidDoi(v.getString()), thesis.getIdentifier());
+                    addUalid(v, thesis.getIdentifier());
                 }
                 break;
 
             case "ual:fedora3Handle":
                 for (final Value v : prop.getValues()) {
                     addString(v, thesis.getIdentifier());
-                    handle = StringUtils.isEmpty(v.getString()) ? null : v.getString();
+                    handle = StringUtils.isEmpty(v.getString())
+                      ? null : valueConverter.convert(v).asLiteral().getString();
                 }
                 break;
 
@@ -284,6 +288,21 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         return thesis;
     }
 
+    /**
+     * Add the thesis date
+     *
+     *
+     * @param thesis
+     * @param prop
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addDate(final Value v, final Thesis thesis)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        thesis.setDate(StringUtils.isEmpty(v.getString()) ? null : valueConverter.convert(v).asLiteral().getString());
+    }
+
 
   /**
      * The addDescription method for long descriptions.
@@ -327,8 +346,9 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
     private void addDescription(final Value v, final List<Description> description, final String prefix)
         throws ValueFormatException, IllegalStateException, RepositoryException {
         if (StringUtils.isNotEmpty(v.getString())) {
+            final String tmp = valueConverter.convert(v).asLiteral().getString();
             final Description desc = etdmsFactory.createThesisDescription();
-            desc.setValue(prefix == null ? v.getString() : prefix + v.getString());
+            desc.setValue(prefix == null ? tmp : prefix + tmp);
             description.add(desc);
         }
     }
@@ -346,7 +366,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
         if (StringUtils.isNotEmpty(v.getString())) {
             final ControlledTextType text = etdmsFactory.createControlledTextType();
-            text.setValue(v.getString());
+            text.setValue(valueConverter.convert(v).asLiteral().getString());
             subject.add(text);
         }
     }
@@ -363,9 +383,26 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
     private void addString(final Value v, final List<String> level)
         throws ValueFormatException, IllegalStateException, RepositoryException {
         if (StringUtils.isNotEmpty(v.getString())) {
-            level.add(v.getString());
+            level.add(valueConverter.convert(v).asLiteral().getString());
         }
     }
+
+    /**
+     * The addString method.
+     *
+     * @param v
+     * @param level
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addUalid(final Value v, final List<String> level)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        if (StringUtils.isNotEmpty(v.getString())) {
+            addString(formatUalidDoi(valueConverter.convert(v).asLiteral().getString()), level);
+        }
+    }
+
 
     /**
      * The addString method.
@@ -397,7 +434,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
         if (StringUtils.isNotEmpty(v.getString())) {
             final Contributor cont = new Thesis.Contributor();
-            cont.setValue(v.getString());
+            cont.setValue(valueConverter.convert(v).asLiteral().getString());
             if (role != null) {
                 cont.setRole(role);
             }
@@ -418,7 +455,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
         if (StringUtils.isNotEmpty(v.getString())) {
             final AuthorityType auth = etdmsFactory.createAuthorityType();
-            auth.setValue(v.getString());
+            auth.setValue(valueConverter.convert(v).asLiteral().getString());
             auths.add(auth);
         }
     }
@@ -436,7 +473,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
         if (StringUtils.isNotEmpty(v.getString())) {
             final FreeTextType text = etdmsFactory.createFreeTextType();
-            text.setValue(v.getString());
+            text.setValue(valueConverter.convert(v).asLiteral().getString());
             texts.add(text);
         }
     }

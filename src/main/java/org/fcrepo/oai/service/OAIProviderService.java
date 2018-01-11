@@ -554,21 +554,22 @@ public class OAIProviderService {
         }
     }
 
-    private JAXBElement<OaiDcType> generateOaiDc(final Session session, final Container obj, final String name,
-            final UriInfo uriInfo) throws RepositoryException {
-        return jcrOaiDcGenerator.generate(session, obj, name, uriInfo);
+    private JAXBElement<OaiDcType> generateOaiDc(
+            final Container obj, final String name, final ValueConverter valueConverter
+            ) throws RepositoryException {
+        return jcrOaiDcGenerator.generate(obj, name, valueConverter);
     }
 
-    private Thesis generateOaiEtdms(final Session session, final Container obj, final String name,
-            final UriInfo uriInfo) throws RepositoryException {
-        return jcrOaiEtdmsGenerator.generate(session, obj, name, uriInfo);
+    private Thesis generateOaiEtdms(
+            final Container obj, final String name, final ValueConverter valueConverter
+            ) throws RepositoryException {
+        return jcrOaiEtdmsGenerator.generate(obj, name, valueConverter);
     }
 
     private JAXBElement<org.w3._2005.atom.EntryType> generateOaiOre(
-            final Session session, final Container obj, final String name,
-            final UriInfo uriInfo, final String identifier)
+            final Container obj, final String name, final ValueConverter valueConverter, final String identifier)
             throws RepositoryException {
-        return jcrOaiOreGenerator.generate(session, obj, name, uriInfo, identifier);
+        return jcrOaiOreGenerator.generate(obj, name, valueConverter, identifier);
     }
 
     private JAXBElement<String> fetchOaiResponse(
@@ -1047,6 +1048,7 @@ public class OAIProviderService {
 
         final HttpResourceConverter converter
                 = new HttpResourceConverter(httpSession, uriInfo.getBaseUriBuilder().clone().path(FedoraNodes.class));
+        final ValueConverter valueConverter = new ValueConverter(session, converter);
         final HeaderType h = oaiFactory.createHeaderType();
 
         // using spring bean property, descriptiveContent.baseUrl
@@ -1067,13 +1069,13 @@ public class OAIProviderService {
         final MetadataType md = oaiFactory.createMetadataType();
         if (mdf.getPrefix().equals(METADATA_PREFIX_OAI_DC)) {
             /* generate a OAI DC reponse using the DC Generator from fcrepo4 */
-            md.setAny(generateOaiDc(session, obj, name, uriInfo));
+            md.setAny(generateOaiDc(obj, name, valueConverter));
         } else if (mdf.getPrefix().equals(METADATA_PREFIX_OAI_ETDMS)) {
             /* generate a OAI ETDMS reponse using the DC Generator from fcrepo4 */
-            md.setAny(generateOaiEtdms(session, obj, name, uriInfo));
+            md.setAny(generateOaiEtdms(obj, name, valueConverter));
         } else if (mdf.getPrefix().equals(METADATA_PREFIX_ORE)) {
             /* generate a OAI ORE reponse using the DC Generator from fcrepo4 */
-            md.setAny(generateOaiOre(session, obj, name, uriInfo, h.getIdentifier()));
+            md.setAny(generateOaiOre(obj, name, valueConverter, h.getIdentifier()));
         } else {
             /* generate a OAI response from the linked Binary */
             md.setAny(fetchOaiResponse(obj, fedoraSession, httpSession, mdf, uriInfo));
@@ -1140,7 +1142,7 @@ public class OAIProviderService {
             jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST('"
                     + dt.toString(dateFormatMillis) + "' AS DATE)");
         }
-
+/*
         // limit returned hasModel properties
         if (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE)) {
             // metadata prefix etdms and ore for thesis only
@@ -1154,7 +1156,7 @@ public class OAIProviderService {
                 .append(" res.[" + propHasModel + "] = '").append(modelIRItem).append("'")
                 .append(") ");
         }
-
+*/
         // set constraint
         if (StringUtils.isNotBlank(set)) {
             jql.append(" AND");
