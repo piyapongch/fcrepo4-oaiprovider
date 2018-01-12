@@ -588,7 +588,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 // disregard malformed dates
                 log.warn("Invalid date on object: " + name + " - value: " + v.getString());
                 // kludge to fix date in format of "[1999]", "c1999", or "[1999?]"
-                final String modDate = valueConverter.convert(v).asLiteral().getString().replaceAll("[^\\d.]", "");
+                final String modDate = valueConverter.convert(v).asLiteral().getString().replaceAll("[^\\d. +:-]", "");
                 addModifiedDate(modDate, et);
                 // throw new ValueFormatException();
             }
@@ -648,26 +648,23 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final LinkType linkFile = oreFactory.createLinkType();
             String fileStr = null;
             if (obj.hasProperty("model:downloadFilename")) {
-                fileStr = findLastPropertyValue(node.getProperty("model:downloadFilename")).getString();
+                fileStr = jcrPropertyValueToXMLString(node.getProperty("model:downloadFilename"));
                 final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
                 linkFile.setHref(hrefStr);
             }
             if (obj.hasProperty("premis:hasOriginalName")) {
                 linkFile.setTitle(
-                        XmlEscapers.xmlAttributeEscaper().escape(
-                                findLastPropertyValue(node.getProperty("premis:hasOriginalName")).getString()
-                        )
-                );
+                    jcrPropertyValueToXMLString(node.getProperty("premis:hasOriginalName")));
             } else if (fileStr != null) {
-                linkFile.setTitle(XmlEscapers.xmlAttributeEscaper().escape(fileStr));
+                linkFile.setTitle(fileStr);
             }
             if (obj.hasProperty("premis:hasSize")) {
                 final BigInteger len
-                        = new BigInteger(findLastPropertyValue(node.getProperty("dcterms:title")).getString());
+                        = new BigInteger(jcrPropertyValueToXMLString(node.getProperty("premis:hasSize")));
                 linkFile.setLength(len);
             }
             if (obj.hasProperty("fedora:mimeType")) {
-                linkFile.setType(findLastPropertyValue(node.getProperty("dcterms:title")).getString());
+                linkFile.setType(jcrPropertyValueToXMLString(node.getProperty("dcterms:title")));
             }
             linkFile.setRel("http://www.openarchives.org/ore/terms/aggregates");
             et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(linkFile));
@@ -677,7 +674,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             linkHtml.setRel("http://www.openarchives.org/ore/terms/aggregates");
             linkHtml.setType("text/html");
             if (obj.hasProperty("dcterms:title")) {
-                final String titleStr = findLastPropertyValue(node.getProperty("dcterms:title")).getString();
+                final String titleStr = jcrPropertyValueToXMLString(node.getProperty("dcterms:title"));
                 linkHtml.setTitle(XmlEscapers.xmlAttributeEscaper().escape(titleStr));
             }
             linkHtml.setHref(String.format(htmlUrlFormat, URLEncoder.encode(name, "UTF-8")));
@@ -687,7 +684,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final LinkType linkOai = oreFactory.createLinkType();
             linkOai.setRel("http://www.openarchives.org/ore/terms/aggregates");
             if (obj.hasProperty("dcterms:title")) {
-                final String titleStr = findLastPropertyValue(node.getProperty("dcterms:title")).getString();
+                final String titleStr = jcrPropertyValueToXMLString(node.getProperty("dcterms:title"));
                 linkOai.setTitle(XmlEscapers.xmlAttributeEscaper().escape(titleStr));
             }
             linkOai.setHref(oaiHref);
@@ -768,30 +765,22 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         description.setType(rdfType);
         if (obj.hasProperty("dcterms:modified")) {
             try {
-                final String modifiedDate =
-                        findLastPropertyValue(node.getProperty("dcterms:modified")).getString();
-                // Todo: is there a better way?
-                // dcterms:modified is a String in the form
-                // "YYYY-MM-DDTHH:MM:SS:xxxZ ^^http://www.w3.org/2001/XMLSchema#dateTime"
-                if (StringUtils.isNotEmpty(modifiedDate)) {
-                    final String trimmedDate =
-                            modifiedDate.replaceAll(".{4,4}http://www.w3.org/2001/XMLSchema#dateTime", "");
-                    final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(trimmedDate);
-                    description.setModified(xgc);
-                }
+                final String modifiedDate = jcrPropertyValueToXMLString(node.getProperty("dcterms:modified"));
+                final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(modifiedDate);
+                description.setModified(xgc);
             } catch (Exception e) {
                 throw new ValueFormatException(e);
             }
         }
 
         if (obj.hasProperty("dc:rights")) {
-            description.setRights(findLastPropertyValue(node.getProperty("dc:rights")).getString());
+            description.setRights(jcrPropertyValueToXMLString(node.getProperty("dc:rights")));
         }
         if (obj.hasProperty("dcterms:license")) {
-            description.setLicense(findLastPropertyValue(node.getProperty("dcterms:license")).getString());
+            description.setLicense(jcrPropertyValueToXMLString(node.getProperty("dcterms:license")));
         }
         if (obj.hasProperty("dcterms:isVersionOf")) {
-            description.setIsVersionOf(findLastPropertyValue(node.getProperty("dcterms:isVersionOf")).getString());
+            description.setIsVersionOf(jcrPropertyValueToXMLString(node.getProperty("dcterms:isVersionOf")));
         }
 
         triples.getDescription().add(description);
@@ -822,7 +811,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final Description description = oreRdfFactory.createDescription();
 
             if (obj.hasProperty("model:downloadFilename")) {
-                final String fileStr = findLastPropertyValue(node.getProperty("model:downloadFilename")).getString();
+                final String fileStr = jcrPropertyValueToXMLString(node.getProperty("model:downloadFilename"));
                 final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
                 description.setAbout(hrefStr);
             }
@@ -1004,16 +993,23 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * 
      * @param prop A JCR property (literal plus datatype
      * 
-     * @return string XML escaped
+     * @return string XML escaped or empty string
      **/
-    private final String jcrPropertyToXMLString(final Property prop)
+    private final String jcrPropertyValueToXMLString(final Property prop)
         throws RepositoryException {
 
         String ret = "";
         if (!prop.isMultiple()) {
-            ret = "";
+            final Value tmp = prop.getValue();
+            ret = valueConverter.convert(tmp).asLiteral().getString();
+        } else {
+            // find last property value
+            final Value tmp = findLastPropertyValue(prop);
+            if (tmp != null) {
+              ret = valueConverter.convert(tmp).asLiteral().getString();
+            }
         }
-        return ret;
+        return XmlEscapers.xmlAttributeEscaper().escape(ret);
     }
 
     /**
