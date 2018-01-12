@@ -1369,11 +1369,13 @@ public class OAIProviderService {
             final StringBuilder jql = new StringBuilder();
             jql.append("SELECT res.[jcr:path] AS path ");
             jql.append(" FROM [fedora:Resource] AS res ");
-            jql.append(" WHERE res.[mode:localName] = '").append(noid).append("'");
+            jql.append(" WHERE ");
+
+            jql.append(" res.[mode:localName] = '").append(noid).append("'");
 
             // permission
             // public only
-            jql.append(" res.[dcterms:accessRights] = CAST('" + publicAccessRights + "' AS STRING)");
+            jql.append(" AND res.[dcterms:accessRights] = CAST('" + publicAccessRights + "' AS STRING)");
             // limit returned hasModel properties
             if (metadataPrefix != null
                 && (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE))
