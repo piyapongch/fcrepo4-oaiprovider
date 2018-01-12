@@ -917,20 +917,20 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
     /**
      * The isThesis method.
      *
-     * @param values type of object
-     *
-     * @return true if Thesis otherwise false or null
+     * @param node Object node
+     * @return true if thesis, false otherwise
      */
-    private boolean isThesis(final Value[] values) {
+    private boolean isThesis(final Node node) throws RepositoryException {
+        final Value[] values
+                = node.hasProperty("model:hasModel") ? node.getProperty("model:hasModel").getValues() : null;
         if (values != null) {
-
             // using stream api to find dcterms:type Thesis
             final List<Value> vl = Arrays.asList(values);
             return vl.stream().anyMatch(v -> {
 
                 // getString() throws exceptions need to catch them
                 try {
-                    return v.getString().equalsIgnoreCase("Thesis");
+                    return v.getString().equalsIgnoreCase(org.fcrepo.oai.service.OAIProviderService.modelIRThesis);
                 } catch (final Exception e) {
                     return false;
                 }
@@ -955,8 +955,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final Node node = getJcrNode(obj);
 
         // get date depending on dc:type
-        final Value[] dcType = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
-        final boolean isThesis = isThesis(dcType);
+        final boolean isThesis = isThesis(node);
 
         //  <!-- dcterms:created | dcterms:dateAccepted (thesis)  -->
         if (isThesis) {

@@ -208,7 +208,7 @@ public class OAIProviderService {
     private static final String modelIRItem
             = "IRItem\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string";
 
-    private static final String modelIRThesis
+    public static final String modelIRThesis
             = "IRThesis\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string";
 
     private static final String publicAccessRights
@@ -1142,7 +1142,7 @@ public class OAIProviderService {
             jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST('"
                     + dt.toString(dateFormatMillis) + "' AS DATE)");
         }
-/*
+
         // limit returned hasModel properties
         if (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE)) {
             // metadata prefix etdms and ore for thesis only
@@ -1156,7 +1156,7 @@ public class OAIProviderService {
                 .append(" res.[" + propHasModel + "] = '").append(modelIRItem).append("'")
                 .append(") ");
         }
-*/
+
         // set constraint
         if (StringUtils.isNotBlank(set)) {
             jql.append(" AND");
