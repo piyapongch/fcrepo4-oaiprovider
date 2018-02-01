@@ -17,7 +17,7 @@ package org.fcrepo.oai.generator;
 
 import static org.fcrepo.oai.generator.JcrOaiDcGenerator.LICENSE_PROMPT;
 
-import java.io.UnsupportedEncodingException;
+//import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -31,9 +31,13 @@ import javax.jcr.ValueFormatException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+
+import org.fcrepo.kernel.api.models.FedoraBinary;
+import org.fcrepo.http.commons.api.rdf.HttpResourceConverter;
 import org.fcrepo.kernel.api.models.Container;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
+
 import org.ndltd.standards.metadata.etdms._1.AuthorityType;
 import org.ndltd.standards.metadata.etdms._1.ControlledTextType;
 import org.ndltd.standards.metadata.etdms._1.FreeTextType;
@@ -42,6 +46,8 @@ import org.ndltd.standards.metadata.etdms._1.Thesis;
 import org.ndltd.standards.metadata.etdms._1.Thesis.Contributor;
 import org.ndltd.standards.metadata.etdms._1.Thesis.Degree;
 import org.ndltd.standards.metadata.etdms._1.Thesis.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The JcrOaiEtdmsGenerator class.
@@ -50,6 +56,8 @@ import org.ndltd.standards.metadata.etdms._1.Thesis.Description;
  * @version $Revision$ $Date$
  */
 public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
+
+    private static final Logger log = LoggerFactory.getLogger(JcrOaiEtdmsGenerator.class);
 
     private static final ObjectFactory etdmsFactory = new ObjectFactory();
 
@@ -67,11 +75,18 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      * @param obj object container
      * @param name name
      * @param valueConverter convert triple object values to string literals
+     * @param fileContainerList object containing the attached file information
+     * @param converter triple lookup value converter
      * @return a JaxB Thesis root object
      * @throws RepositoryException general repository exception
      */
     public Thesis generate(
-        final Container obj, final String name, final ValueConverter valueConverter)
+        final Container obj,
+            final String name,
+            final ValueConverter valueConverter,
+            final HttpResourceConverter converter,
+            final List<FedoraBinary> fileContainerList
+    )
         throws RepositoryException {
 
         this.valueConverter = valueConverter;
@@ -218,17 +233,6 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 }
                 break;
 
-            case "model:downloadFilename":
-                for (final Value v : prop.getValues()) {
-                    try {
-                        thesis.getIdentifier()
-                            .add(String.format(pdfUrlFormat, name, URLEncoder.encode(v.getString(), "UTF-8")));
-                    } catch (final UnsupportedEncodingException e) {
-                        throw new RepositoryException(e);
-                    }
-                }
-                break;
-
             case "dcterms:description":
                 addLongDescription(thesis, prop, null);
                 break;
@@ -280,10 +284,23 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
             }
         } catch (final Exception e) {
             // could not generate the identifier
+            log.error(e.toString());
         }
 
         // era identifier
         thesis.getIdentifier().add(String.format(eraIdFormat, name));
+
+        // download file
+        for (final FedoraBinary fileItem : fileContainerList) {
+            try {
+                thesis.getIdentifier().add(
+                        String.format(pdfUrlFormat, name, URLEncoder.encode(fileItem.getFilename()), "UTF-8")
+                        );
+            } catch (final Exception e) {
+                log.error(e.toString());
+                throw new RepositoryException(e);
+            }
+        }
 
         return thesis;
     }

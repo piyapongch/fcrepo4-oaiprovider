@@ -40,6 +40,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.fcrepo.http.commons.api.rdf.HttpResourceConverter;
+import org.fcrepo.kernel.api.models.FedoraBinary;
 import org.fcrepo.kernel.api.models.Container;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
@@ -111,13 +113,20 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param name Name of the object (id)
      * @param valueConverter convert triple object values to string literals
      * @param identifier object identifier
+     * @param fedoraBinaryList list of attached File resources to th current object
+     * @param resourceConverter converter
      *
      * @return JAXB element containing the metadata
      * @throws RepositoryException general repository exception
      */
     public JAXBElement<EntryType> generate(
-        final Container obj, final String name, final ValueConverter valueConverter, final String identifier)
-        throws RepositoryException {
+            final Container obj,
+            final String name,
+            final ValueConverter valueConverter,
+            final HttpResourceConverter resourceConverter,
+            final List<FedoraBinary> fedoraBinaryList,
+            final String identifier
+            ) throws RepositoryException {
 
         this.valueConverter = valueConverter;
 
@@ -144,10 +153,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             addAtomCategory(entry, obj, name);
 
             // <!-- Aggregated Resources -->
-            addAggregatedResources(entry, obj, name, oaiHref);
+            addAggregatedResources(entry, obj, name, oaiHref, fedoraBinaryList);
 
             // <!-- Additional properties pertaining to Aggregated Resources and Aggregation -->
-            addAtomTriples(entry, obj, name, identifier, htmlHref, oreHref, oaiHref, etdmsHref);
+            addAtomTriples(entry, obj, name, identifier, htmlHref,
+                    oreHref, oaiHref, etdmsHref, fedoraBinaryList);
         } catch (final UnsupportedEncodingException e) {
             throw new RepositoryException(e);
         }
@@ -635,39 +645,41 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @throws IllegalStateException
      * @throws ValueFormatException
      */
-    private void addAggregatedResources(final EntryType et, final Container obj, final String name,
-            final String oaiHref)
+    private void addAggregatedResources(
+            final EntryType et,
+            final Container obj,
+            final String name,
+            final String oaiHref,
+            final List<FedoraBinary> fedoraBinaryList
+            )
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
         final Node node = getJcrNode(obj);
 
         try {
             // <!-- Aggregated Resources -->
-            // <!-- info:fedora/fedora-system:def/model#downloadFilename |
-            // premis:hasOriginalName | fedora:mimetype | premis:hasSize -->
-            final LinkType linkFile = oreFactory.createLinkType();
-            String fileStr = null;
-            if (obj.hasProperty("model:downloadFilename")) {
-                fileStr = jcrPropertyValueToXMLString(node.getProperty("model:downloadFilename"));
-                final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
-                linkFile.setHref(hrefStr);
+            // Attached file information block
+            for (final FedoraBinary fileItem : fedoraBinaryList) {
+                // <!-- info:fedora/fedora-system:def/model#downloadFilename |
+                // premis:hasOriginalName | fedora:mimetype | premis:hasSize -->
+                final LinkType linkFile = oreFactory.createLinkType();
+                final String fileStr = fileItem.getFilename();
+
+                // use property: ebucore:filename
+                if (fileStr != null) {
+                    final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
+                    linkFile.setHref(hrefStr);
+                    // ToDo: is there a better property to use for "title"?
+                    // Previously, premis:hasOriginalName with fallback to educore:filename
+                    linkFile.setTitle(fileStr);
+                }
+                // use property: premis:hasSize
+                linkFile.setLength(BigInteger.valueOf(fileItem.getContentSize()));
+                // use property: ebucore:hasMimeType
+                linkFile.setType(fileItem.getMimeType());
+                linkFile.setRel("http://www.openarchives.org/ore/terms/aggregates");
+                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(linkFile));
             }
-            if (obj.hasProperty("premis:hasOriginalName")) {
-                linkFile.setTitle(
-                    jcrPropertyValueToXMLString(node.getProperty("premis:hasOriginalName")));
-            } else if (fileStr != null) {
-                linkFile.setTitle(fileStr);
-            }
-            if (obj.hasProperty("premis:hasSize")) {
-                final BigInteger len
-                        = new BigInteger(jcrPropertyValueToXMLString(node.getProperty("premis:hasSize")));
-                linkFile.setLength(len);
-            }
-            if (obj.hasProperty("fedora:mimeType")) {
-                linkFile.setType(jcrPropertyValueToXMLString(node.getProperty("dcterms:title")));
-            }
-            linkFile.setRel("http://www.openarchives.org/ore/terms/aggregates");
-            et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(linkFile));
 
             // add html
             final LinkType linkHtml = oreFactory.createLinkType();
@@ -707,14 +719,21 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param oreHref
      * @param oaiHref
      * @param etdmsHref
+     * @param fedoraBinaryList
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
      */
-    private void addAtomTriples(final EntryType et, final Container obj, final String name,
+    private void addAtomTriples(
+            final EntryType et,
+            final Container obj,
+            final String name,
             final String identifier,
-            final String htmlHref, final String oreHref, final String oaiHref,
-            final String etdmsHref
+            final String htmlHref,
+            final String oreHref,
+            final String oaiHref,
+            final String etdmsHref,
+            final List<FedoraBinary> fedoraBinaryList
             )
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
@@ -729,7 +748,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         // <!-- Properties pertaining to aggregation -->
         addTriplePropAgg(et, obj, oreRdfFactory, oreHref, triples);
         // <!-- Properties pertaining to the aggregated binary (can be repeated for multifile resources) -->
-        addTriplePropAggBinary(et, obj, oreRdfFactory, triples, name);
+        addTriplePropAggBinary(et, obj, oreRdfFactory, triples, name, fedoraBinaryList);
         // <!-- Properties pertaining to the aggregated resource splash page-->
         addTriplePropSplashPage(et, oreRdfFactory, htmlHref, triples);
         // <!-- asserts the relationship between the oai_pmh record and the ore record -->
@@ -795,25 +814,33 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param oreHref URL for the ORE
      * @param triples Object to create the ORE Triples section
      * @param name Name of the object (id)
+     * @param fedoraBinaryList list of files attached to item
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
      */
     private void addTriplePropAggBinary(
-        final EntryType et, final Container obj, final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
-        final Triples triples, final String name)
+            final EntryType et,
+            final Container obj,
+            final org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory oreRdfFactory,
+            final Triples triples,
+            final String name,
+            final List<FedoraBinary> fedoraBinaryList
+        )
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
         final Node node = getJcrNode(obj);
 
-
         try {
             final Description description = oreRdfFactory.createDescription();
 
-            if (obj.hasProperty("model:downloadFilename")) {
-                final String fileStr = jcrPropertyValueToXMLString(node.getProperty("model:downloadFilename"));
-                final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
-                description.setAbout(hrefStr);
+            // Attached file information block
+            for (final FedoraBinary fileItem : fedoraBinaryList) {
+                final String fileStr = fileItem.getFilename();
+                if (fileStr != null) {
+                    final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
+                    description.setAbout(hrefStr);
+                }
             }
 
             final Type rdfType = oreRdfFactory.createType();

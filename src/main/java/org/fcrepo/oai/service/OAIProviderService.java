@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -555,21 +556,35 @@ public class OAIProviderService {
     }
 
     private JAXBElement<OaiDcType> generateOaiDc(
-            final Container obj, final String name, final ValueConverter valueConverter
+            final Container obj,
+            final String name,
+            final ValueConverter valueConverter
             ) throws RepositoryException {
         return jcrOaiDcGenerator.generate(obj, name, valueConverter);
     }
 
     private Thesis generateOaiEtdms(
-            final Container obj, final String name, final ValueConverter valueConverter
+            final Container obj,
+            final String name,
+            final ValueConverter valueConverter,
+            final HttpResourceConverter resourceConverter,
+            final FedoraSession fedoraSession
             ) throws RepositoryException {
-        return jcrOaiEtdmsGenerator.generate(obj, name, valueConverter);
+        // retrieve the associated file container
+        final List<FedoraBinary> fileContainerList = getFileResources(obj, resourceConverter, fedoraSession);
+        return jcrOaiEtdmsGenerator.generate(obj, name, valueConverter, resourceConverter, fileContainerList);
     }
 
     private JAXBElement<org.w3._2005.atom.EntryType> generateOaiOre(
-            final Container obj, final String name, final ValueConverter valueConverter, final String identifier)
-            throws RepositoryException {
-        return jcrOaiOreGenerator.generate(obj, name, valueConverter, identifier);
+            final Container obj,
+            final String name,
+            final ValueConverter valueConverter,
+            final HttpResourceConverter resourceConverter,
+            final FedoraSession fedoraSession,
+            final String identifier
+            ) throws RepositoryException {
+        final List<FedoraBinary> fileContainerList = getFileResources(obj, resourceConverter, fedoraSession);
+        return jcrOaiOreGenerator.generate(obj, name, valueConverter, resourceConverter, fileContainerList, identifier);
     }
 
     private JAXBElement<String> fetchOaiResponse(
@@ -1040,8 +1055,10 @@ public class OAIProviderService {
         }
     }
 
-    private RecordType createRecord(final Session session, final MetadataFormat mdf, final String path,
-            final String name, final UriInfo uriInfo) throws IOException, RepositoryException {
+    private RecordType createRecord(
+            final Session session, final MetadataFormat mdf, final String path,
+            final String name, final UriInfo uriInfo)
+            throws IOException, RepositoryException {
 
         final FedoraSession fedoraSession = sessionFactory.getInternalSession();
         final HttpSession httpSession = new HttpSession(fedoraSession);
@@ -1072,10 +1089,10 @@ public class OAIProviderService {
             md.setAny(generateOaiDc(obj, name, valueConverter));
         } else if (mdf.getPrefix().equals(METADATA_PREFIX_OAI_ETDMS)) {
             /* generate a OAI ETDMS reponse using the DC Generator from fcrepo4 */
-            md.setAny(generateOaiEtdms(obj, name, valueConverter));
+            md.setAny(generateOaiEtdms(obj, name, valueConverter, converter, fedoraSession));
         } else if (mdf.getPrefix().equals(METADATA_PREFIX_ORE)) {
             /* generate a OAI ORE reponse using the DC Generator from fcrepo4 */
-            md.setAny(generateOaiOre(obj, name, valueConverter, h.getIdentifier()));
+            md.setAny(generateOaiOre(obj, name, valueConverter, converter, fedoraSession, h.getIdentifier()));
         } else {
             /* generate a OAI response from the linked Binary */
             md.setAny(fetchOaiResponse(obj, fedoraSession, httpSession, mdf, uriInfo));
@@ -1418,6 +1435,68 @@ public class OAIProviderService {
         final String noid = slashPattern.split(identifier)[1];
         return noid.matches("^[/\\pL\\pN:_-]+$") ? noid : null;
     }
+
+    /**
+     * Get the filename property from the PCDM model within Fcrepo
+     *
+     * @param obj the object container
+     * @param converter an HttpresoruceConverter
+     * @param fedoraSession current session object
+     *
+     * @return a list of container object representing files
+     */
+     public final List<FedoraBinary> getFileResources(
+             final Container obj, final HttpResourceConverter converter,
+             final FedoraSession fedoraSession
+     ) {
+
+         final List<FedoraBinary> fileObjList = new ArrayList<FedoraBinary>();
+
+        Stream<Triple> proxyTriples;
+        Stream<Triple> fileSetTriples;
+
+        final java.util.function.Predicate<Triple> hasMemberPredicate
+                = new PropertyPredicate("http://pcdm.org/models#hasMember");
+        final java.util.function.Predicate<Triple> hasFilePredicate
+                = new PropertyPredicate("http://pcdm.org/models#hasFile");
+
+        // lookup the dcdm:hasMember to get the FileSet proxy
+        proxyTriples = obj.getTriples(converter, RequiredRdfContext.LDP_MEMBERSHIP).filter(hasMemberPredicate);
+        final List<Triple> tripleList = proxyTriples.collect(toList());
+
+        for (Triple triple : tripleList) {
+            try {
+                // convert URI into a fcrepo path for JCR node query and lookup proxy
+                final String proxyPath = (new URI(triple.getObject().getURI())).toString();
+                // extract the path from the full uri
+                final Container proxyObj
+                        = containerService.find(
+                                fedoraSession,"/" + proxyPath.replace(converter.toDomain("").toString(),""));
+                // find the pcdm:hasFile predicate
+                fileSetTriples =
+                        proxyObj.getTriples(converter, RequiredRdfContext.LDP_MEMBERSHIP).filter(hasFilePredicate);
+                final List<Triple> hasFileList = fileSetTriples.collect(toList());
+
+                for ( Triple hasFileTriple : hasFileList) {
+                    // for each file, add object to list
+                    log.debug(hasFileTriple.toString());
+                    final String tmp = hasFileTriple.getObject().getURI();
+                    // extract the path from the full uri
+                    final String filePath = "/" + tmp.replace(converter.toDomain("").toString(),"");
+                    // treat as a FedoraBinary and find via binaryService otherwise missing FileSet properties
+                    // like ebucore:filename, premise:hasSize
+                    final FedoraBinary resource = binaryService.find(fedoraSession, filePath);
+                    if (resource != null ) {
+                        log.debug(resource.toString());
+                        fileObjList.add(resource);
+                    }
+                }
+            } catch (Exception e) {
+                log.error(e.toString());
+            }
+        }
+        return fileObjList;
+     }
 
     /**
      * Sets property has set spec.
