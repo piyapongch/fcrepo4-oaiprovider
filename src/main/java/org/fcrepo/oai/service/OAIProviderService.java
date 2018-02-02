@@ -353,7 +353,7 @@ public class OAIProviderService {
         final FedoraResource root = nodeService.find(fedoraSession, rootPath);
 
         final IdentifyType id = oaiFactory.createIdentifyType();
-        id.setEarliestDatestamp(dateFormat.print(root.getCreatedDate().getEpochSecond()));
+        id.setEarliestDatestamp(dateFormat.print(root.getCreatedDate().toEpochMilli()));
         id.setProtocolVersion("2.0");
 
         java.util.function.Predicate<Triple> predicate;
@@ -720,7 +720,7 @@ public class OAIProviderService {
                 h.setIdentifier(createId(converter.asString(sub)));
 
                 final Container obj = containerService.find(fedoraSession, path);
-                h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
+                h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().toEpochMilli()));
                 predicate = new PropertyPredicate(propertyHasCollectionId);
                 triples = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
                 final List<Triple> tl = triples.collect(toList());
@@ -1072,7 +1072,7 @@ public class OAIProviderService {
         h.setIdentifier(createId(path));
 
         final Container obj = containerService.find(fedoraSession, path);
-        h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().getEpochSecond()));
+        h.setDatestamp(dateFormat.print(obj.getLastModifiedDate().toEpochMilli()));
 
         // set setSpecs
         final java.util.function.Predicate<Triple> predicate
