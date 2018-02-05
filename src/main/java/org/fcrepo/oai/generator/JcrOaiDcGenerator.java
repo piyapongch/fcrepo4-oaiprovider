@@ -15,6 +15,7 @@
  */
 package org.fcrepo.oai.generator;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,9 +32,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.fcrepo.kernel.api.models.Container;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
+
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
 import org.purl.dc.elements._1.ObjectFactory;
 import org.purl.dc.elements._1.SimpleLiteral;
+
 
 /**
  * The type Jcr properties oai_dc generator.
@@ -62,7 +65,9 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      * @throws IllegalStateException illegal state exception
      */
     public JAXBElement<OaiDcType> generate(
-        final Container obj, final String name, final ValueConverter valueConverter
+            final Container obj,
+            final String name,
+            final ValueConverter valueConverter
         ) throws RepositoryException, IllegalStateException {
 
         this.valueConverter = valueConverter;
@@ -86,8 +91,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             if (values != null) {
                 addType(oaidc, values);
             } else {
-                values = obj.hasProperty("rdf:type") ? node.getProperty("rdf:type").getValues() : null;
-                addType(oaidc, values);
+                addThesisType(oaidc, obj);
             }
         } else {
             // non-thesis dc:creator
@@ -112,9 +116,9 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
         // If both institution and department are present
         if ((ddgs != null) && (depts != null)) {
-            pub.append(ddgs[0].getString() + ". ");
+            pub.append(valueConverter.convert(ddgs[0]).asLiteral().getString() + ". ");
             for (int i = 0; i < depts.length; i++) {
-                pub.append(i == 0 ? "" : "; ").append(depts[i].getString());
+                pub.append(i == 0 ? "" : "; ").append(valueConverter.convert(depts[i]).asLiteral().getString());
             }
             pub.append(depts.length == 1 ? "." : "");
 
@@ -122,13 +126,13 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         } else if ((ddgs == null) && (depts != null)) {
             pub.append(uofa);
             for (int i = 0; i < depts.length; i++) {
-                pub.append(i == 0 ? "; " : ", ").append(depts[i].getString());
+                pub.append(i == 0 ? "; " : ", ").append(valueConverter.convert(depts[i]).asLiteral().getString());
             }
             pub.append(depts.length == 1 ? "." : "");
 
             // Otherwise, print only institution (no punctuation)
         } else if (ddgs != null) {
-            pub.append(ddgs[0].getString());
+            pub.append(valueConverter.convert(ddgs[0]).asLiteral().getString());
         }
         pub.append(pub.toString().trim().length() == 0 ? uofa : "");
 
@@ -577,6 +581,20 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
                 simple.getContent().add(valueConverter.convert(values[i]).asLiteral().getString());
                 oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
             }
+        }
+    }
+
+    /** add the dc:type for a Thesis
+     *
+     * @param oaidc the output object
+     * @param obj a container object
+     *
+     */
+    private void addThesisType(final OaiDcType oaidc, final Container obj) {
+        for (URI v : obj.getTypes()) {
+            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+            simple.getContent().add(v.toString());
+            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
         }
     }
 }

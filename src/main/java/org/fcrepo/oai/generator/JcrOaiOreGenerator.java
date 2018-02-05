@@ -18,6 +18,7 @@ package org.fcrepo.oai.generator;
 import com.google.common.xml.XmlEscapers;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
 import java.time.ZoneOffset;
@@ -491,9 +492,6 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             if (obj.hasProperty("dcterms:identifier")) {
                 addIdentifier(entry, node.getProperty("dcterms:identifier"));
             }
-            if (obj.hasProperty("model:downloadFilename")) {
-                addFilenameIdentifier(entry, node.getProperty("model:downloadFilename"), name);
-            }
             if (obj.hasProperty("prism:doi")) {
                 addIdentifier(entry, node.getProperty("prism:doi"));
                 addUalidDoiIdentifier(entry, node.getProperty("prism:doi"));
@@ -529,13 +527,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             if (obj.hasProperty("dc:contributor")) {
                 addAtomContributor(entry, node.getProperty("dc:contributor"));
             }
-            // supervisor
-            //  if (obj.hasProperty("marcrel:ths")) {
-            //      addAtomContributor(entry, obj.getProperty("marcrel:ths"));
-            //  }
             // committee - assume include "marcrel:ths" value
-            if (obj.hasProperty("ual:commiteeMember")) {
-                addAtomContributor(entry, node.getProperty("ual:commiteeMember"));
+            if (obj.hasProperty("ual:committeeMember")) {
+                addAtomContributor(entry, node.getProperty("ual:committeeMember"));
+            }
+            // supervisor
+            if (obj.hasProperty("ual:supervisor")) {
+                addAtomContributor(entry, node.getProperty("ual:supervisor"));
             }
             // <!-- dcterms:title -->
             if (obj.hasProperty("dcterms:title")) {
@@ -547,25 +545,21 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The add Category method.
      *
      * @param et entryType class
-     * @param prop JCR object properties
+     * @param v JCR object properties value string
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
      */
-    private void addAtomCategory(final EntryType et, final Property prop)
-        throws ValueFormatException, IllegalStateException, RepositoryException {
-
-        for (final Value v : prop.getValues()) {
-            if (StringUtils.isNotEmpty(v.getString())) {
-                final CategoryType category = oreFactory.createCategoryType();
-                final String tmp
-                  = XmlEscapers.xmlAttributeEscaper().escape(valueConverter.convert(v).asLiteral().getString());
-                category.setTerm(tmp);
-                category.setLabel(tmp);
-                category.setScheme("http://purl.org/ontology/bibo/");
-                et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(category));
-            }
-        }
+    private void addAtomCategory(final EntryType et, final String v) {
+                if (StringUtils.isNotEmpty(v)) {
+                    final CategoryType category = oreFactory.createCategoryType();
+                    final String tmp
+                            = XmlEscapers.xmlAttributeEscaper().escape(v);
+                    category.setTerm(tmp);
+                    category.setLabel(tmp);
+                    category.setScheme("http://purl.org/ontology/bibo/");
+                    et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(category));
+                }
     }
 
     /**
@@ -617,8 +611,18 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         catFedora.setLabel("Fedora Resource");
         et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(catFedora));
         // <!-- dcterms:type -->
-        final Property prop = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type") : null;
-        addAtomCategory(et, prop);
+        if (isThesis(node)) {
+            for (URI type : obj.getTypes()) {
+                addAtomCategory(et, type.toString());
+            }
+        } else {
+            final Property prop = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type") : null;
+            if (prop != null) {
+                for (final Value val : prop.getValues()) {
+                    addAtomCategory(et, valueConverter.convert(val).asLiteral().getString());
+                }
+            }
+        }
     }
 
     /**
@@ -987,7 +991,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         //  <!-- dcterms:created | dcterms:dateAccepted (thesis)  -->
         if (isThesis) {
             values = obj.hasProperty("dcterms:dateAccepted")
-                    ? node.getProperty("dcterms:dateAccepted").getValues() : null;
+                    ? node.getProperty("dcterms:dateAccepted").getValues() : new Value[0];
         } else {
             values = obj.hasProperty("dcterms:created")
               ? node.getProperty("dcterms:created").getValues() : new Value[0];
@@ -1000,9 +1004,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * The find last value method.
      *
      * @param prop a property
-     * 
+     *
      * @return value property value
-     * 
+     *
      * @throws ValueFormatException value format exception
      * @throws RepositoryException general repository exception
      */
@@ -1016,9 +1020,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
     /**
      * convert JCR property to an XML escaped String
-     * 
+     *
      * @param prop A JCR property (literal plus datatype
-     * 
+     *
      * @return string XML escaped or empty string
      **/
     private final String jcrPropertyValueToXMLString(final Property prop)

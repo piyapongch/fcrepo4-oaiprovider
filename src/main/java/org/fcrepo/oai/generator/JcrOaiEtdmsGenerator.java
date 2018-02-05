@@ -15,6 +15,7 @@
  */
 package org.fcrepo.oai.generator;
 
+import java.net.URI;
 import static org.fcrepo.oai.generator.JcrOaiDcGenerator.LICENSE_PROMPT;
 
 //import java.io.UnsupportedEncodingException;
@@ -105,12 +106,6 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
             switch (prop.getName()) {
 
             case "dcterms:type":
-                for (final Value v : prop.getValues()) {
-                    addFreeTextType(v, thesis.getType());
-                }
-                break;
-
-            case "rdf:type":
                 for (final Value v : prop.getValues()) {
                     addFreeTextType(v, thesis.getType());
                 }
@@ -289,6 +284,9 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
 
         // era identifier
         thesis.getIdentifier().add(String.format(eraIdFormat, name));
+
+        // rdf:type
+        addThesisType(obj, thesis.getType());
 
         // download file
         for (final FedoraBinary fileItem : fileContainerList) {
@@ -492,6 +490,20 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
             final FreeTextType text = etdmsFactory.createFreeTextType();
             text.setValue(valueConverter.convert(v).asLiteral().getString());
             texts.add(text);
+        }
+    }
+
+    /** add the dc:type for a Thesis
+     *
+     * @param oaidc the output object
+     * @param obj a container object
+     *
+     */
+    private void addThesisType(final Container obj, final List<FreeTextType> freeTextTypes) {
+        for (URI v : obj.getTypes()) {
+            final FreeTextType freeTextType = etdmsFactory.createFreeTextType();
+            freeTextType.setValue(v.toString());
+            freeTextTypes.add(freeTextType);
         }
     }
 
