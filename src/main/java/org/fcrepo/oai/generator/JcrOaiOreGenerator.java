@@ -576,8 +576,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
         // <!-- Creation and Modification date/time of the Aggregation (rdf literals) -->
-        final Value[] values = returnDateValues(obj);
+        addAggregationDate(obj.getLastModifiedDate().toString(), "http://www.openarchives.org/ore/atom/modified", et);
 
+        final Value[] values = returnDateValues(obj);
         final Node node = getJcrNode(obj);
 
         // get last date
@@ -585,15 +586,19 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final Value v = (len > 0) ? values[len - 1] : null;
         if (v != null && StringUtils.isNotEmpty(v.getString())) {
             try {
+                // test if ISO date - if not handle in exception
                 final XMLGregorianCalendar xgc
                         = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
-                addModifiedDate(valueConverter.convert(v).asLiteral().getString(), et);
+                addAggregationDate(
+                        valueConverter.convert(v).asLiteral().getString(),
+                        "http://www.openarchives.org/ore/atom/modified",
+                        et);
             } catch (Exception e) {
                 // disregard malformed dates
                 log.warn("Invalid date on object: " + name + " - value: " + v.getString());
                 // kludge to fix date in format of "[1999]", "c1999", or "[1999?]"
                 final String modDate = valueConverter.convert(v).asLiteral().getString().replaceAll("[^\\d. +:-]", "");
-                addModifiedDate(modDate, et);
+                addAggregationDate(modDate, "http://www.openarchives.org/ore/atom/modified", et);
                 // throw new ValueFormatException();
             }
         }
@@ -629,12 +634,13 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * add modified date
      *
      * @param v String representation of a valid date
+     * @param schema ore aggregation schema to utilize
      * @param et And EntryType container object
      */
-    private void addModifiedDate(final String v, final EntryType et) {
+    private void addAggregationDate(final String v, final String schema, final EntryType et) {
         final CategoryType modified = oreFactory.createCategoryType();
         modified.setTerm(v);
-        modified.setScheme("http://www.openarchives.org/ore/atom/modified");
+        modified.setScheme(schema);
         et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeCategory(modified));
     }
 
