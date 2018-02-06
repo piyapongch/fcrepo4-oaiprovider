@@ -76,7 +76,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      * @param obj object container
      * @param name name
      * @param valueConverter convert triple object values to string literals
-     * @param fileContainerList object containing the attached file information
+     * @param fileBinaryList object containing the attached file information
      * @param converter triple lookup value converter
      * @return a JaxB Thesis root object
      * @throws RepositoryException general repository exception
@@ -86,7 +86,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
             final String name,
             final ValueConverter valueConverter,
             final HttpResourceConverter converter,
-            final List<FedoraBinary> fileContainerList
+            final List<FedoraBinary> fileBinaryList
     )
         throws RepositoryException {
 
@@ -289,7 +289,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         addThesisType(obj, thesis.getType());
 
         // download file
-        for (final FedoraBinary fileItem : fileContainerList) {
+        for (final FedoraBinary fileItem : fileBinaryList) {
             try {
                 thesis.getIdentifier().add(
                         String.format(pdfUrlFormat, name, URLEncoder.encode(fileItem.getFilename()), "UTF-8")

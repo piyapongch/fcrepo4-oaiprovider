@@ -836,23 +836,23 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final Node node = getJcrNode(obj);
 
         try {
-            final Description description = oreRdfFactory.createDescription();
-
             // Attached file information block
             for (final FedoraBinary fileItem : fedoraBinaryList) {
+                final Description description = oreRdfFactory.createDescription();
                 final String fileStr = fileItem.getFilename();
                 if (fileStr != null) {
                     final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
                     description.setAbout(hrefStr);
                 }
+                final Type rdfType = oreRdfFactory.createType();
+                rdfType.setResource("http://fedora.info/definitions/v4/repository#Binary");
+                description.setType(rdfType);
+                description.setDescription("ORIGINAL");
+
+                triples.getDescription().add(description);
             }
 
-            final Type rdfType = oreRdfFactory.createType();
-            rdfType.setResource("http://fedora.info/definitions/v4/repository#Binary");
-            description.setType(rdfType);
-            description.setDescription("ORIGINAL");
 
-            triples.getDescription().add(description);
         } catch (final UnsupportedEncodingException e) {
             throw new ValueFormatException(e);
         }

@@ -1443,7 +1443,7 @@ public class OAIProviderService {
      * @param converter an HttpresoruceConverter
      * @param fedoraSession current session object
      *
-     * @return a list of container object representing files
+     * @return a list of container object representing "Original files": http://pcdm.org/use#OriginalFile
      */
      public final List<FedoraBinary> getFileResources(
              final Container obj, final HttpResourceConverter converter,
@@ -1485,10 +1485,12 @@ public class OAIProviderService {
                     final String filePath = "/" + tmp.replace(converter.toDomain("").toString(),"");
                     // treat as a FedoraBinary and find via binaryService otherwise missing FileSet properties
                     // like ebucore:filename, premise:hasSize
-                    final FedoraBinary resource = binaryService.find(fedoraSession, filePath);
-                    if (resource != null ) {
-                        log.debug(resource.toString());
-                        fileObjList.add(resource);
+                    final FedoraBinary fedoraBinaryObject = binaryService.find(fedoraSession, filePath);
+                    if (fedoraBinaryObject != null ) {
+                        log.debug(fedoraBinaryObject.toString());
+                        if (fedoraBinaryObject.getTypes().contains(new URI("http://pcdm.org/use#OriginalFile"))) {
+                            fileObjList.add(fedoraBinaryObject);
+                        }
                     }
                 }
             } catch (Exception e) {
