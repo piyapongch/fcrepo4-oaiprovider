@@ -116,7 +116,9 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
         // If both institution and department are present
         if ((ddgs != null) && (depts != null)) {
-            pub.append(valueConverter.convert(ddgs[0]).asLiteral().getString() + ". ");
+            final String tmp = valueConverter.convert(ddgs[0]).asLiteral().getString();
+            final String humanDdgs = (institutionMap.containsKey(tmp)) ? institutionMap.get(tmp) : tmp;
+            pub.append(humanDdgs + ". ");
             for (int i = 0; i < depts.length; i++) {
                 pub.append(i == 0 ? "" : "; ").append(valueConverter.convert(depts[i]).asLiteral().getString());
             }
@@ -132,7 +134,9 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
             // Otherwise, print only institution (no punctuation)
         } else if (ddgs != null) {
-            pub.append(valueConverter.convert(ddgs[0]).asLiteral().getString());
+            final String tmp = valueConverter.convert(ddgs[0]).asLiteral().getString();
+            final String humanDdgs = (institutionMap.containsKey(tmp)) ? institutionMap.get(tmp) : tmp;
+            pub.append(humanDdgs);
         }
         pub.append(pub.toString().trim().length() == 0 ? uofa : "");
 

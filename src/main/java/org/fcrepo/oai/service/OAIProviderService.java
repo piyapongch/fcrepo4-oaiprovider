@@ -1399,7 +1399,7 @@ public class OAIProviderService {
                 ) {
                 // metadata prefix etdms and ore for thesis only
                 jql.append(" AND")
-                    .append(" res.[model:hasModel] = '").append(modelIRItem).append("'");
+                    .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'");
             } else {
                 // include both thesis and generic items
                 jql.append(" AND (")

@@ -6,6 +6,7 @@
 
 package org.fcrepo.oai.generator;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,8 @@ public class JcrOaiGenerator {
 
     protected String eraIdFormat;
     protected String doiFullUriFormat;
+    protected Map<String, String> institutionMap;
+
 
     /**
      * The setEraIdFormat setter method.
@@ -70,5 +73,15 @@ public class JcrOaiGenerator {
         }
         return ret;
     }
+
+    /**
+     * The setNamespaces setter method.
+     *
+     * @param controlledVocabularyInstitutionMap the institution map to convert URIs to human readable strings.
+     */
+    public void setControlledVocabularyInstitutionMap(final Map<String, String> controlledVocabularyInstitutionMap) {
+        this.institutionMap = controlledVocabularyInstitutionMap;
+    }
+
 
 }

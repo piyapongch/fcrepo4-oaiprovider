@@ -11,6 +11,12 @@
     <bean name="jcrOaiGenerator" class="org.fcrepo.oai.generator.JcrOaiGenerator">
         <property name="eraIdFormat" value="https://era.library.ualberta.ca/items/%1$s" />
         <property name="doiFullUriFormat" value="https://doi.org/%1$s" />
+        <property name="controlledVocabularyInstitutionMap">
+          <map>
+            <entry key="http://id.loc.gov/authorities/names/n79058482" value="University of Alberta" />
+            <entry key="http://id.loc.gov/authorities/names/n2009054054" value="St. Stephen&apos;s College" />
+          </map>
+        </property>
     </bean>
 
     <bean name="jcrOaiDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator" parent="jcrOaiGenerator">

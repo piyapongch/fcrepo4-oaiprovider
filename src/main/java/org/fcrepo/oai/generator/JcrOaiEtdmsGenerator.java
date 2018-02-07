@@ -143,7 +143,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
 
             case "swrc:institution":
                 for (final Value v : prop.getValues()) {
-                    addAuthorityType(v, degree.getGrantor());
+                    addInstitutionType(v, degree.getGrantor());
                 }
                 break;
 
@@ -476,6 +476,27 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         if (StringUtils.isNotEmpty(v.getString())) {
             final AuthorityType auth = etdmsFactory.createAuthorityType();
             auth.setValue(valueConverter.convert(v).asLiteral().getString());
+            auths.add(auth);
+        }
+    }
+
+    /**
+     * The addAuthorityType method.
+     *
+     * @param v
+     * @param auths
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addInstitutionType(final Value v, final List<AuthorityType> auths)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        if (StringUtils.isNotEmpty(v.getString())) {
+            // use map to convert to human readable string
+            final String tmp = valueConverter.convert(v).asLiteral().getString();
+            final String humanStr = (institutionMap.containsKey(tmp)) ? institutionMap.get(tmp) : tmp;
+            final AuthorityType auth = etdmsFactory.createAuthorityType();
+            auth.setValue(humanStr);
             auths.add(auth);
         }
     }
