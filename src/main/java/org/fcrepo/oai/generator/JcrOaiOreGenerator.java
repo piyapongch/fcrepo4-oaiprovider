@@ -142,7 +142,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final String oreRef  = String.format(oreUrlFormat, URLEncoder.encode(identifier, "UTF-8"));
 
             // <!-- Atom Specific; No ORE Semantics -->
-            addAtomIdentifiers(entry, obj, name);
+            addAtomIdentifiers(entry, obj, name, identifier);
 
             // <!-- Resource map metadata -->
             addResourceMapMetadata(entry, obj, oreRef);
@@ -166,7 +166,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         return oreFactory.createEntry(entry);
     }
 
-  /**
+    /**
      * The add multi-valued identifier method.
      *
      * @param et entryType class
@@ -209,37 +209,6 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
         for (final Value v : prop.getValues()) {
             addIdentifier(et, formatUalidDoi(valueConverter.convert(v).asLiteral().getString()));
-        }
-    }
-
-    /**
-     * The add multi-valued Filename Id method.
-     *
-     * @param et entryType class
-     * @param prop JCR/Fedora property
-     * @param name Name of the object (id)
-     * @throws RepositoryException
-     * @throws IllegalStateException
-     * @throws ValueFormatException
-     */
-    private void addFilenameIdentifier(final EntryType et, final Property prop, final String name)
-        throws ValueFormatException, IllegalStateException, RepositoryException {
-        try {
-            for (final Value v : prop.getValues()) {
-                if (StringUtils.isNotEmpty(v.getString())) {
-                    final LinkType link = oreFactory.createLinkType();
-                    link.setHref(String.format(
-                          pdfUrlFormat, name,
-                          URLEncoder.encode(
-                            valueConverter.convert(v).asLiteral().getString()
-                            , "UTF-8")
-                          ));
-                    link.setRel("alternate");
-                    et.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(link));
-                }
-            }
-        } catch (final UnsupportedEncodingException e) {
-            throw new ValueFormatException(e);
         }
     }
 
@@ -445,7 +414,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(oreLink));
 
         // add atom:source
-        final Value[] dois = obj.hasProperty("ualid:doi") ? node.getProperty("ualid:doi").getValues() : null;
+        final Value[] dois = obj.hasProperty("prism:doi") ? node.getProperty("prism:doi").getValues() : null;
         addAtomSource(entry, dois);
 
         // atom:published
@@ -477,17 +446,19 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      * @param entry entryType class
      * @param obj JCR object properties
      * @param name Name of the object (id)
+     * @param identifier id of the object using the oai shoulder
      * @throws RepositoryException
      * @throws IllegalStateException
      * @throws ValueFormatException
      */
-    private void addAtomIdentifiers(final EntryType entry, final Container obj, final String name)
+    private void addAtomIdentifiers(
+            final EntryType entry, final Container obj, final String name, final String identifer)
         throws ValueFormatException, IllegalStateException, RepositoryException {
 
             final Node node = getJcrNode(obj);
 
            // identifiers
-            addIdentifier(entry, name);
+            addIdentifier(entry, identifer);
             addEraIdentifier(entry, name);
             if (obj.hasProperty("dcterms:identifier")) {
                 addIdentifier(entry, node.getProperty("dcterms:identifier"));
@@ -674,10 +645,17 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 // premis:hasOriginalName | fedora:mimetype | premis:hasSize -->
                 final LinkType linkFile = oreFactory.createLinkType();
                 final String fileStr = fileItem.getFilename();
+                final String fileSet = getFileSetFromPath(fileItem.getPath());
 
                 // use property: ebucore:filename
                 if (fileStr != null) {
-                    final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
+                    final String hrefStr
+                            = String.format(
+                                    pdfUrlFormat,
+                                    name,
+                                    fileSet,
+                                    URLEncoder.encode(fileStr, "UTF-8")
+                            );
                     linkFile.setHref(hrefStr);
                     // ToDo: is there a better property to use for "title"?
                     // Previously, premis:hasOriginalName with fallback to educore:filename
@@ -846,8 +824,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             for (final FedoraBinary fileItem : fedoraBinaryList) {
                 final Description description = oreRdfFactory.createDescription();
                 final String fileStr = fileItem.getFilename();
+                final String fileSet = getFileSetFromPath(fileItem.getPath());
+
                 if (fileStr != null) {
-                    final String hrefStr = String.format(pdfUrlFormat, name, URLEncoder.encode(fileStr, "UTF-8"));
+                    final String hrefStr
+                            = String.format(pdfUrlFormat, name, fileSet, URLEncoder.encode(fileStr, "UTF-8"));
                     description.setAbout(hrefStr);
                 }
                 final Type rdfType = oreRdfFactory.createType();

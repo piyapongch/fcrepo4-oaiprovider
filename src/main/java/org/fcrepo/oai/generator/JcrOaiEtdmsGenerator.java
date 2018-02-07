@@ -290,9 +290,14 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
 
         // download file
         for (final FedoraBinary fileItem : fileBinaryList) {
+            final String fileSet = getFileSetFromPath(fileItem.getPath());
             try {
                 thesis.getIdentifier().add(
-                        String.format(pdfUrlFormat, name, URLEncoder.encode(fileItem.getFilename()), "UTF-8")
+                        String.format(
+                                pdfUrlFormat,
+                                name,
+                                fileSet,
+                                URLEncoder.encode(fileItem.getFilename()), "UTF-8")
                         );
             } catch (final Exception e) {
                 log.error(e.toString());
