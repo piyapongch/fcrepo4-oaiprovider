@@ -562,14 +562,14 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                         = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
                 addAggregationDate(
                         valueConverter.convert(v).asLiteral().getString(),
-                        "http://www.openarchives.org/ore/atom/modified",
+                        "http://www.openarchives.org/ore/atom/created",
                         et);
             } catch (Exception e) {
                 // disregard malformed dates
                 log.warn("Invalid date on object: " + name + " - value: " + v.getString());
                 // kludge to fix date in format of "[1999]", "c1999", or "[1999?]"
                 final String modDate = valueConverter.convert(v).asLiteral().getString().replaceAll("[^\\d. +:-]", "");
-                addAggregationDate(modDate, "http://www.openarchives.org/ore/atom/modified", et);
+                addAggregationDate(modDate, "http://www.openarchives.org/ore/atom/created", et);
                 // throw new ValueFormatException();
             }
         }
