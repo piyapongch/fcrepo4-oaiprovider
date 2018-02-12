@@ -27,6 +27,8 @@ A graph linking a Fedora Object to it's OAI metadata should look like this:
                                    +----------------+      +----------+
                                    | MyMarc21Binary |      |   MySet  |
                                    +----------------+      +----------+
+
+Release Notes with more information available [here](RELEASE_NOTES.md)
                                 
 Additional Metadata record types
 --------------------------------
