@@ -251,6 +251,19 @@ public class OAIProviderService {
             final NamespaceRegistry namespaceRegistry
                     = (org.modeshape.jcr.api.NamespaceRegistry) session.getWorkspace().getNamespaceRegistry();
 
+            log.debug("Registered prefixes: " + namespaceRegistry.toString());
+
+            /*
+                Due to the production Fedora being populated with content before a CND
+                file registered prefixes with the Modeshape JCR namespace registry 2018-04-06
+                https://wiki.duraspace.org/display/FEDORA4x/Best+Practices+-+RDF+Namespaces
+                registering namespaces doesn't work and fails with errors:
+                "018-04-06 09:19:48,467 [localhost-startStop-1] ERROR - OAIProviderService.init(280):
+                The namespace with URI "http://terms.library.ualberta.ca/" cannot be unregistered
+                because the node type "{http://terms.library.ualberta.ca/}Community" uses it."
+
+                oai.xml should have an empty "namespaces" map
+            */
             // Register namespaces
             log.info("Registering namespaces...");
             final Set<Entry<String, String>> entries = namespaces.entrySet();
@@ -263,15 +276,24 @@ public class OAIProviderService {
                     namespaceRegistry.unregisterNamespace(prefix);
                 } catch (final NamespaceException e) {
                     log.warn("no prefix for <" + entry.getValue() + ">!");
+                    log.error(e.getMessage());
                 }
 
                 // register prefix
-                if (!(namespaceRegistry.isRegisteredPrefix(entry.getKey())
-                        && namespaceRegistry.isRegisteredUri(entry.getValue()))) {
-                    log.debug("registering prefix: " + entry.getKey() + " <" + entry.getValue() + "> ...");
-                    namespaceRegistry.registerNamespace(entry.getKey(), entry.getValue());
+                try {
+                    if (!(namespaceRegistry.isRegisteredPrefix(entry.getKey())
+                            && namespaceRegistry.isRegisteredUri(entry.getValue()))) {
+                        log.debug("registering prefix: " + entry.getKey() + " <" + entry.getValue() + "> ...");
+                        namespaceRegistry.registerNamespace(entry.getKey(), entry.getValue());
+                    }
+                } catch (final NamespaceException e) {
+                    log.warn("unable to register prefix for <" + entry.getValue() + ">!");
+                    log.error(e.getMessage(),e);
                 }
             }
+
+            log.debug("Registered prefixes: " + namespaceRegistry.toString());
+
 
             final Container root;
             if (!nodeService.exists(fedoraSession, rootPath)) {
@@ -831,6 +853,12 @@ public class OAIProviderService {
                 = new HttpResourceConverter(httpSession, uriInfo.getBaseUriBuilder().clone().path(FedoraLdp.class));
         final ValueConverter valueConverter = new ValueConverter(session, converter);
 
+        final String propDCTermsTitle
+                = getPropertyName(session, createProperty("http://purl.org/dc/terms/title"));
+        final String propUALPath
+                = getPropertyName(session, createProperty("http://terms.library.ualberta.ca/path"));
+        final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
+
         try {
             if (!setsEnabled) {
                 return error(VerbType.LIST_SETS, null, null, OAIPMHerrorcodeType.NO_SET_HIERARCHY,
@@ -849,9 +877,9 @@ public class OAIProviderService {
 
             // store community names in cache
             final StringBuilder cjql = new StringBuilder();
-            cjql.append("SELECT com.[mode:localName] AS id, com.[dcterms:title] as name ");
+            cjql.append("SELECT com.[mode:localName] AS id, com.[" + propDCTermsTitle + "] as name ");
             cjql.append("FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as com ");
-            cjql.append("WHERE com.[model:hasModel] = '").append(modelIRCommunity).append("' ");
+            cjql.append("WHERE com.[" + propHasModel + "] = '").append(modelIRCommunity).append("' ");
 
             log.debug(cjql.toString());
 
@@ -869,10 +897,10 @@ public class OAIProviderService {
             // query official collections
             // assumes collection is a memberOf a community
             final StringBuilder jql = new StringBuilder();
-            jql.append("SELECT col.[mode:localName] AS spec, col.[dcterms:title] AS name, ")
-                    .append("col.[ual:path] as cid ");
+            jql.append("SELECT col.[mode:localName] AS spec, col.[" + propDCTermsTitle + "] AS name, ")
+                    .append("col.[" + propUALPath + "] as cid ");
             jql.append(" FROM [").append(FedoraTypes.FEDORA_RESOURCE).append("] as col ");
-            jql.append(" WHERE col.[model:hasModel] = '").append(modelIRCollection).append("'");
+            jql.append(" WHERE col.[" + propHasModel + "] = '").append(modelIRCollection).append("'");
 
             if (maxListSize > 0) {
                 jql.append(" LIMIT ").append(maxListSize);
@@ -1126,6 +1154,8 @@ public class OAIProviderService {
         final String propJcrLastModifiedDate = getPropertyName(session, RdfLexicon.LAST_MODIFIED_DATE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
         final String propHasCollectionId = getPropertyName(session, createProperty(propertyHasCollectionId));
+        final String propAccessRights
+                = getPropertyName(session, createProperty("http://purl.org/dc/terms/accessRights"));
 
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub, res.[mode:localName] AS name ");
@@ -1134,7 +1164,7 @@ public class OAIProviderService {
 
         // permission
         // public only
-        jql.append(" res.[dcterms:accessRights] = CAST('" + publicAccessRights + "' AS STRING) ");
+        jql.append(" res.[" + propAccessRights + "] = CAST('" + publicAccessRights + "' AS STRING) ");
 
         // mixin type constraint
         jql.append(" AND res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
@@ -1227,6 +1257,10 @@ public class OAIProviderService {
         final String propJcrPath = getPropertyName(session, createProperty(RdfJcrLexicon.JCR_NAMESPACE + "path"));
         final String propHasMixinType = getPropertyName(session, RdfJcrLexicon.HAS_MIXIN_TYPE);
         final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
+        final String propAccessRights
+                = getPropertyName(session, createProperty("http://purl.org/dc/terms/accessRights"));
+
+
         final StringBuilder jql = new StringBuilder();
         jql.append("SELECT res.[" + propJcrPath + "] AS sub ");
         jql.append(" FROM [" + FedoraTypes.FEDORA_RESOURCE + "] AS [res] ");
@@ -1234,7 +1268,7 @@ public class OAIProviderService {
 
         // permission
         // public only
-        jql.append(" res.[dcterms:accessRights] = CAST('" + publicAccessRights + "' AS STRING) ");
+        jql.append(" res.[" + propAccessRights + "] = CAST('" + publicAccessRights + "' AS STRING) ");
 
         // mixin type constraint
         jql.append(" AND res.[" + propHasMixinType + "] = '" + mixinTypes + "'");
@@ -1381,31 +1415,36 @@ public class OAIProviderService {
      */
     protected String getPathFromNoid(final Session session, final String noid, final String metadataPrefix)
             throws RepositoryException {
+
+        final String propAccessRights
+                = getPropertyName(session, createProperty("http://purl.org/dc/terms/accessRights"));
+        final String propHasModel = getPropertyName(session, createProperty(propertyHasModel));
+
         String path = null;
         if (noid != null) {
             final StringBuilder jql = new StringBuilder();
             jql.append("SELECT res.[jcr:path] AS path ");
-            jql.append(" FROM [fedora:Resource] AS res ");
+            jql.append(" FROM [" + FedoraTypes.FEDORA_RESOURCE + "] AS res ");
             jql.append(" WHERE ");
 
             jql.append(" res.[mode:localName] = '").append(noid).append("'");
 
             // permission
             // public only
-            jql.append(" AND res.[dcterms:accessRights] = CAST('" + publicAccessRights + "' AS STRING)");
+            jql.append(" AND res.[" + propAccessRights + "] = CAST('" + publicAccessRights + "' AS STRING)");
             // limit returned hasModel properties
             if (metadataPrefix != null
                 && (metadataPrefix.equals(METADATA_PREFIX_OAI_ETDMS) || metadataPrefix.equals(METADATA_PREFIX_ORE))
                 ) {
                 // metadata prefix etdms and ore for thesis only
                 jql.append(" AND")
-                    .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'");
+                    .append(" res.[" + propHasModel + "] = '").append(modelIRThesis).append("'");
             } else {
                 // include both thesis and generic items
                 jql.append(" AND (")
-                    .append(" res.[model:hasModel] = '").append(modelIRThesis).append("'")
+                    .append(" res.[" + propHasModel + "] = '").append(modelIRThesis).append("'")
                     .append(" OR ")
-                    .append(" res.[model:hasModel] = '").append(modelIRItem).append("'")
+                    .append(" res.[" + propHasModel + "] = '").append(modelIRItem).append("'")
                     .append(") ");
             }
 
@@ -1460,7 +1499,7 @@ public class OAIProviderService {
         final java.util.function.Predicate<Triple> hasFilePredicate
                 = new PropertyPredicate("http://pcdm.org/models#hasFile");
 
-        // lookup the dcdm:hasMember to get the FileSet proxy
+        // lookup the pcdm:hasMember to get the FileSet proxy
         proxyTriples = obj.getTriples(converter, RequiredRdfContext.LDP_MEMBERSHIP).filter(hasMemberPredicate);
         final List<Triple> tripleList = proxyTriples.collect(toList());
 

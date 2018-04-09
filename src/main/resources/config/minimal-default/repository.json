@@ -32,7 +32,7 @@
         "initialTime" : "00:00",
         "intervalInHours" : 24
     },
-    "node-types" : ["fedora-node-types.cnd", "/config/minimal-default/node-types_ual.cnd"],
+    "node-types" : ["fedora-node-types.cnd"],
 
     "indexProviders" : {
         "local" : {
@@ -58,14 +58,14 @@
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "model:hasModel(STRING)"
+            "columns" : "{info:fedora/fedora-system:def/model#}hasModel(STRING)"
         },
         "accessRights" : {
             "kind" : "value",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "dcterms:accessRights(STRING)"
+            "columns" : "{http://purl.org/dc/terms/}accessRights(STRING)"
         },
         "lastModified" : {
             "kind" : "value",
@@ -79,21 +79,21 @@
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "dcterms:type(STRING)"
+            "columns" : "{http://purl.org/dc/terms/}type(STRING)"
         },
         "memberOf" : {
             "kind" : "value",
             "provider" : "lucene",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "pcdm:memberOf(STRING)"
+            "columns" : "{http://pcdm.org/models#}memberOf(STRING)"
         },
         "ualPath" : {
             "kind" : "value",
             "provider" : "lucene",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
-            "columns" : "ual:path(STRING)"
+            "columns" : "{http://terms.library.ualberta.ca/}path(STRING)"
         },
         "localName" : {
             "kind" : "value",

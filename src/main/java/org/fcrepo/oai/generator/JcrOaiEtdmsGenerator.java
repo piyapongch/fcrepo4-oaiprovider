@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
@@ -100,172 +99,197 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         // degree element
         final Degree degree = etdmsFactory.createThesisDegree();
 
-        final PropertyIterator props = node.getProperties();
-        while (props.hasNext()) {
-            final Property prop = (Property) props.next();
-            switch (prop.getName()) {
+        final String nsUal = jcrNamespaceMap.get("ual");
+        final String nsDc = jcrNamespaceMap.get("dc");
+        final String nsDcTerms = jcrNamespaceMap.get("dcterms");
+        final String nsBibo = jcrNamespaceMap.get("bibo");
+        final String nsPrism = jcrNamespaceMap.get("prism");
+        final String nsSwrc = jcrNamespaceMap.get("swrc");
 
-            case "dcterms:type":
-                for (final Value v : prop.getValues()) {
-                    addFreeTextType(v, thesis.getType());
-                }
-                break;
-
-            case "dcterms:creator":
-                for (final Value v : prop.getValues()) {
-                    addAuthorityType(v, thesis.getCreator());
-                }
-                break;
-
-            case "ual:dissertant":
-                for (final Value v : prop.getValues()) {
-                    addAuthorityType(v, thesis.getCreator());
-                }
-                break;
-
-            case "dc:contributor":
-                for (final Value v : prop.getValues()) {
-                    addContributor(v, thesis.getContributor(), null);
-                }
-                break;
-
-            case "ual:supervisor":
-                for (final Value v : prop.getValues()) {
-                    addContributor(v, thesis.getContributor(), "advisor");
-                }
-                break;
-
-            case "ual:commiteeMember":
-                for (final Value v : prop.getValues()) {
-                    addContributor(v, thesis.getContributor(), "committeemember");
-                }
-                break;
-
-            case "swrc:institution":
-                for (final Value v : prop.getValues()) {
-                    addInstitutionType(v, degree.getGrantor());
-                }
-                break;
-
-            case "ual:department":
-                for (final Value v : prop.getValues()) {
-                    addFreeTextType(v, degree.getDiscipline());
-                }
-                break;
-
-            case "dc:subject":
-                for (final Value v : prop.getValues()) {
-                    addControlledTextType(v, thesis.getSubject());
-                }
-                break;
-
-            case "dcterms:temporal":
-                for (final Value v : prop.getValues()) {
-                    addControlledTextType(v, thesis.getSubject());
-                }
-                break;
-
-            case "dcterms:spatial":
-                for (final Value v : prop.getValues()) {
-                    addControlledTextType(v, thesis.getSubject());
-                }
-                break;
-
-            case "ual:specialization":
-                for (final Value v : prop.getValues()) {
-                    addDescription(v, thesis.getDescription(), "Specialization: ");
-                }
-                break;
-
-            case "dcterms:dateAccepted":
-                for (final Value v : prop.getValues()) {
-                    addDate(v, thesis);
-                }
-                break;
-
-            case "dcterms:title":
-                for (final Value v : prop.getValues()) {
-                    addFreeTextType(v, thesis.getTitle());
-                }
-                break;
-
-            case "dcterms:alternative":
-                for (final Value v : prop.getValues()) {
-                    addFreeTextType(v, thesis.getAlternativeTitle());
-                }
-                break;
-
-            case "bibo:degree":
-                for (final Value v : prop.getValues()) {
-                    addFreeTextType(v, degree.getName());
-                }
-                break;
-
-            case "ual:thesisLevel":
-                for (final Value v : prop.getValues()) {
-                    addString(v, degree.getLevel());
-                }
-                break;
-
-            case "dcterms:identifier":
-                for (final Value v : prop.getValues()) {
-                    addString(v, thesis.getIdentifier());
-                }
-                break;
-
-            case "prism:doi":
-                for (final Value v : prop.getValues()) {
-                    addString(v, thesis.getIdentifier());
-                    addUalid(v, thesis.getIdentifier());
-                }
-                break;
-
-            case "ual:fedora3Handle":
-                for (final Value v : prop.getValues()) {
-                    addString(v, thesis.getIdentifier());
-                    handle = StringUtils.isEmpty(v.getString())
-                      ? null : valueConverter.convert(v).asLiteral().getString();
-                }
-                break;
-
-            case "dcterms:description":
-                addLongDescription(thesis, prop, null);
-                break;
-
-            case "dcterms:abstract":
-                addLongDescription(thesis, prop, "Abstract: ");
-                break;
-
-            case "dcterms:language":
-                for (final Value v : prop.getValues()) {
-                    addString(v, thesis.getLanguage());
-                }
-                break;
-
-            case "dc:rights":
-                for (final Value v : prop.getValues()) {
-                    addFreeTextType(v, thesis.getRights());
-                }
-                break;
-
-            case "dcterms:license":
-                for (final Value v : prop.getValues()) {
-                    if (!v.getString().equals(LICENSE_PROMPT)) {
-                        addFreeTextType(v, thesis.getRights());
-                    }
-                }
-                break;
-
-            case "dcterms:format":
-                for (final Value v : prop.getValues()) {
-                    addFreeTextType(v, thesis.getFormat());
-                }
-                break;
-
-            default:
-                break;
+        // case "dcterms:type":
+        if (obj.hasProperty(nsDcTerms + "type")) {
+            for (final Value v : node.getProperty(nsDcTerms + "type").getValues()) {
+                addFreeTextType(v, thesis.getType());
             }
         }
+
+        // case "dcterms:creator":
+        if (obj.hasProperty(nsDcTerms + "creator")) {
+            for (final Value v : node.getProperty(nsDcTerms + "creator").getValues()) {
+                addAuthorityType(v, thesis.getCreator());
+            }
+        }
+
+        // case "ual:dissertant":
+        if (obj.hasProperty(nsUal + "dissertant")) {
+            for (final Value v : node.getProperty(nsUal + "dissertant").getValues()) {
+                addAuthorityType(v, thesis.getCreator());
+            }
+        }
+
+        // case "dc:contributor":
+        if (obj.hasProperty(nsDc + "contributor")) {
+            for (final Value v : node.getProperty(nsDc + "contributor").getValues()) {
+                addContributor(v, thesis.getContributor(), null);
+            }
+        }
+
+        // case "ual:supervisor":
+        if (obj.hasProperty(nsUal + "supervisor")) {
+            for (final Value v : node.getProperty(nsUal + "supervisor").getValues()) {
+                addContributor(v, thesis.getContributor(), "advisor");
+            }
+        }
+
+        // case "ual:commiteeMember":
+        if (obj.hasProperty(nsUal + "commiteeMember")) {
+            for (final Value v : node.getProperty(nsUal + "commiteeMember").getValues()) {
+                addContributor(v, thesis.getContributor(), "committeemember");
+            }
+        }
+
+        // case "swrc:institution":
+        if (obj.hasProperty(nsSwrc + "institution")) {
+            for (final Value v : node.getProperty(nsSwrc + "institution").getValues()) {
+                addInstitutionType(v, degree.getGrantor());
+            }
+        }
+
+        // case "ual:department":
+        if (obj.hasProperty(nsUal + "department")) {
+            for (final Value v : node.getProperty(nsUal + "department").getValues()) {
+                addFreeTextType(v, degree.getDiscipline());
+            }
+        }
+
+        // case "dc:subject":
+        if (obj.hasProperty(nsDc + "subject")) {
+            for (final Value v : node.getProperty(nsDc + "subject").getValues()) {
+                addControlledTextType(v, thesis.getSubject());
+            }
+        }
+
+        // case "dcterms:temporal":
+        if (obj.hasProperty(nsDcTerms + "temporal")) {
+            for (final Value v : node.getProperty(nsDcTerms + "temporal").getValues()) {
+                addControlledTextType(v, thesis.getSubject());
+            }
+        }
+
+        // case "dcterms:spatial":
+        if (obj.hasProperty(nsDcTerms + "spatial")) {
+            for (final Value v : node.getProperty(nsDcTerms + "spatial").getValues()) {
+                addControlledTextType(v, thesis.getSubject());
+            }
+        }
+
+        // case "ual:specialization":
+        if (obj.hasProperty(nsUal + "specialization")) {
+            for (final Value v : node.getProperty(nsUal + "specialization").getValues()) {
+                addDescription(v, thesis.getDescription(), "Specialization: ");
+            }
+        }
+
+        // case "dcterms:dateAccepted":
+        if (obj.hasProperty(nsDcTerms + "dateAccepted")) {
+            for (final Value v : node.getProperty(nsDcTerms + "dateAccepted").getValues()) {
+                addDate(v, thesis);
+            }
+        }
+
+        // case "dcterms:title":
+        if (obj.hasProperty(nsDcTerms + "title")) {
+            for (final Value v : node.getProperty(nsDcTerms + "title").getValues()) {
+                addFreeTextType(v, thesis.getTitle());
+            }
+        }
+
+        // case "dcterms:alternative":
+        if (obj.hasProperty(nsDcTerms + "alternative")) {
+            for (final Value v : node.getProperty(nsDcTerms + "alternative").getValues()) {
+                addFreeTextType(v, thesis.getAlternativeTitle());
+            }
+        }
+
+        // case "bibo:degree":
+        if (obj.hasProperty(nsBibo + "degree")) {
+            for (final Value v : node.getProperty(nsPrism + "degree").getValues()) {
+                addFreeTextType(v, degree.getName());
+            }
+        }
+
+        // case "ual:thesisLevel":
+        if (obj.hasProperty(nsUal + "thesisLevel")) {
+            for (final Value v : node.getProperty(nsUal + "thesisLevel").getValues()) {
+                addString(v, degree.getLevel());
+            }
+        }
+
+        // case "dcterms:identifier":
+        if (obj.hasProperty(nsDcTerms + "identifier")) {
+            for (final Value v : node.getProperty(nsDcTerms + "identifier").getValues()) {
+                addString(v, thesis.getIdentifier());
+            }
+        }
+
+        // case "prism:doi":
+        if (obj.hasProperty(nsPrism + "doi")) {
+            for (final Value v : node.getProperty(nsPrism + "doi").getValues()) {
+                addString(v, thesis.getIdentifier());
+                addUalid(v, thesis.getIdentifier());
+            }
+        }
+
+        // case "ual:fedora3Handle":
+        if (obj.hasProperty(nsUal + "fedora3Handle")) {
+            for (final Value v : node.getProperty(nsUal + "fedora3Handle").getValues()) {
+                addString(v, thesis.getIdentifier());
+                handle = StringUtils.isEmpty(v.getString())
+                  ? null : valueConverter.convert(v).asLiteral().getString();
+            }
+        }
+
+        // case "dcterms:description":
+        if (obj.hasProperty(nsDcTerms + "description")) {
+            addLongDescription(thesis, node.getProperty(nsDcTerms + "description"), null);
+        }
+
+        // case "dcterms:abstract":
+        if (obj.hasProperty(nsDcTerms + "abstract")) {
+            addLongDescription(thesis, node.getProperty(nsDcTerms + "abstract"), "Abstract: ");
+        }
+
+        // case "dcterms:language":
+        if (obj.hasProperty(nsDcTerms + "language")) {
+            for (final Value v : node.getProperty(nsDcTerms + "language").getValues()) {
+                addString(v, thesis.getLanguage());
+            }
+        }
+
+        // case "dc:rights":
+        if (obj.hasProperty(nsDc + "rights")) {
+            for (final Value v : node.getProperty(nsDc + "rights").getValues()) {
+                addFreeTextType(v, thesis.getRights());
+            }
+        }
+
+        // case "dcterms:license":
+        if (obj.hasProperty(nsDcTerms + "license")) {
+            for (final Value v : node.getProperty(nsDcTerms + "license").getValues()) {
+                if (!v.getString().equals(LICENSE_PROMPT)) {
+                    addFreeTextType(v, thesis.getRights());
+                }
+            }
+        }
+
+        // case "dcterms:format":
+        if (obj.hasProperty(nsDcTerms + "format")) {
+            for (final Value v : node.getProperty(nsDcTerms + "format").getValues()) {
+                addFreeTextType(v, thesis.getFormat());
+            }
+        }
+
+
         thesis.setDegree(degree);
 
         // LAC unique identifier

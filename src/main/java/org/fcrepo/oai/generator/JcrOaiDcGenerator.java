@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
@@ -76,18 +75,26 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         Value[] values;
         final Node node = getJcrNode(obj);
 
+        final String nsUal = jcrNamespaceMap.get("ual");
+        final String nsDc = jcrNamespaceMap.get("dc");
+        final String nsDcTerms = jcrNamespaceMap.get("dcterms");
+        final String nsBibo = jcrNamespaceMap.get("bibo");
+        final String nsPrism = jcrNamespaceMap.get("prism");
+        final String nsSwrc = jcrNamespaceMap.get("swrc");
+
         // creator and date
         final boolean isThesis = isThesis(node);
         if (isThesis) {
             // thesis dc:creator
-            values = obj.hasProperty("ual:dissertant") ? node.getProperty("ual:dissertant").getValues() : null;
+            values = obj.hasProperty(nsUal + "dissertant") ? node.getProperty(nsUal + "dissertant").getValues() : null;
             addCreator(oaidc, values);
             // thesis dc:date
             values =
-                obj.hasProperty("dcterms:dateAccepted") ? node.getProperty("dcterms:dateAccepted").getValues() : null;
+                obj.hasProperty(nsDcTerms + "dateAccepted")
+                    ? node.getProperty(nsDcTerms + "dateAccepted").getValues() : null;
             addDate(oaidc, values);
             // dc:type
-            values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
+            values = obj.hasProperty(nsDcTerms + "type") ? node.getProperty(nsDcTerms + "type").getValues() : null;
             if (values != null) {
                 addType(oaidc, values);
             } else {
@@ -95,22 +102,23 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
             }
         } else {
             // non-thesis dc:creator
-            values = obj.hasProperty("dc:creator") ? node.getProperty("dc:creator").getValues() : null;
+            values = obj.hasProperty(nsDc + "creator") ? node.getProperty(nsDc + "creator").getValues() : null;
             addCreator(oaidc, values);
             // non-thesis dc:date
-            values = obj.hasProperty("dcterms:created") ? node.getProperty("dcterms:created").getValues() : null;
+            values = obj.hasProperty(nsDcTerms + "created")
+                    ? node.getProperty(nsDcTerms + "created").getValues() : null;
             addDate(oaidc, values);
             // dc:type
-            values = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type").getValues() : null;
+            values = obj.hasProperty(nsDcTerms + "type") ? node.getProperty(nsDcTerms + "type").getValues() : null;
             addType(oaidc, values);
         }
 
         // dc:publisher (concatenate grantor and discipline/department contents)
         final Value[] depts =
-            obj.hasProperty("ual:department") ? node.getProperty("ual:department").getValues() : null;
+            obj.hasProperty(nsUal + "department") ? node.getProperty(nsUal + "department").getValues() : null;
         //
-        final Value[] ddgs = obj.hasProperty("swrc:institution")
-                ? node.getProperty("swrc:institution").getValues() : null;
+        final Value[] ddgs = obj.hasProperty(nsSwrc + "institution")
+                ? node.getProperty(nsSwrc + "institution").getValues() : null;
 
         final StringBuilder pub = new StringBuilder();
 
@@ -140,6 +148,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         }
         pub.append(pub.toString().trim().length() == 0 ? uofa : "");
 
+        // dc:publisher (concatenate grantor and discipline/department contents)
         final SimpleLiteral sim = dcFactory.createSimpleLiteral();
         sim.getContent().add(pub.toString());
         oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createPublisher(sim));
@@ -149,100 +158,113 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         simple.getContent().add(String.format(eraIdFormat, name));
         oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createIdentifier(simple));
 
-        final PropertyIterator props = node.getProperties();
-        while (props.hasNext()) {
-            final Property prop = (Property) props.next();
-            switch (prop.getName()) {
-
-            case "dc:contributor":
-                addContributor(oaidc, prop);
-                break;
-
-            case "ual:supervisor":
-                addContributor(oaidc, prop);
-                break;
-
-            case "ual:commiteeMember":
-                addContributor(oaidc, prop);
-                break;
-
-            case "dc:subject":
-                addSubject(oaidc, prop);
-                break;
-
-            case "dcterms:temporal":
-                addSubject(oaidc, prop);
-                break;
-
-            case "dcterms:spatial":
-                addSubject(oaidc, prop);
-                break;
-
-            case "ual:specialization":
-                addDescription(oaidc, prop, "Specialization: ");
-                break;
-
-            case "dcterms:title":
-                addTitle(oaidc, prop);
-                break;
-
-            case "bibo:degree":
-                addDescription(oaidc, prop, "Degree: ");
-                break;
-
-            case "dcterms:identifier":
-                addIdentifier(oaidc, prop);
-                break;
-
-            case "prism:doi":
-                addIdentifier(oaidc, prop);
-                addIdentifierDoi(oaidc, prop, dcFactory);
-                break;
-
-            case "ual:fedora3Handle":
-                addIdentifier(oaidc, prop);
-                break;
-
-            case "dcterms:description":
-                addLongDescription(oaidc, prop, null);
-                break;
-
-            case "dcterms:abstract":
-                addLongDescription(oaidc, prop, "Abstract: ");
-                break;
-
-            case "dcterms:language":
-                addLanguage(oaidc, prop);
-                break;
-
-            case "dcterms:relation":
-                addRelation(oaidc, prop);
-                break;
-
-            case "dcterms:isVersionOf":
-                addRelation(oaidc, prop);
-                break;
-
-            case "dcterms:source":
-                addSource(oaidc, prop);
-                break;
-
-            case "dc:rights":
-                addRights(oaidc, prop);
-                break;
-
-            case "dcterms:license":
-                addRights(oaidc, prop);
-                break;
-
-            case "dcterms:format":
-                addFormat(oaidc, prop);
-                break;
-
-            default:
-                break;
-            }
+        // "dc:contributor":
+        if (obj.hasProperty(nsDc + "contributor")) {
+            addContributor(oaidc, node.getProperty(nsDc + "contributor"));
         }
+
+        // "ual:supervisor":
+        if (obj.hasProperty(nsUal + "supervisor")) {
+            addContributor(oaidc, node.getProperty(nsUal + "supervisor"));
+        }
+
+        // "ual:commiteeMember":
+        if (obj.hasProperty(nsUal + "commiteeMember")) {
+            addContributor(oaidc, node.getProperty(nsUal + "commiteeMember"));
+        }
+
+        // "dc:subject":
+        if (obj.hasProperty(nsDc + "subject")) {
+            addSubject(oaidc, node.getProperty(nsDc + "subject"));
+        }
+
+        // "dcterms:temporal":
+        if (obj.hasProperty(nsDcTerms + "temporal")) {
+            addSubject(oaidc, node.getProperty(nsDcTerms + "temporal"));
+        }
+
+        // "dcterms:spatial":
+        if (obj.hasProperty(nsDcTerms + "spatial")) {
+            addSubject(oaidc, node.getProperty(nsDcTerms + "spatial"));
+        }
+
+        // "ual:specialization":
+        if (obj.hasProperty(nsUal + "specialization")) {
+            addDescription(oaidc, node.getProperty(nsUal + "specialization"), "Specialization: ");
+        }
+
+        // "dcterms:title":
+        if (obj.hasProperty(nsDcTerms + "title")) {
+            addTitle(oaidc, node.getProperty(nsDcTerms + "title"));
+        }
+
+        // "bibo:degree":
+        if (obj.hasProperty(nsBibo + "degree")) {
+            addDescription(oaidc, node.getProperty(nsBibo + "degree"), "Degree: ");
+        }
+
+        // "dcterms:identifier":
+        if (obj.hasProperty(nsDcTerms + "identifier")) {
+            addIdentifier(oaidc, node.getProperty(nsDcTerms + "identifier"));
+        }
+
+        // "prism:doi":
+        if (obj.hasProperty(nsPrism + "doi")) {
+            addIdentifier(oaidc, node.getProperty(nsPrism + "doi"));
+            addIdentifierDoi(oaidc, node.getProperty(nsPrism + "doi"), dcFactory);
+        }
+
+        // "ual:fedora3Handle":
+        if (obj.hasProperty(nsUal + "fedora3Handle")) {
+            addIdentifier(oaidc, node.getProperty(nsUal + "fedora3Handle"));
+        }
+
+        // "dcterms:description":
+        if (obj.hasProperty(nsDcTerms + "description")) {
+            addLongDescription(oaidc, node.getProperty(nsDcTerms + "description"), null);
+        }
+
+        // "dcterms:abstract":
+        if (obj.hasProperty(nsDcTerms + "abstract")) {
+            addLongDescription(oaidc, node.getProperty(nsDcTerms + "abstract"), "Abstract: ");
+        }
+
+        // "dcterms:language":
+        if (obj.hasProperty(nsDcTerms + "language")) {
+            addLanguage(oaidc, node.getProperty(nsDcTerms + "language"));
+        }
+
+        // "dcterms:relation":
+        if (obj.hasProperty(nsDcTerms + "relation")) {
+            addRelation(oaidc, node.getProperty(nsDcTerms + "relation"));
+        }
+
+        // "dcterms:isVersionOf":
+        if (obj.hasProperty(nsDcTerms + "isVersionOf")) {
+            addRelation(oaidc, node.getProperty(nsDcTerms + "isVersionOf"));
+        }
+
+        // "dcterms:source":
+        if (obj.hasProperty(nsDcTerms + "source")) {
+            addSource(oaidc, node.getProperty(nsDcTerms + "source"));
+        }
+
+        // "dc:rights":
+        if (obj.hasProperty(nsDc + "rights")) {
+            addRights(oaidc, node.getProperty(nsDc + "rights"));
+        }
+
+        // "dcterms:license":
+        if (obj.hasProperty(nsDcTerms + "license")) {
+            addRights(oaidc, node.getProperty(nsDcTerms + "license"));
+        }
+
+        // "dcterms:format":
+        if (obj.hasProperty(nsDcTerms + "format")) {
+            addFormat(oaidc, node.getProperty(nsDcTerms + "format"));
+        }
+
+
         return oaiDcFactory.createDc(oaidc);
     }
 
@@ -551,7 +573,8 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      */
     private boolean isThesis(final Node node) throws RepositoryException {
         final Value[] values
-                = node.hasProperty("model:hasModel") ? node.getProperty("model:hasModel").getValues() : null;
+                = node.hasProperty(jcrNamespaceMap.get("model") + "hasModel") ?
+                        node.getProperty(jcrNamespaceMap.get("model") + "hasModel").getValues() : null;
         if (values != null) {
             // using stream api to find dcterms:type Thesis
             final List<Value> vl = Arrays.asList(values);

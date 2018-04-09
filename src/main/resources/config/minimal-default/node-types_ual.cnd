@@ -8,40 +8,17 @@
  *   https://wiki.duraspace.org/display/FEDORA4x/Best+Practices+-+RDF+Namespaces
 */
 
-/* previous Fedora 4.2 ERA */
-/*
-<oai = 'http://www.openarchives.org/OAI/2.0/' >
-<oaiid = 'http://www.openarchives.org/OAI/2.0/oai-identifier' >
-<dcterms = 'http://purl.org/dc/terms/' >
-<marcrel = 'http://id.loc.gov/vocabulary/relators/' >
-<vivo = 'http://vivoweb.org/ontology/core#' >
-<bibo = 'http://purl.org/ontology/bibo/' >                
-<webacl = 'http://www.w3.org/ns/auth/acl#' >
-<model = 'info:fedora/fedora-system:def/model#' >
-<relsext = 'info:fedora/fedora-system:def/relations-external#' >
-<hydragroup = 'http://projecthydra.org/ns/auth/group#' >
-<hydraacl = 'http://projecthydra.org/ns/auth/acl#' >
-<scholarsphere = 'http://scholarsphere.psu.edu/ns#' >
-<ualrole = 'http://terms.library.ualberta.ca/role/' >
-<ualid = 'http://terms.library.ualberta.ca/id/' >
-<ualsubj = 'http://terms.library.ualberta.ca/subject/' >
-<ualdate = 'http://terms.library.ualberta.ca/date/' >
-<ualtitle = 'http://terms.library.ualberta.ca/title/' >
-<ualname = 'http://terms.library.ualberta.ca/name/' >
-<ualplace = 'http://terms.library.ualberta.ca/place/' >
-<ualthesis = 'http://terms.library.ualberta.ca/thesis/' >
-<ualterms = 'http://terms.library.ualberta.ca/' >
-<ualidentifier = 'http://terms.library.ualberta.ca/identifiers/' >
-<uatermsid = 'http://terms.library.library.ca/identifiers/' >
-*/
-
 /* ToDo: not in data dictionary */
+/*
 <model = 'info:fedora/fedora-system:def/model#' >
 <mode = 'http://www.modeshape.org/1.0' >
 <oai = 'http://www.openarchives.org/OAI/2.0/' >
+<works_models = 'http://projecthydra.org/works/models#' >
+*/
 
 /* as per: 2017-11-23 - https://github.com/ualbertalib/metadata/tree/master/data_dictionary */
 
+/*
 <bibo = 'http://purl.org/ontology/bibo/' >
 <cc = 'http://creativecommons.org/ns#' >
 <dc = 'http://purl.org/dc/elements/1.1/' >
@@ -74,3 +51,4 @@
 <ualthesis = 'http://terms.library.ualberta.ca/thesis/' >
 <works = 'http://pcdm.org/works#' >
 <vivo = 'http://vivoweb.org/ontology/core#' >
+*/

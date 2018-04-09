@@ -22,6 +22,7 @@ public class JcrOaiGenerator {
     protected String eraIdFormat;
     protected String doiFullUriFormat;
     protected Map<String, String> institutionMap;
+    protected Map<String, String> jcrNamespaceMap;
 
 
     /**
@@ -75,7 +76,7 @@ public class JcrOaiGenerator {
     }
 
     /**
-     * The setNamespaces setter method.
+     * The Institution Controlled Vocabulary setter method.
      *
      * @param controlledVocabularyInstitutionMap the institution map to convert URIs to human readable strings.
      */
@@ -84,4 +85,12 @@ public class JcrOaiGenerator {
     }
 
 
+    /**
+     * The JCR Namespace Map setter method.
+     *
+     * @param jcrNamespaceMap a Map obect containing a list of JCR syntax namespace.
+     */
+    public void setJcrNamespaceMap(final Map<String, String> jcrNamespaceMap) {
+        this.jcrNamespaceMap = jcrNamespaceMap;
+    }
 }

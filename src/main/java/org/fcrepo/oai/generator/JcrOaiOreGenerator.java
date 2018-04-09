@@ -414,8 +414,9 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         entry.getAuthorOrCategoryOrContent().add(oreFactory.createEntryTypeLink(oreLink));
 
         // add atom:source
-        final Value[] dois = obj.hasProperty("prism:doi") ? node.getProperty("prism:doi").getValues() : null;
-        addAtomSource(entry, dois);
+        if (obj.hasProperty(jcrNamespaceMap.get("prism") + "doi")) {
+            addAtomSource(entry, node.getProperty(jcrNamespaceMap.get("prism") + "doi").getValues());
+        }
 
         // atom:published
         final Value[] values = returnDateValues(obj);
@@ -460,16 +461,16 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
            // identifiers
             addIdentifier(entry, identifer);
             addEraIdentifier(entry, name);
-            if (obj.hasProperty("dcterms:identifier")) {
-                addIdentifier(entry, node.getProperty("dcterms:identifier"));
+            if (obj.hasProperty(jcrNamespaceMap.get("dcterms") + "identifier")) {
+                addIdentifier(entry, node.getProperty(jcrNamespaceMap.get("dcterms") + "identifier"));
             }
-            if (obj.hasProperty("prism:doi")) {
-                addIdentifier(entry, node.getProperty("prism:doi"));
-                addUalidDoiIdentifier(entry, node.getProperty("prism:doi"));
+            if (obj.hasProperty(jcrNamespaceMap.get("prism") + "doi")) {
+                addIdentifier(entry, node.getProperty(jcrNamespaceMap.get("prism") + "doi"));
+                addUalidDoiIdentifier(entry, node.getProperty(jcrNamespaceMap.get("prism") + "doi"));
             }
-            if (obj.hasProperty("ual:fedora3Handle")) {
-                addIdentifier(entry, node.getProperty("ual:fedora3Handle"));
-                addLacIdentifier(entry, node.getProperty("ual:fedora3Handle"));
+            if (obj.hasProperty(jcrNamespaceMap.get("ual") + "fedora3Handle")) {
+                addIdentifier(entry, node.getProperty(jcrNamespaceMap.get("ual") + "fedora3Handle"));
+                addLacIdentifier(entry, node.getProperty(jcrNamespaceMap.get("ual") + "fedora3Handle"));
             }
     }
 
@@ -487,28 +488,32 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
             final Node node = getJcrNode(obj);
 
+            final String nsUal = jcrNamespaceMap.get("ual");
+            final String nsDc = jcrNamespaceMap.get("dc");
+            final String nsDcTerms = jcrNamespaceMap.get("dcterms");
+
             // <!-- dcterms:creator / http://id.loc.gov/vocabulary/relators/dis (thesis) -->
             // marcrel:dis maps to creator
-            if (obj.hasProperty("ual:dissertant")) {
-                addAtomAuthor(entry, node.getProperty("ual:dissertant"));
-            } else if (obj.hasProperty("dcterms:creator")) {
-                addAtomAuthor(entry, node.getProperty("dcterms:creator"));
+            if (obj.hasProperty(nsUal + "dissertant")) {
+                addAtomAuthor(entry, node.getProperty(nsUal + "dissertant"));
+            } else if (obj.hasProperty(nsDcTerms + "creator")) {
+                addAtomAuthor(entry, node.getProperty(nsDcTerms + "creator"));
             }
             // <!-- dcterms:contributor (optional)-->/
-            if (obj.hasProperty("dc:contributor")) {
-                addAtomContributor(entry, node.getProperty("dc:contributor"));
+            if (obj.hasProperty(nsDc + "contributor")) {
+                addAtomContributor(entry, node.getProperty(nsDc + "contributor"));
             }
             // committee - assume include "marcrel:ths" value
-            if (obj.hasProperty("ual:committeeMember")) {
-                addAtomContributor(entry, node.getProperty("ual:committeeMember"));
+            if (obj.hasProperty(nsUal + "committeeMember")) {
+                addAtomContributor(entry, node.getProperty(nsUal + "committeeMember"));
             }
             // supervisor
-            if (obj.hasProperty("ual:supervisor")) {
-                addAtomContributor(entry, node.getProperty("ual:supervisor"));
+            if (obj.hasProperty(nsUal + "supervisor")) {
+                addAtomContributor(entry, node.getProperty(nsUal + "supervisor"));
             }
             // <!-- dcterms:title -->
-            if (obj.hasProperty("dcterms:title")) {
-                addAtomTitle(entry, node.getProperty("dcterms:title"));
+            if (obj.hasProperty(nsDcTerms + "title")) {
+                addAtomTitle(entry, node.getProperty(nsDcTerms + "title"));
             }
     }
 
@@ -592,7 +597,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 addAtomCategory(et, type.toString());
             }
         } else {
-            final Property prop = obj.hasProperty("dcterms:type") ? node.getProperty("dcterms:type") : null;
+            final Property prop = obj.hasProperty(jcrNamespaceMap.get("dcterms") + "type")
+                    ? node.getProperty(jcrNamespaceMap.get("dcterms") + "type") : null;
             if (prop != null) {
                 for (final Value val : prop.getValues()) {
                     addAtomCategory(et, valueConverter.convert(val).asLiteral().getString());
@@ -673,8 +679,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             final LinkType linkHtml = oreFactory.createLinkType();
             linkHtml.setRel("http://www.openarchives.org/ore/terms/aggregates");
             linkHtml.setType("text/html");
-            if (obj.hasProperty("dcterms:title")) {
-                final String titleStr = jcrPropertyValueToXMLString(node.getProperty("dcterms:title"));
+            if (obj.hasProperty(jcrNamespaceMap.get("dcterms") + "title")) {
+                final String titleStr = jcrPropertyValueToXMLString(
+                        node.getProperty(jcrNamespaceMap.get("dcterms") + "title")
+                        );
                 linkHtml.setTitle(XmlEscapers.xmlAttributeEscaper().escape(titleStr));
             }
             linkHtml.setHref(String.format(htmlUrlFormat, URLEncoder.encode(name, "UTF-8")));
@@ -683,8 +691,10 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             // add OAI-PMH
             final LinkType linkOai = oreFactory.createLinkType();
             linkOai.setRel("http://www.openarchives.org/ore/terms/aggregates");
-            if (obj.hasProperty("dcterms:title")) {
-                final String titleStr = jcrPropertyValueToXMLString(node.getProperty("dcterms:title"));
+            if (obj.hasProperty(jcrNamespaceMap.get("dcterms") + "title")) {
+                final String titleStr = jcrPropertyValueToXMLString(
+                        node.getProperty(jcrNamespaceMap.get("dcterms") + "title")
+                        );
                 linkOai.setTitle(XmlEscapers.xmlAttributeEscaper().escape(titleStr));
             }
             linkOai.setHref(oaiHref);
@@ -770,9 +780,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         final Type rdfType = oreRdfFactory.createType();
         rdfType.setResource("http://fedora.info/definitions/v4/repository#Resource");
         description.setType(rdfType);
-        if (obj.hasProperty("dcterms:modified")) {
+        if (obj.hasProperty(jcrNamespaceMap.get("dcterms") + "modified")) {
             try {
-                final String modifiedDate = jcrPropertyValueToXMLString(node.getProperty("dcterms:modified"));
+                final String modifiedDate = jcrPropertyValueToXMLString(
+                        node.getProperty(jcrNamespaceMap.get("dcterms") + "modified")
+                        );
                 final XMLGregorianCalendar xgc = DatatypeFactory.newInstance().newXMLGregorianCalendar(modifiedDate);
                 description.setModified(xgc);
             } catch (Exception e) {
@@ -780,14 +792,18 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
             }
         }
 
-        if (obj.hasProperty("dc:rights")) {
-            description.setRights(jcrPropertyValueToXMLString(node.getProperty("dc:rights")));
+        if (obj.hasProperty(jcrNamespaceMap.get("dc") + "rights")) {
+            description.setRights(jcrPropertyValueToXMLString(node.getProperty(jcrNamespaceMap.get("dc") + "rights")));
         }
-        if (obj.hasProperty("dcterms:license")) {
-            description.setLicense(jcrPropertyValueToXMLString(node.getProperty("dcterms:license")));
+        if (obj.hasProperty(jcrNamespaceMap.get("dcterms") + "license")) {
+            description.setLicense(
+                    jcrPropertyValueToXMLString(node.getProperty(jcrNamespaceMap.get("dcterms") + "license"))
+                    );
         }
-        if (obj.hasProperty("dcterms:isVersionOf")) {
-            description.setIsVersionOf(jcrPropertyValueToXMLString(node.getProperty("dcterms:isVersionOf")));
+        if (obj.hasProperty(jcrNamespaceMap.get("dcterms") + "isVersionOf")) {
+            description.setIsVersionOf(
+                    jcrPropertyValueToXMLString(node.getProperty(jcrNamespaceMap.get("dcterms") + "isVersionOf"))
+                    );
         }
 
         triples.getDescription().add(description);
@@ -940,7 +956,8 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
      */
     private boolean isThesis(final Node node) throws RepositoryException {
         final Value[] values
-                = node.hasProperty("model:hasModel") ? node.getProperty("model:hasModel").getValues() : null;
+                = node.hasProperty(jcrNamespaceMap.get("model") + "hasModel")
+                        ? node.getProperty(jcrNamespaceMap.get("model") + "hasModel").getValues() : null;
         if (values != null) {
             // using stream api to find dcterms:type Thesis
             final List<Value> vl = Arrays.asList(values);
@@ -977,11 +994,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
 
         //  <!-- dcterms:created | dcterms:dateAccepted (thesis)  -->
         if (isThesis) {
-            values = obj.hasProperty("dcterms:dateAccepted")
-                    ? node.getProperty("dcterms:dateAccepted").getValues() : new Value[0];
+            values = obj.hasProperty(jcrNamespaceMap.get("dcterms") + "dateAccepted")
+                    ? node.getProperty(jcrNamespaceMap.get("dcterms") + "dateAccepted").getValues() : new Value[0];
         } else {
-            values = obj.hasProperty("dcterms:created")
-              ? node.getProperty("dcterms:created").getValues() : new Value[0];
+            values = obj.hasProperty(jcrNamespaceMap.get("dcterms") + "created")
+              ? node.getProperty(jcrNamespaceMap.get("dcterms") + "created").getValues() : new Value[0];
         }
 
         return values;

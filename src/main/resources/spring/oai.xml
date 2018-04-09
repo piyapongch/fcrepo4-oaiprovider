@@ -17,6 +17,19 @@
             <entry key="http://id.loc.gov/authorities/names/n2009054054" value="St. Stephen&apos;s College" />
           </map>
         </property>
+        <property name="jcrNamespaceMap">
+            <map>
+                <!-- 
+                    for use with ModeShape JCR node namespace specification formate with {} syntax 
+                    as per: modeshape-jcr/src/main/java/org/modeshape/jcr/value/basic/NameValueFactory.java "create" function
+                -->
+                <entry key="model" value="{info:fedora/fedora-system:def/model#}" />
+                <entry key="ual" value="{http://terms.library.ualberta.ca/}" />
+                <entry key="dc" value="{http://purl.org/dc/elements/1.1/}" />
+                <entry key="dcterms" value="{http://purl.org/dc/terms/}" />
+                <entry key="swrc" value="{http://ontoware.org/swrc/ontology#}" />
+            </map>
+        </property>
     </bean>
 
     <bean name="jcrOaiDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator" parent="jcrOaiGenerator">
@@ -53,12 +66,24 @@
         <property name="propertyOaiBaseUrl" value="http://www.openarchives.org/OAI/2.0/baseUrl" />
         <property name="namespaces">
             <map>
-                <!-- ToDo: 2017-11-24 - is this necessary -->
+                <!-- 
+                    2018-04-05: disabled due to preexisting content within Fedora with preexisting URIs
+                    these fail as per
+                    https://wiki.duraspace.org/display/FEDORA4x/Best+Practices+-+RDF+Namespaces
+                    example error
+                    ERROR - OAIProviderService.init(279): The namespace with URI
+                    "http://terms.library.ualberta.ca/" cannot be unregistered because the node type 
+                    "{http://terms.library.ualberta.ca/}Community" uses it.
+                -->
+                <!-- also defined in the CND file included within
+                -Dfcrepo.modeshape.configuration=classpath:/config/file-simple/repository.json
+                -->
+                <!--
                 <entry key="model" value="info:fedora/fedora-system:def/model#" />
                 <entry key="mode" value="http://www.modeshape.org/1.0" />
                 <entry key="oai" value="http://www.openarchives.org/OAI/2.0/" />
+                <entry key="works_models" value="http://projecthydra.org/works/models#" />
 
-                <!-- -->
                 <entry key="bibo" value="http://purl.org/ontology/bibo/" />
                 <entry key="cc" value="http://creativecommons.org/ns#" />
                 <entry key="dc" value="http://purl.org/dc/elements/1.1/" />
@@ -92,6 +117,7 @@
                 <entry key="ualthesis" value="http://terms.library.ualberta.ca/thesis/" />
                 <entry key="works" value="http://pcdm.org/works#" />
                 <entry key="vivo" value="http://vivoweb.org/ontology/core#" />
+                -->
             </map>
         </property>
         <property name="metadataFormats">
