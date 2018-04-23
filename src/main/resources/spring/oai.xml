@@ -23,11 +23,13 @@
                     for use with ModeShape JCR node namespace specification formate with {} syntax 
                     as per: modeshape-jcr/src/main/java/org/modeshape/jcr/value/basic/NameValueFactory.java "create" function
                 -->
-                <entry key="model" value="{info:fedora/fedora-system:def/model#}" />
-                <entry key="ual" value="{http://terms.library.ualberta.ca/}" />
+                <entry key="bibo" value="{http://purl.org/ontology/bibo/}" />
                 <entry key="dc" value="{http://purl.org/dc/elements/1.1/}" />
                 <entry key="dcterms" value="{http://purl.org/dc/terms/}" />
+                <entry key="model" value="{info:fedora/fedora-system:def/model#}" />
+                <entry key="prism" value="{http://prismstandard.org/namespaces/basic/3.0/}" />
                 <entry key="swrc" value="{http://ontoware.org/swrc/ontology#}" />
+                <entry key="ual" value="{http://terms.library.ualberta.ca/}" />
             </map>
         </property>
     </bean>

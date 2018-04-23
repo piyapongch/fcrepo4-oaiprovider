@@ -75,12 +75,12 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         Value[] values;
         final Node node = getJcrNode(obj);
 
-        final String nsUal = jcrNamespaceMap.get("ual");
+        final String nsBibo = jcrNamespaceMap.get("bibo");
         final String nsDc = jcrNamespaceMap.get("dc");
         final String nsDcTerms = jcrNamespaceMap.get("dcterms");
-        final String nsBibo = jcrNamespaceMap.get("bibo");
         final String nsPrism = jcrNamespaceMap.get("prism");
         final String nsSwrc = jcrNamespaceMap.get("swrc");
+        final String nsUal = jcrNamespaceMap.get("ual");
 
         // creator and date
         final boolean isThesis = isThesis(node);

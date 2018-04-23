@@ -213,7 +213,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
 
         // case "bibo:degree":
         if (obj.hasProperty(nsBibo + "degree")) {
-            for (final Value v : node.getProperty(nsPrism + "degree").getValues()) {
+            for (final Value v : node.getProperty(nsBibo + "degree").getValues()) {
                 addFreeTextType(v, degree.getName());
             }
         }
