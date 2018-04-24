@@ -563,10 +563,11 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         if (v != null && StringUtils.isNotEmpty(v.getString())) {
             try {
                 // test if ISO date - if not handle in exception
+                final String tmpDate = valueConverter.convert(v).asLiteral().getString();
                 final XMLGregorianCalendar xgc
-                        = DatatypeFactory.newInstance().newXMLGregorianCalendar(v.getString());
+                        = DatatypeFactory.newInstance().newXMLGregorianCalendar(tmpDate);
                 addAggregationDate(
-                        valueConverter.convert(v).asLiteral().getString(),
+                        tmpDate,
                         "http://www.openarchives.org/ore/atom/created",
                         et);
             } catch (Exception e) {
