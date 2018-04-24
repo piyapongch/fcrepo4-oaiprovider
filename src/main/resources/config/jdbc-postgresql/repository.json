@@ -5,7 +5,7 @@
         "predefined" : ["default"],
         "default" : "default",
         "allowCreation" : true,
-        "cacheSize" : 20000
+        "cacheSize" : "${fcrepo.modeshape.cacheSize:10000}"
     },
     "storage" : {
         "persistence": {
