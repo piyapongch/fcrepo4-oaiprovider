@@ -5,7 +5,7 @@
         "predefined" : ["default"],
         "default" : "default",
         "allowCreation" : true,
-        "cacheSize" : 10000
+        "cacheSize" : 20000
     },
     "storage" : {
         "persistence": {
@@ -35,5 +35,75 @@
         "initialTime" : "00:00",
         "intervalInHours" : 24
     },
-    "node-types" : ["fedora-node-types.cnd"]
+    "node-types" : ["fedora-node-types.cnd"],
+ 
+    "indexProviders" : {
+        "local" : {
+            "classname" : "org.modeshape.jcr.index.local.LocalIndexProvider",
+            "directory" : "${fcrepo.modeshape.index.directory}",
+            "cacheLRUEnable" : true,
+            "mmapFileEnable" : true,
+            "commitFileSyncDisable" : true,
+            "transactionDisable" : true,
+            "asyncWrite" : true,
+            "cacheSize" : 1000000
+        },
+          "lucene" : {
+            "classname" : "lucene",
+            "directory" : "${fcrepo.modeshape.index.directory}",
+            "analyzerClass" : "org.apache.lucene.analysis.standard.StandardAnalyzer",
+            "lockFactoryClass" : "org.apache.lucene.store.NoLockFactory"
+        }
+    },
+    "indexes" : {
+        "hasModel" : {
+            "kind" : "value",
+            "provider" : "local",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "{info:fedora/fedora-system:def/model#}hasModel(STRING)"
+        },
+        "accessRights" : {
+            "kind" : "value",
+            "provider" : "local",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "{http://purl.org/dc/terms/}accessRights(STRING)"
+        },
+        "lastModified" : {
+            "kind" : "value",
+            "provider" : "local",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "jcr:lastModified(DATE)"
+        },
+        "type" : {
+            "kind" : "value",
+            "provider" : "local",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "{http://purl.org/dc/terms/}type(STRING)"
+        },
+        "memberOf" : {
+            "kind" : "value",
+            "provider" : "lucene",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "{http://pcdm.org/models#}memberOf(STRING)"
+        },
+        "ualPath" : {
+            "kind" : "value",
+            "provider" : "lucene",
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "{http://terms.library.ualberta.ca/}path(STRING)"
+        },
+        "localName" : {
+            "kind" : "value",
+            "provider" : "local",                                               
+            "synchronous" : "false",
+            "nodeType" : "fedora:Resource",
+            "columns" : "mode:localName(STRING)"
+        }
+    }
 }

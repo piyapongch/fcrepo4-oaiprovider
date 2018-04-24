@@ -383,8 +383,11 @@
                                 <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/spring" verbose="true">
                                     <fileset dir="src/main/resources/spring" />
                                 </copy>
-                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/config/minimal-default" verbose="true">
-                                    <fileset dir="src/main/resources/config/minimal-default" />
+                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/config/file-simple" verbose="true">
+                                    <fileset dir="src/main/resources/config/file-simple" />
+                                </copy>
+                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/config/jdbc-postgresql" verbose="true">
+                                    <fileset dir="src/main/resources/config/jdbc-postgresql" />
                                 </copy>
                                 <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib" file="target/${project.artifactId}-${project.version}.jar" verbose="true"/>
                                 <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
