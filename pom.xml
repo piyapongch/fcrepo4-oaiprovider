@@ -14,7 +14,9 @@
     <version>4.7.4.5</version>
 
     <properties>
-      <fcrepo.version>4.7.4</fcrepo.version>
+      <fcrepo.version>4.7.4</fcrepo.version> <!-- change for Fcrepo update -->
+      <modeshape.version>5.3.0.Final</modeshape.version> <!-- change for Fcrepo update -->
+      <lucene.version>6.0.1</lucene.version> <!-- change for Fcrepo update -->
       <fcrepo-build-tools.version>4.2.0</fcrepo-build-tools.version>
     </properties>
 
@@ -180,6 +182,7 @@
           <groupId>joda-time</groupId>
           <artifactId>joda-time</artifactId>
           <version>2.3</version>
+          <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
@@ -380,25 +383,30 @@
                                 <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib" verbose="true">
                                     <fileset dir="src/main/resources/lib" />
                                 </copy>
-                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/spring" verbose="true">
+                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/spring" overwrite="true" verbose="true">
                                     <fileset dir="src/main/resources/spring" />
                                 </copy>
-                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/config" verbose="true">
+                                <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/classes/config" overwrite="true" verbose="true">
                                     <fileset dir="src/main/resources/config" />
                                 </copy>
                                 <copy todir="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib" file="target/${project.artifactId}-${project.version}.jar" verbose="true"/>
-                                <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
+                                <!-- for use with the ModeShape Lucene index- ToDo: find better way than "get" --> 
                                 <get
-                                  src="http://central.maven.org/maven2/org/modeshape/modeshape-lucene-index-provider/5.3.0.Final/modeshape-lucene-index-provider-5.3.0.Final.jar"
-                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/modeshape-lucene-index-provider-5.3.0.Final.jar"/>
-                                <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
+                                  src="http://central.maven.org/maven2/org/modeshape/modeshape-lucene-index-provider/${modeshape.version}/modeshape-lucene-index-provider-${modeshape.version}.jar"
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/modeshape-lucene-index-provider-${modeshape.version}.jar"/>
+                                <!-- for use with the ModeShape Lucene index- ToDo: find better way than "get" --> 
                                 <get
-                                  src="http://central.maven.org/maven2/org/apache/lucene/lucene-core/6.0.1/lucene-core-6.0.1.jar"
-                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/lucene-core-6.0.1.jar"/>
-                                <!-- for use with the ModeShape 5.3 Lucene index- ToDo: find better way than "get" --> 
+                                  src="http://central.maven.org/maven2/org/apache/lucene/lucene-core/${lucene.version}/lucene-core-${lucene.version}.jar"
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/lucene-core-${lucene.version}.jar"/>
+                                <!-- for use with the ModeShape Lucene index- ToDo: find better way than "get" --> 
                                 <get
-                                  src="http://central.maven.org/maven2/org/apache/lucene/lucene-analyzers-common/6.0.1/lucene-analyzers-common-6.0.1.jar"
-                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/lucene-analyzers-common-6.0.1.jar"/>
+                                  src="http://central.maven.org/maven2/org/apache/lucene/lucene-analyzers-common/${lucene.version}/lucene-analyzers-common-${lucene.version}.jar"
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/lucene-analyzers-common-${lucene.version}.jar"/>
+                                <!-- for use with the ModeShape Lucene index- ToDo: find better way than "get" --> 
+                                <get
+                                  src="http://central.maven.org/maven2/org/apache/lucene/lucene-backward-codecs/${lucene.version}/lucene-backward-codecs-${lucene.version}.jar"
+                                  dest="target/fcrepo-webapp-${fcrepo.version}/WEB-INF/lib/lucene-backwards-codecs-${lucene.version}.jar"/>
+																<!-- build jar for project -->
                                 <jar destfile="target/${project.artifactId}-${project.version}.war" basedir="target/fcrepo-webapp-${fcrepo.version}" />
                             </tasks>
                         </configuration>

@@ -55,28 +55,28 @@
     "indexes" : {
         "hasModel" : {
             "kind" : "value",
-            "provider" : "local",
+            "provider" : "lucene",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
             "columns" : "{info:fedora/fedora-system:def/model#}hasModel(STRING)"
         },
         "accessRights" : {
             "kind" : "value",
-            "provider" : "local",
+            "provider" : "lucene",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
             "columns" : "{http://purl.org/dc/terms/}accessRights(STRING)"
         },
         "lastModified" : {
             "kind" : "value",
-            "provider" : "local",
+            "provider" : "lucene",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
             "columns" : "jcr:lastModified(DATE)"
         },
         "type" : {
             "kind" : "value",
-            "provider" : "local",
+            "provider" : "lucene",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
             "columns" : "{http://purl.org/dc/terms/}type(STRING)"
@@ -97,7 +97,7 @@
         },
         "localName" : {
             "kind" : "value",
-            "provider" : "local",
+            "provider" : "lucene",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
             "columns" : "mode:localName(STRING)"

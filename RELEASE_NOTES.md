@@ -1,11 +1,21 @@
 # RELEASE NOTES - OAI PROVIDER
 
-## v4.7.4.3 Fcrepo4 OAI Provider
+# Table of Contents
+
+* [General v4.7.x Notes](#v4.7.x)
+* [v4.7.4.3 Notes](#v4.7.4.3)
+* [v4.7.5.0 Notes](#v4.7.5.0)
+
+
+
+<a name="v4.7.x"/>
+
+## v4.7.x Fcrepo4 OAI Provider
+
 
 ### Archetecture
 
-* OAI Provider is a Java-based extension of Fedora Commons (Fcrepo) version 4.7.4.
-* v4.7.4.3 release is untested with other Fcrepo versions. The release is largely based on version 4.2.
+* OAI Provider is a Java-based extension of Fedora Commons (Fcrepo) version 4.7.x.
 * Builds as a Java Jar file and copied into Fedora Commons lib directory.
 * OAI Provider interacts with Fedora below the WEB API and directly calls Fcrepo session, Fcrepo service, and ModeShape layers (including the use of JCR2-SQL).
 * Utilizes JAX-B to autogenerate Java Class files representing the output XML metadata and includes serialization routines. 
@@ -21,11 +31,10 @@
         * https://github.com/ualbertalib/metadata/commit/9d399072010c51ab066c56b4252595695355d049#diff-040171f6a9f356b320be186e0c34d6e1
         * https://github.com/ualbertalib/metadata/tree/9d399072010c51ab066c56b4252595695355d049
         * https://github.com/ualbertalib/metadata/tree/9d399072010c51ab066c56b4252595695355d049
-* OAI-PMH validator: 
-    * https://github.com/zimeon/oaipmh-validator.git 
 
 
 ### Build/Installation
+
 
 #### Build
 
@@ -33,20 +42,28 @@
     * compiles OAI Provider code into a Jar
     * downloads Fedora Commons War file and adds the following items before rebuilding
         * OAI Provider Jar
-        * config files: OAI Provider, Fedora (Modeshape config, indexing, and fedora config) - oai.xml, master.xml, repository.json, node-types_ual.cnd)
+        * config files: OAI Provider, Fedora (Modeshape config, indexing, and fedora config) - oai.xml, master.xml, repository.json (file-simple, jdbc-postgres), activemq.xml (modifed) node-types_ual.cnd)
         * ModeShape libraries to allow the usage of Lucene indexing within ModeShape (e.g., allowing indexing of multi-valued properties, for example collection membership (https://docs.jboss.org/author/display/MODE50/Lucene)
     * Builds a War file named `fcrepo-oaiprovider-4.7.4.3.war` where `4.7.4` is the Fcrepo version with the last dot number represting the OAI Provider version
+
 
 #### Installation / Deployment
 
 * The same a previous versions
-* Build script packages (e.g., mvn dist) all necessary config and library files such that one can drop-in the resulting `fcrepo-oaiprovider-4.7.4.3.war` into a Tomcat instance with the following property passed into Tomcat at start-up
+* Build script packages (e.g., mvn install; mvn package) all necessary config and library files such that one can drop-in the resulting `fcrepo-oaiprovider-4.7.4.3.war` into a Tomcat instance with the following property passed into Tomcat at start-up
     * -Dfcrepo.modeshape.configuration=classpath:/config/minimal-default/repository.json 
     * -Dfcrepo.modeshape.index.directory=/fcrepo4-data/modeshape.index 
     * -Dfcrepo.streaming.parallel=true 
     * -Dfcrepo.home=/fcrepo4-data 
+    * -Dfcrepo.triplestore.activemq.broker=triplestore:61616
+    * -Djava.xml.transform.TransformerFactory=net.sf.saxon.TransformerFactoryImpl
+* Alternative Modeshape persistance layer - PostgreSQL JDBC in `src/main/resources/config/jdbc-postgresql/`
 
 * Alternatively, as a Docker image described here: https://github.com/ualbertalib/fcrepo4-oaiprovider/issues/27    
+
+* OAI-PMH validator - testing script: 
+    * https://github.com/zimeon/oaipmh-validator.git 
+
 
 #### Updating to a new Fcrepo release (minor release)
 * update `pom.xml`
@@ -58,6 +75,24 @@
             * lucene-analyzers-common-6.0.1.jar
             * more info might appear in the release notes for the ModeShape version (http://docs.jboss.org/modeshape/)
 
+
+#### Examples
+
+* Via the web Browser plugin https://restlet.com
+    * config: https://github.com/ualbertalib/fcrepo4-oaiprovider/tree/master/config/restlet
+* General
+    * http://localhost:8080/fcrepo/rest/oai?verb=Identify
+    * http://localhost:8080/fcrepo/rest/oai?verb=ListSets 
+    * http://localhost:8080/fcrepo/rest/oai?verb=ListIdentifiers&metadataPrefix=oai_dc
+    * http://localhost:8080/fcrepo/rest/oai?verb=ListRecords&metadataPrefix=oai_dc
+    * http://localhost:8080/fcrepo/rest/oai?verb=GetRecord&metadataPrefix=oai_etdms&identifier={replace_me_with_a_record_identifier}
+    * http://localhost:8080/fcrepo/rest/oai?verb=ListRecords&metadataPrefix=oai_dc&set=3fedbfcc-d99e-40ca-b66b-2c7c7433e77b/6cddc888-91f8-4f8c-aa54-49b1b597891e
+    * http://localhost:8080/fcrepo/rest/oai?verb=ListRecords&metadataPrefix=oai_dc&from=2002-02-05&until=2002-02-06T05:35:00Z 
+
+
+<a name="v4.7.4.3"/>
+
+## v4.7.4.3 Fcrepo4 OAI Provider
 
 ### Overview
 
@@ -105,16 +140,23 @@ kj
 * reverse JCR query workarounds (from Fcrepo 4.2) no longer required in Fcrepo 4.7.4
 * alter property acquisition to conform to PCDM and Jupiter specific structures
 
+#### Notes
 
-#### Examples
+* v4.7.4.3 release is untested with other Fcrepo versions. The release is largely based on version 4.2.
 
-* Via the web Browser plugin https://restlet.com
-    * config: https://github.com/ualbertalib/fcrepo4-oaiprovider/tree/master/config/restlet
-* General
-    * http://localhost:8080/fcrepo/rest/oai?verb=Identify
-    * http://localhost:8080/fcrepo/rest/oai?verb=ListSets 
-    * http://localhost:8080/fcrepo/rest/oai?verb=ListIdentifiers&metadataPrefix=oai_dc
-    * http://localhost:8080/fcrepo/rest/oai?verb=ListRecords&metadataPrefix=oai_dc
-    * http://localhost:8080/fcrepo/rest/oai?verb=GetRecord&metadataPrefix=oai_etdms&identifier={replace_me_with_a_record_identifier}
-    * http://localhost:8080/fcrepo/rest/oai?verb=ListRecords&metadataPrefix=oai_dc&set=3fedbfcc-d99e-40ca-b66b-2c7c7433e77b/6cddc888-91f8-4f8c-aa54-49b1b597891e
-    * http://localhost:8080/fcrepo/rest/oai?verb=ListRecords&metadataPrefix=oai_dc&from=2002-02-05&until=2002-02-06T05:35:00Z 
+
+<a name="v4.7.5.0"/>
+
+## v4.7.5.0 Fcrepo4 OAI Provider
+
+### Overview
+
+A minor revision of v4.7.4 - see release note for detailed explaination of the 4.7.x.x release family.
+
+### Features
+
+* update version in pom.xml
+  * fcrepo.version: bump Fcrepo to 4.7.5 - https://wiki.duraspace.org/display/FF/Fedora+4.7.5+Release+Notes
+  * modeshape.version: bump to 5.4.0.Final as per Fcrepo release 
+  * lucene.version: bump lucene to 6.4.1 as per ModeShape release
+* Narayana config added: https://github.com/fcrepo4/fcrepo4/commit/cab6f05305e26cf7b0aa818e6683dda422c6984d
