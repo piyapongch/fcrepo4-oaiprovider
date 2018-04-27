@@ -57,14 +57,14 @@
     },
     "indexes" : {
         "hasModel" : {
-            "kind" : "value",
+            "kind" : "enumerated",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
             "columns" : "{info:fedora/fedora-system:def/model#}hasModel(STRING)"
         },
         "accessRights" : {
-            "kind" : "value",
+            "kind" : "enumerated",
             "provider" : "local",
             "synchronous" : "false",
             "nodeType" : "fedora:Resource",
