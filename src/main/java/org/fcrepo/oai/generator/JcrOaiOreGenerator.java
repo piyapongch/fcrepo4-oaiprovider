@@ -465,7 +465,7 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
                 addIdentifier(entry, node.getProperty(jcrNamespaceMap.get("dcterms") + "identifier"));
             }
             if (obj.hasProperty(jcrNamespaceMap.get("prism") + "doi")) {
-                addIdentifier(entry, node.getProperty(jcrNamespaceMap.get("prism") + "doi"));
+                //addIdentifier(entry, node.getProperty(jcrNamespaceMap.get("prism") + "doi"));
                 addUalidDoiIdentifier(entry, node.getProperty(jcrNamespaceMap.get("prism") + "doi"));
             }
             if (obj.hasProperty(jcrNamespaceMap.get("ual") + "fedora3Handle")) {

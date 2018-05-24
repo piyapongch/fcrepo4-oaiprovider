@@ -210,7 +210,7 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
 
         // "prism:doi":
         if (obj.hasProperty(nsPrism + "doi")) {
-            addIdentifier(oaidc, node.getProperty(nsPrism + "doi"));
+            //addIdentifier(oaidc, node.getProperty(nsPrism + "doi"));
             addIdentifierDoi(oaidc, node.getProperty(nsPrism + "doi"), dcFactory);
         }
 

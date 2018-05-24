@@ -235,7 +235,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         // case "prism:doi":
         if (obj.hasProperty(nsPrism + "doi")) {
             for (final Value v : node.getProperty(nsPrism + "doi").getValues()) {
-                addString(v, thesis.getIdentifier());
+                //addString(v, thesis.getIdentifier());
                 addUalid(v, thesis.getIdentifier());
             }
         }
