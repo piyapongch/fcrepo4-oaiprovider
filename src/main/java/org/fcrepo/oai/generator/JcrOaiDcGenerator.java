@@ -604,9 +604,12 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
         for (int i = 0; values != null && i < values.length; i++) {
             if (!StringUtils.isEmpty(values[i].getString())) {
-                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(valueConverter.convert(values[i]).asLiteral().getString());
-                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
+                final String validDcType = getDcTypeValue(valueConverter.convert(values[i]).asLiteral().getString());
+                if (validDcType != null) {
+                    final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                    simple.getContent().add(validDcType);
+                    oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
+                }
             }
         }
     }
@@ -619,9 +622,13 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
      */
     private void addThesisType(final OaiDcType oaidc, final Container obj) {
         for (URI v : obj.getTypes()) {
-            final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-            simple.getContent().add(v.toString());
-            oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
+            final String validDcType = getDcTypeValue(v.toString());
+            if (validDcType != null) {
+                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                simple.getContent().add(validDcType);
+                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createType(simple));
+            }
         }
     }
+
 }

@@ -109,7 +109,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         // case "dcterms:type":
         if (obj.hasProperty(nsDcTerms + "type")) {
             for (final Value v : node.getProperty(nsDcTerms + "type").getValues()) {
-                addFreeTextType(v, thesis.getType());
+                addType(v, thesis.getType());
             }
         }
 
@@ -543,6 +543,29 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         }
     }
 
+    /**
+     * The a type method.
+     *
+     * @param v
+     * @param texts
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addType(final Value v, final List<FreeTextType> texts)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        if (StringUtils.isNotEmpty(v.getString())) {
+            final String validDcType =
+                getDcTypeValue(valueConverter.convert(v).asLiteral().getString());
+            if (validDcType != null) {
+                final FreeTextType text = etdmsFactory.createFreeTextType();
+                text.setValue(validDcType);
+                texts.add(text);
+            }
+        }
+    }
+
+
     /** add the dc:type for a Thesis
      *
      * @param oaidc the output object
@@ -551,9 +574,12 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
      */
     private void addThesisType(final Container obj, final List<FreeTextType> freeTextTypes) {
         for (URI v : obj.getTypes()) {
-            final FreeTextType freeTextType = etdmsFactory.createFreeTextType();
-            freeTextType.setValue(v.toString());
-            freeTextTypes.add(freeTextType);
+            final String validDcType = getDcTypeValue(v.toString());
+            if (validDcType != null) {
+                final FreeTextType freeTextType = etdmsFactory.createFreeTextType();
+                freeTextType.setValue(validDcType);
+                freeTextTypes.add(freeTextType);
+            }
         }
     }
 

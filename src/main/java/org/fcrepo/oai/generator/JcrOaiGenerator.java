@@ -7,6 +7,7 @@
 package org.fcrepo.oai.generator;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,8 @@ public class JcrOaiGenerator {
     protected String doiFullUriFormat;
     protected Map<String, String> institutionMap;
     protected Map<String, String> jcrNamespaceMap;
+    protected Map<String, String> dcTypeMap;
+    protected Set<String> dcTypeExclusionsSet;
 
 
     /**
@@ -93,4 +96,39 @@ public class JcrOaiGenerator {
     public void setJcrNamespaceMap(final Map<String, String> jcrNamespaceMap) {
         this.jcrNamespaceMap = jcrNamespaceMap;
     }
+
+    /**
+     * dc:type url to literal mapping
+     *
+     * @param dcTypeMap a Map object containing the url to literal mapping
+     */
+    public void setDcTypeMap(final Map<String, String> dcTypeMap) {
+      this.dcTypeMap = dcTypeMap;
+    }
+
+    /**
+     * dc:type urls to exclude
+     *
+     * @param dcTypeExclusionsSet a set object containing urls to exclude
+     */
+    public void setDcTypeExclusionsSet(final Set<String> dcTypeExclusionsSet) {
+      this.dcTypeExclusionsSet = dcTypeExclusionsSet;
+    }
+
+    /**
+     * dc:type: map to literal value from dcTypeMap and dcTypeExclusions
+     *
+     * @param input a dc:type value string
+     * @return literal (not url) value or null if not in dcTypeMap or an exclusion
+     */
+    public String getDcTypeValue(final String input) {
+      String ret = null;
+      if (input != null) {
+        if (!this.dcTypeExclusionsSet.contains(input)) {
+          ret = this.dcTypeMap.get(input);
+        }
+      }
+      return ret;
+    }
+
 }

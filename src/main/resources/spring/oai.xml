@@ -32,6 +32,37 @@
                 <entry key="ual" value="{http://terms.library.ualberta.ca/}" />
             </map>
         </property>
+        <property name="dcTypeMap">
+            <map>
+                <!--
+                 * Map dc:type full URIs to a literal value
+                 * https://github.com/ualbertalib/fcrepo4-oaiprovider/issues/33 
+                -->
+                <entry key="http://purl.org/ontology/bibo/Report" value="Report" />
+                <entry key="http://terms.library.ualberta.ca/learningObject" value="Learning Object" />
+                <entry key="http://vivoweb.org/ontology/core#ConferencePoster" value="Conference Poster" />
+                <entry key="http://purl.org/ontology/bibo/Article" value="Article" />
+                <entry key="http://purl.org/ontology/bibo/Image" value="Image" />
+                <entry key="http://vivoweb.org/ontology/core#Review" value="Review" />
+                <entry key="http://vivoweb.org/ontology/core#ConferencePaper" value="Conference Paper" />
+                <entry key="http://purl.org/ontology/bibo/Chapter" value="Chapter" />
+                <entry key="http://vivoweb.org/ontology/core#Dataset" value="Dataset" />
+                <entry key="http://purl.org/ontology/bibo/Book" value="Book" />
+                <entry key="http://terms.library.ualberta.ca/researchMaterial" value="Research Material" />
+                <entry key="http://purl.org/ontology/bibo/Thesis" value="Thesis" />
+            </map>
+        </property>
+        <property name="dcTypeExclusionsSet">
+            <list>
+                <!--
+                 * dc:type full URIs to a exclude 
+                 * https://github.com/ualbertalib/fcrepo4-oaiprovider/issues/33 
+                -->
+                <value>http://fedora.info/definitions/v4/repository#Container</value>
+                <value>http://fedora.info/definitions/v4/repository#Resource</value>
+                <value>http://pcdm.org/models#Object</value>
+            </list>
+        </property>
     </bean>
 
     <bean name="jcrOaiDcGenerator" class="org.fcrepo.oai.generator.JcrOaiDcGenerator" parent="jcrOaiGenerator">

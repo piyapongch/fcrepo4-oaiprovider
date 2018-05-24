@@ -595,14 +595,20 @@ public class JcrOaiOreGenerator extends JcrOaiGenerator {
         // <!-- dcterms:type -->
         if (isThesis(node)) {
             for (URI type : obj.getTypes()) {
-                addAtomCategory(et, type.toString());
+                final String validDcType = getDcTypeValue(type.toString());
+                if (validDcType != null) {
+                    addAtomCategory(et, validDcType);
+                }
             }
         } else {
             final Property prop = obj.hasProperty(jcrNamespaceMap.get("dcterms") + "type")
                     ? node.getProperty(jcrNamespaceMap.get("dcterms") + "type") : null;
             if (prop != null) {
                 for (final Value val : prop.getValues()) {
-                    addAtomCategory(et, valueConverter.convert(val).asLiteral().getString());
+                    final String validDcType = getDcTypeValue(valueConverter.convert(val).asLiteral().getString());
+                    if (validDcType != null) {
+                        addAtomCategory(et, validDcType);
+                    }
                 }
             }
         }
