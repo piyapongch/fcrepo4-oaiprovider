@@ -37,6 +37,7 @@ import org.fcrepo.http.commons.api.rdf.HttpResourceConverter;
 import org.fcrepo.kernel.api.models.Container;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
+import org.fcrepo.oai.rdf.LanguageRdf;
 
 import org.ndltd.standards.metadata.etdms._1.AuthorityType;
 import org.ndltd.standards.metadata.etdms._1.ControlledTextType;
@@ -48,6 +49,7 @@ import org.ndltd.standards.metadata.etdms._1.Thesis.Degree;
 import org.ndltd.standards.metadata.etdms._1.Thesis.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The JcrOaiEtdmsGenerator class.
@@ -68,6 +70,9 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
     private String pdfUrlFormat;
 
     private ValueConverter valueConverter = null;
+
+    @Autowired
+    private LanguageRdf languageRdf;
 
     /**
      * The generate method.
@@ -262,7 +267,7 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
         // case "dcterms:language":
         if (obj.hasProperty(nsDcTerms + "language")) {
             for (final Value v : node.getProperty(nsDcTerms + "language").getValues()) {
-                addString(v, thesis.getLanguage());
+                addLanguage(v, thesis.getLanguage());
             }
         }
 
@@ -579,6 +584,25 @@ public class JcrOaiEtdmsGenerator extends JcrOaiGenerator {
                 final FreeTextType freeTextType = etdmsFactory.createFreeTextType();
                 freeTextType.setValue(validDcType);
                 freeTextTypes.add(freeTextType);
+            }
+        }
+    }
+
+    /**
+     * The addLanguage method.
+     *
+     * @param v
+     * @param level
+     * @throws RepositoryException
+     * @throws IllegalStateException
+     * @throws ValueFormatException
+     */
+    private void addLanguage(final Value v, final List<String> level)
+        throws ValueFormatException, IllegalStateException, RepositoryException {
+        if (StringUtils.isNotEmpty(v.getString())) {
+            final String langStr = languageRdf.getLiteralFromUrl(valueConverter.convert(v).asLiteral().getString());
+            if (langStr != null) {
+                level.add(langStr);
             }
         }
     }

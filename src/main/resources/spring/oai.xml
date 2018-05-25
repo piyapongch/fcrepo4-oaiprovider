@@ -200,4 +200,454 @@
         <property name="namespace" value="http://www.w3.org/2005/Atom" />
         <property name="propertyName" value="http://fedora.info/definitions/v4/config#hasOaiOreRecord" />
     </bean>
+
+    <!-- convert ISO 639-2 URL to literal value -->
+    <bean name="languageRdf" class="org.fcrepo.oai.rdf.LanguageRdf">
+        <property name="languageMap">
+            <map>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/luo" value="Luo (Kenya and Tanzania)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/oci" value="Occitan (post 1500)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/enm" value="English, Middle (1100-1500)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kik" value="Kikuyu |  Gikuyu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ira" value="Iranian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tut" value="Altaic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/inh" value="Ingush"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nno" value="Norwegian Nynorsk |  Nynorsk, Norwegian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lim" value="Limburgan |  Limburger |  Limburgish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mic" value="Mi'kmaq |  Micmac"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sna" value="Shona"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kom" value="Komi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ori" value="Oriya"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/div" value="Divehi |  Dhivehi |  Maldivian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nap" value="Neapolitan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/phn" value="Phoenician"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bla" value="Siksika"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ful" value="Fulah"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sux" value="Sumerian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bel" value="Belarusian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/zha" value="Zhuang |  Chuang"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fry" value="Western Frisian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ssw" value="Swati"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dyu" value="Dyula"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lav" value="Latvian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chg" value="Chagatai"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pus" value="Pushto |  Pashto"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/smi" value="Sami languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tsi" value="Tsimshian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/umb" value="Umbundu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bod" value="Tibetan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cpf" value="Creoles and pidgins, French-based"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dut" value="Dutch |  Flemish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kho" value="Khotanese |  Sakan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hat" value="Haitian |  Haitian Creole"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/crh" value="Crimean Tatar |  Crimean Turkish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nyo" value="Nyoro"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tha" value="Thai"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fon" value="Fon"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/peo" value="Persian, Old (ca.600-400 B.C.)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/zgh" value="Standard Moroccan Tamazight"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fro" value="French, Old (842-ca.1400)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pro" value="Provençal, Old (to 1500) | Occitan, Old (to 1500)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ota" value="Turkish, Ottoman (1500-1928)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cor" value="Cornish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lua" value="Luba-Lulua"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chk" value="Chuukese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fil" value="Filipino |  Pilipino"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dak" value="Dakota"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nia" value="Nias"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fij" value="Fijian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chn" value="Chinook jargon"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/aka" value="Akan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/deu" value="German"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/myv" value="Erzya"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ava" value="Avaric"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/iba" value="Iban"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/apa" value="Apache languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mul" value="Multiple languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/arn" value="Mapudungun |  Mapuche"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/srd" value="Sardinian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kua" value="Kuanyama |  Kwanyama"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kal" value="Kalaallisut |  Greenlandic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mlt" value="Maltese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ast" value="Asturian |  Bable |  Leonese |  Asturleonese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/may" value="Malay"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mlg" value="Malagasy"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nai" value="North American Indian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/xho" value="Xhosa"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lun" value="Lunda"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gsw" value="Swiss German |  Alemannic |  Alsatian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dua" value="Duala"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nic" value="Niger-Kordofanian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kau" value="Kanuri"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tmh" value="Tamashek"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kaz" value="Kazakh"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/zul" value="Zulu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/map" value="Austronesian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/shn" value="Shan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/uzb" value="Uzbek"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lad" value="Ladino"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/syr" value="Syriac"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hrv" value="Croatian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ibo" value="Igbo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nso" value="Pedi |  Sepedi |  Northern Sotho"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ron" value="Romanian |  Moldavian |  Moldovan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/amh" value="Amharic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gon" value="Gondi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hau" value="Hausa"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/jav" value="Javanese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/day" value="Land Dayak languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/egy" value="Egyptian (Ancient)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/vai" value="Vai"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lui" value="Luiseno"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ukr" value="Ukrainian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/frm" value="French, Middle (ca.1400-1600)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tli" value="Tlingit"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tvl" value="Tuvalu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pra" value="Prakrit languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tsn" value="Tswana"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fan" value="Fang"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/yap" value="Yapese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/zza" value="Zaza |  Dimili |  Dimli |  Kirdki |  Kirmanjki |  Zazaki"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/wak" value="Wakashan languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ach" value="Acoli"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gay" value="Gayo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hmn" value="Hmong |  Mong"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tgk" value="Tajik"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lat" value="Latin"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lug" value="Ganda"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/art" value="Artificial languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fas" value="Persian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/alg" value="Algonquian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nau" value="Nauru"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/yor" value="Yoruba"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mis" value="Uncoded languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kbd" value="Kabardian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sme" value="Northern Sami"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/por" value="Portuguese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pam" value="Pampanga |  Kapampangan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/che" value="Chechen"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/grn" value="Guarani"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/zbl" value="Blissymbols |  Blissymbolics |  Bliss"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/rup" value="Aromanian |  Arumanian |  Macedo-Romanian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nya" value="Chichewa |  Chewa |  Nyanja"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/haw" value="Hawaiian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ssa" value="Nilo-Saharan languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tah" value="Tahitian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/got" value="Gothic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/zxx" value="No linguistic content |  Not applicable"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kab" value="Kabyle"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sma" value="Southern Sami"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/qaa-qtz" value="Reserved for local use"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bai" value="Bamileke languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tog" value="Tonga (Nyasa)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/arc" value="Official Aramaic (700-300 BCE) |  Imperial Aramaic (700-300 BCE)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fao" value="Faroese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cha" value="Chamorro"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kac" value="Kachin |  Jingpho"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/krc" value="Karachay-Balkar"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chp" value="Chipewyan |  Dene Suline"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/smo" value="Samoan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lam" value="Lamba"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/abk" value="Abkhazian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dum" value="Dutch, Middle (ca.1050-1350)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fra" value="French"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cad" value="Caddo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ijo" value="Ijo languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ita" value="Italian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ice" value="Icelandic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lus" value="Lushai"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/baq" value="Basque"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/niu" value="Niuean"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bre" value="Breton"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dar" value="Dargwa"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cel" value="Celtic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/vie" value="Vietnamese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hil" value="Hiligaynon"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sam" value="Samaritan Aramaic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/roa" value="Romance languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sem" value="Semitic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bam" value="Bambara"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sin" value="Sinhala |  Sinhalese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/iii" value="Sichuan Yi |  Nuosu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tpi" value="Tok Pisin"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kas" value="Kashmiri"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tel" value="Telugu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pal" value="Pahlavi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/osa" value="Osage"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bad" value="Banda languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chy" value="Cheyenne"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nbl" value="Ndebele, South |  South Ndebele"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kaa" value="Kara-Kalpak"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nds" value="Low German |  Low Saxon |  German, Low |  Saxon, Low"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/znd" value="Zande languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/srp" value="Serbian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hmo" value="Hiri Motu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bik" value="Bikol"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cai" value="Central American Indian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mnc" value="Manchu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sla" value="Slavic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tem" value="Timne"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mwl" value="Mirandese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/grb" value="Grebo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ipk" value="Inupiaq"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kos" value="Kosraean"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tur" value="Turkish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/wln" value="Walloon"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bih" value="Bihari languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/udm" value="Udmurt"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kut" value="Kutenai"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gaa" value="Ga"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/jrb" value="Judeo-Arabic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/new" value="Nepal Bhasa |  Newari"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/him" value="Himachali languages |  Western Pahari languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/alt" value="Southern Altai"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/aus" value="Australian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mno" value="Manobo languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/den" value="Slave (Athapascan)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/afa" value="Afro-Asiatic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tat" value="Tatar"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ven" value="Venda"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dgr" value="Dogrib"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ind" value="Indonesian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/byn" value="Blin |  Bilin"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/btk" value="Batak languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/rus" value="Russian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mas" value="Masai"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ilo" value="Iloko"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/din" value="Dinka"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/goh" value="German, Old High (ca.750-1050)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/snk" value="Soninke"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/inc" value="Indic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cre" value="Cree"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cym" value="Welsh"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gla" value="Gaelic |  Scottish Gaelic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ile" value="Interlingue |  Occidental"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lub" value="Luba-Katanga"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tso" value="Tsonga"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cat" value="Catalan |  Valencian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/was" value="Washo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/rom" value="Romany"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/glg" value="Galician"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nor" value="Norwegian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gem" value="Germanic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ine" value="Indo-European languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/men" value="Mende"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ces" value="Czech"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/oto" value="Otomian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sai" value="South American Indian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kpe" value="Kpelle"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dra" value="Dravidian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gmh" value="German, Middle High (ca.1050-1500)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/roh" value="Romansh"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mga" value="Irish, Middle (900-1200)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sog" value="Sogdian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/smj" value="Lule Sami"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sad" value="Sandawe"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/asm" value="Assamese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/oss" value="Ossetian |  Ossetic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kor" value="Korean"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/moh" value="Mohawk"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/khi" value="Khoisan languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tup" value="Tupi languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sms" value="Skolt Sami"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hsb" value="Upper Sorbian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ewe" value="Ewe"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nub" value="Nubian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sel" value="Selkup"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ton" value="Tonga (Tonga Islands)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mah" value="Marshallese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/arw" value="Arawak"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/srn" value="Sranan Tongo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mad" value="Madurese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/slk" value="Slovak"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fin" value="Finnish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bas" value="Basa"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cau" value="Caucasian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chu" value="Church Slavic |  Old Slavonic |  Church Slavonic |  Old Bulgarian |  Old Church Slavonic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kmb" value="Kimbundu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tkl" value="Tokelau"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mdr" value="Mandar"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/est" value="Estonian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/crp" value="Creoles and pidgins"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mun" value="Munda languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sal" value="Salishan languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/alb" value="Albanian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/akk" value="Akkadian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hup" value="Hupa"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nym" value="Nyamwezi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/wen" value="Sorbian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/elx" value="Elamite"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bur" value="Burmese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kru" value="Kurukh"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sco" value="Scots"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bnt" value="Bantu languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mao" value="Maori"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/und" value="Undetermined"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/del" value="Delaware"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nde" value="Ndebele, North |  North Ndebele"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mak" value="Makasar"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/iro" value="Iroquoian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nwc" value="Classical Newari |  Old Newari |  Classical Nepal Bhasa"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cmc" value="Chamic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/grc" value="Greek, Ancient (to 1453)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kur" value="Kurdish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nyn" value="Nyankole"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/uig" value="Uighur |  Uyghur"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kon" value="Kongo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lol" value="Mongo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lez" value="Lezghian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pon" value="Pohnpeian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sot" value="Sotho, Southern"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/srr" value="Serer"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/anp" value="Angika"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/aym" value="Aymara"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kin" value="Kinyarwanda"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kam" value="Kamba"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/wal" value="Wolaitta |  Wolaytta"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bug" value="Buginese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ath" value="Athapascan languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pol" value="Polish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chm" value="Mari"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dsb" value="Lower Sorbian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pan" value="Panjabi |  Punjabi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bra" value="Braj"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/que" value="Quechua"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/scn" value="Sicilian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gba" value="Gbaya"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cus" value="Cushitic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tiv" value="Tiv"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/zap" value="Zapotec"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/car" value="Galibi Carib"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cos" value="Corsican"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/phi" value="Philippine languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/slv" value="Slovenian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/arp" value="Arapaho"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chb" value="Chibcha"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chi" value="Chinese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/min" value="Minangkabau"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tet" value="Tetum"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bos" value="Bosnian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sgn" value="Sign Languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tuk" value="Turkmen"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hit" value="Hittite"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kum" value="Kumyk"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/krl" value="Karelian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/eng" value="English"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sio" value="Siouan languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/spa" value="Spanish |  Castilian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gor" value="Gorontalo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/csb" value="Kashubian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ell" value="Greek, Modern (1453-)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/frs" value="Eastern Frisian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sid" value="Sidamo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bis" value="Bislama"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/vot" value="Votic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/rap" value="Rapanui"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ave" value="Avestan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/xal" value="Kalmyk |  Oirat"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/khm" value="Central Khmer"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/smn" value="Inari Sami"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bem" value="Bemba"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/paa" value="Papuan languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bak" value="Bashkir"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kar" value="Karen languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/dan" value="Danish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pau" value="Palauan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/uga" value="Ugaritic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/arg" value="Aragonese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bua" value="Buriat"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ter" value="Tereno"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tig" value="Tigre"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bin" value="Bini |  Edo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bal" value="Baluchi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ady" value="Adyghe |  Adygei"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/arm" value="Armenian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mkh" value="Mon-Khmer languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cop" value="Coptic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chr" value="Cherokee"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cpe" value="Creoles and pidgins, English based"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/suk" value="Sukuma"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/her" value="Herero"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ypk" value="Yupik languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tlh" value="Klingon |  tlhIngan-Hol"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gil" value="Gilbertese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/orm" value="Oromo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fur" value="Friulian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cpp" value="Creoles and pidgins, Portuguese-based"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hun" value="Hungarian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/man" value="Mandingo"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sun" value="Sundanese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ain" value="Ainu"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fiu" value="Finno-Ugrian languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/guj" value="Gujarati"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tir" value="Tigrinya"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/zun" value="Zuni"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mag" value="Magahi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mni" value="Manipuri"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ban" value="Balinese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mus" value="Creek"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mac" value="Macedonian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/twi" value="Twi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ang" value="English, Old (ca.450-1100)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/jpr" value="Judeo-Persian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bat" value="Baltic languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kha" value="Khasi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ara" value="Arabic"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/heb" value="Hebrew"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/syc" value="Classical Syriac"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/cho" value="Choctaw"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/loz" value="Lozi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sag" value="Sango"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mon" value="Mongolian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/rar" value="Rarotongan |  Cook Islands Maori"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ina" value="Interlingua (International Auxiliary Language Association)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/chv" value="Chuvash"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lao" value="Lao"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nzi" value="Nzima"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bej" value="Beja |  Bedawiyet"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gwi" value="Gwich'in"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/yao" value="Yao"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tyv" value="Tuvinian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/hai" value="Haida"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/geo" value="Georgian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kro" value="Kru languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nob" value="Bokmål, Norwegian |  Norwegian Bokmål"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/kir" value="Kirghiz |  Kyrgyz"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/snd" value="Sindhi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/jpn" value="Japanese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tai" value="Tai languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/pag" value="Pangasinan"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/aar" value="Afar"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/frr" value="Northern Frisian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nah" value="Nahuatl languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mdf" value="Moksha"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/bul" value="Bulgarian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/lit" value="Lithuanian"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/myn" value="Mayan languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/run" value="Rundi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sit" value="Sino-Tibetan languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/son" value="Songhai languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/tum" value="Tumbuka"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gle" value="Irish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nog" value="Nogai"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sah" value="Yakut"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/yid" value="Yiddish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ace" value="Achinese"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/sga" value="Irish, Old (to 900)"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/non" value="Norse, Old"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ltz" value="Luxembourgish |  Letzeburgesch"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/swe" value="Swedish"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/wol" value="Wolof"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/fat" value="Fanti"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ale" value="Aleut"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/oji" value="Ojibwa"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/gez" value="Geez"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/mos" value="Mossi"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/nav" value="Navajo |  Navaho"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ada" value="Adangme"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/ber" value="Berber languages"/>
+              <entry key="http://id.loc.gov/vocabulary/iso639-2/aze" value="Azerbaijani"/>
+            </map>
+        </property>
+    </bean>
 </beans>

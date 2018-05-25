@@ -31,10 +31,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.fcrepo.kernel.api.models.Container;
 import static org.fcrepo.kernel.modeshape.utils.FedoraTypesUtils.getJcrNode;
 import org.fcrepo.kernel.modeshape.rdf.converters.ValueConverter;
+import org.fcrepo.oai.rdf.LanguageRdf;
 
 import org.openarchives.oai._2_0.oai_dc.OaiDcType;
 import org.purl.dc.elements._1.ObjectFactory;
 import org.purl.dc.elements._1.SimpleLiteral;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
@@ -52,6 +54,9 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
     private static final String uofa = "University of Alberta";
 
     private ValueConverter valueConverter = null;
+
+    @Autowired
+    private LanguageRdf languageRdf;
 
     /**
      * Generate dC.
@@ -362,9 +367,12 @@ public class JcrOaiDcGenerator extends JcrOaiGenerator {
         throws ValueFormatException, IllegalStateException, RepositoryException {
         for (final Value v : prop.getValues()) {
             if (StringUtils.isNotEmpty(v.getString())) {
-                final SimpleLiteral simple = dcFactory.createSimpleLiteral();
-                simple.getContent().add(valueConverter.convert(v).asLiteral().getString());
-                oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createLanguage(simple));
+                final String langStr = languageRdf.getLiteralFromUrl(valueConverter.convert(v).asLiteral().getString());
+                if (langStr != null) {
+                    final SimpleLiteral simple = dcFactory.createSimpleLiteral();
+                    simple.getContent().add(langStr);
+                    oaidc.getTitleOrCreatorOrSubject().add(dcFactory.createLanguage(simple));
+                }
             }
         }
     }
