@@ -746,7 +746,9 @@ public class OAIProviderService {
                 predicate = new PropertyPredicate(propertyHasCollectionId);
                 triples = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
                 final List<Triple> tl = triples.collect(toList());
-                tl.forEach((tmp) -> { h.getSetSpec().add(tmp.getObject().getLiteralValue().toString()); });
+                tl.forEach((tmp) -> {
+                    h.getSetSpec().add(ualPathToOaiSetSpec(tmp.getObject().getLiteralValue().toString()));
+                    });
 
                 ids.getHeader().add(h);
             }
@@ -952,7 +954,7 @@ public class OAIProviderService {
                 }
 
                 // spec
-                set.setSetSpec(setSpec);
+                set.setSetSpec(ualPathToOaiSetSpec(setSpec));
                 set.setSetName(setName);
                 sets.getSet().add(set);
             }
@@ -1108,7 +1110,9 @@ public class OAIProviderService {
         final Stream<Triple> triples
                 = obj.getTriples(converter, RequiredRdfContext.PROPERTIES).filter(predicate);
         final List<Triple> tl = triples.collect(toList());
-        tl.forEach((tmp) -> { h.getSetSpec().add(tmp.getObject().getLiteralValue().toString()); });
+        tl.forEach((tmp) -> {
+            h.getSetSpec().add(ualPathToOaiSetSpec(tmp.getObject().getLiteralValue().toString()));
+        });
 
         // get the metadata record from fcrepo
         final MetadataType md = oaiFactory.createMetadataType();
@@ -1208,7 +1212,7 @@ public class OAIProviderService {
         if (StringUtils.isNotBlank(set)) {
             jql.append(" AND");
             jql.append(" res.[" + propHasCollectionId + "] = '"
-                    + set + "\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string'");
+                    + oaiSetSpecToUalPath(set) + "\u0018^^\u0018http://www.w3.org/2001/XMLSchema#string'");
         }
         if (limit > 0) {
             jql.append(" LIMIT ").append(maxListSize);
@@ -1537,6 +1541,26 @@ public class OAIProviderService {
             }
         }
         return fileObjList;
+     }
+
+     /** 
+      * convert ual:path to OAI setSpec id
+      * 
+      * @param ualPath value of the ual:path property
+      * @return valid OAI setSpec id or empty string
+      */
+     private String ualPathToOaiSetSpec(final String ualPath) {
+        return (ualPath != null) ? ualPath.replace("/",":") : "";
+     }
+
+     /** 
+      * convert OAI setSpec id to ual:path
+      * 
+      * @param oaiSetSpec value of the ual:path property
+      * @return valid OAI setSpec id or empty string
+      */
+     private String oaiSetSpecToUalPath(final String oaiSetSpec) {
+        return (oaiSetSpec != null) ? oaiSetSpec.replace(":","/") : "";
      }
 
     /**
