@@ -209,6 +209,10 @@ Why? ModeShape JCR and JCR SQL uses registered prefixs e.g., dcterms:title and i
 ## v4.7.4.6 Fcrepo4 OAI Provider
 
 * updated documentation
+* output language term instead of url code #34
+* output type term instead of url code #33
+* single DOI reference #35
+* tweak setSpec as per #30
 
 
 <a name="v4.7.5.0"/>
