@@ -125,6 +125,9 @@
 
 5. Warning: due to the usage of system defined namespace prefixes instead predefined namespace prefixes within a [CND file](https://wiki.duraspace.org/display/FEDORA4x/Best+Practices+-+RDF+Namespaces) before content migrated into Fedora, ns00x patterned namespace prefixes were assigned by Fedora/Modeshape 4.7.4. The OAI Provider uses the `{uri}property` syntax to idenify the properies (e.g., [`{http://purl.org/dc/terms/}accessRights`](https://github.com/ualbertalib/fcrepo4-oaiprovider/blob/fcrepo4-oaiprovider-4.7.4.5/src/main/resources/config/jdbc-postgresql/repository.json). Attempting to change via unregister/register function lead to errors [reference](https://github.com/ualbertalib/fcrepo4-oaiprovider/blob/cba619e8c466c64d6bc78c8563a8d5c134c30738/src/main/java/org/fcrepo/oai/service/OAIProviderService.java#L254-L274) as the functions only changed properties not values such as `The namespace with URI "http://projecthydra.org/works/models#" cannot be unregistered because the node type "{http://projecthydra.org/works/models#}Thesis" uses it.`
 
+6. Language codes: warning, if additional languages are added or changes to translation from code to string literal, modify oai.xml, iso 639-2 mapping
+
+6. Type codes: warning, if additional types are added or changes to translation from code to string literal, modify oai.xml, dc type mapping
 
 <a name="v4.7.4.3"/>
 
