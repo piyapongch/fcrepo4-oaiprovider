@@ -196,6 +196,7 @@ public class OAIProviderService {
 
     private String idFormat;
 
+    private String idFormatExtractor;
 
 
     private static final Pattern slashPattern = Pattern.compile("\\/");
@@ -1475,7 +1476,8 @@ public class OAIProviderService {
      */
     protected String getNoidFromIdentifier(final String identifier) throws Exception {
         // whitelist noid to avoid JCR injections
-        final String noid = slashPattern.split(identifier)[1];
+        final String noid = identifier.replaceFirst(idFormatExtractor,"");
+        //final String noid = slashPattern.split(identifier)[1];
         return noid.matches("^[/\\pL\\pN:_-]+$") ? noid : null;
     }
 
@@ -1604,6 +1606,16 @@ public class OAIProviderService {
     public final void setIdFormat(final String idFormat) {
         this.idFormat = idFormat;
     }
+
+    /**
+     * The setIdFormatExtractor setter method.
+     *
+     * @param idFormatExtractor the idFormatExtractor to set
+     */
+    public final void setIdFormatExtractor(final String idFormatExtractor) {
+        this.idFormatExtractor = idFormatExtractor;
+    }
+
 
     /**
      * Sets max list size.

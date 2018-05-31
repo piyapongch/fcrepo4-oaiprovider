@@ -90,7 +90,8 @@
         <property name="setsEnabled" value="true" />
         <property name="searchEnabled" value="true" />
         <property name="rootPath" value="/oai" />
-        <property name="idFormat" value="oai:era.library.ualberta.ca:1/%1$s" />
+        <property name="idFormat" value="oai:era.library.ualberta.ca:%1$s" />
+        <property name="idFormatExtractor" value="oai:era.library.ualberta.ca:" />
         <property name="propertyHasCollectionId" value="http://terms.library.ualberta.ca/path" />
         <property name="propertyHasModel" value="info:fedora/fedora-system:def/model#hasModel" />
         <property name="propertyOaiRepositoryName" value="http://www.openarchives.org/OAI/2.0/repositoryName" />
@@ -168,7 +169,7 @@
                 <entry key="scheme" value="oai" />
                 <entry key="repositoryIdentifier" value="era.library.ualberta.ca" />
                 <entry key="delimiter" value=":" />
-                <entry key="sampleIdentifier" value="oai:era.library.ualberta.ca:1/1d7047d8-f164-45bb-b62c-ae6045eb0c42" />
+                <entry key="sampleIdentifier" value="oai:era.library.ualberta.ca:1d7047d8-f164-45bb-b62c-ae6045eb0c42" />
             </map>
         </property>
     </bean>
