@@ -8,6 +8,7 @@
 * [Release v4.7.4.4 Notes](#v4.7.4.4)
 * [Release v4.7.4.5 Notes](#v4.7.4.5)
 * [Release v4.7.4.6 Notes](#v4.7.4.6)
+* [Release v4.7.4.7 Notes](#v4.7.4.7)
 * [Release v4.7.5.0 Notes](#v4.7.5.0)
 
 
@@ -213,6 +214,12 @@ Why? ModeShape JCR and JCR SQL uses registered prefixs e.g., dcterms:title and i
 * output type term instead of url code #33
 * single DOI reference #35
 * tweak setSpec as per #30
+
+<a name="v4.7.4.7"/>
+
+## v4.7.4.7 Fcrepo4 OAI Provider
+
+* change to remove '1/' from before the UUID idenifier #30 
 
 
 <a name="v4.7.5.0"/>
