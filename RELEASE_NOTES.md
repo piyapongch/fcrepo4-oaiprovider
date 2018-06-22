@@ -9,6 +9,7 @@
 * [Release v4.7.4.5 Notes](#v4.7.4.5)
 * [Release v4.7.4.6 Notes](#v4.7.4.6)
 * [Release v4.7.4.7 Notes](#v4.7.4.7)
+* [Release v4.7.4.8 Notes](#v4.7.4.8)
 * [Release v4.7.5.0 Notes](#v4.7.5.0)
 
 
@@ -47,7 +48,7 @@
     * compiles OAI Provider code into a Jar (`mvn clean; mvn package;`)
     * downloads Fedora Commons War file and adds the following items before rebuilding
         * OAI Provider Jar
-        * config files: OAI Provider, Fedora (Modeshape config, indexing, and fedora config) - oai.xml, master.xml, repository.json (file-simple, jdbc-postgres), activemq.xml (modifed) node-types_ual.cnd)
+        * config files: OAI Provider, Fedora (Modeshape config, indexing, and fedora config) - oai.xml, master.xml, repository.json (file-simple, jdbc-postgres), activemq.xml (modifed) node-types_ual.cnd), web.xml (allow /oai public access while password protecting other url patterns)
         * ModeShape libraries to allow the usage of Lucene indexing within ModeShape (e.g., allowing indexing of multi-valued properties, for example collection membership (https://docs.jboss.org/author/display/MODE50/Lucene)
     * Builds a War file named `fcrepo-oaiprovider-4.7.4.x.war` where `4.7.4` is the Fcrepo version with the last dot number, 'x',  represting the OAI Provider version
 
@@ -66,6 +67,7 @@
         * -Dfcrepo.streaming.parallel=true
     * Fedora/Modeshape performance enhancement (optional) [reference](https://wiki.duraspace.org/display/FEDORA4x/Configuration+Options+Inventory#ConfigurationOptionsInventory-cacheSize) - unsure the optimal value - this is the default
         * Dfcrepo.modeshape.cacheSize=10000
+    * build package `war` file contains the config files required with server specific properties assigned /etc/tomcat/conf.d/jvm_opts.conf via the -Dproperty=value syntax (e.g., -Dfcrepo.triplestore.activemq.broker)
 
 
 * Alternative Modeshape persistance layer - PostgreSQL JDBC in `src/main/resources/config/jdbc-postgresql/`
@@ -221,6 +223,12 @@ Why? ModeShape JCR and JCR SQL uses registered prefixs e.g., dcterms:title and i
 
 * change to remove '1/' from before the UUID idenifier #30 
 
+<a name="v4.7.4.8"/>
+
+## v4.7.4.8 Fcrepo4 OAI Provider
+
+* update web.xml with contents from https://github.com/fcrepo4/fcrepo4/blob/fcrepo-4.7.4/fcrepo-webapp/src/main/webapp/WEB-INF/web.xml
+* update documentation to describe how web.xml changes from the default 
 
 <a name="v4.7.5.0"/>
 
@@ -237,3 +245,5 @@ A minor revision of v4.7.4 - see release note for detailed explaination of the 4
   * modeshape.version: bump to 5.4.0.Final as per Fcrepo release 
   * lucene.version: bump lucene to 6.4.1 as per ModeShape release
 * Add Narayana config : https://github.com/fcrepo4/fcrepo4/commit/cab6f05305e26cf7b0aa818e6683dda422c6984d / https://jira.duraspace.org/browse/FCREPO-2664
+* Check web.xml for updates
+
