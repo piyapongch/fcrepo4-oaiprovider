@@ -145,6 +145,11 @@ public class OAIProviderService {
     private static final String METADATA_PREFIX_OAI_ETDMS = "oai_etdms";
     private static final String METADATA_PREFIX_OAI_DC = "oai_dc";
 
+    // Date granularity
+    private static final int DATE_GRANULARITY_EMPTY     = 0;
+    private static final int DATE_GRANULARITY_DAY       = 1;
+    private static final int DATE_GRANULARITY_SECOND    = 2;
+
     private static final Logger log = LoggerFactory.getLogger(OAIProviderService.class);
 
     private static final ObjectFactory oaiFactory = new ObjectFactory();
@@ -181,6 +186,8 @@ public class OAIProviderService {
     private final DateTimeFormatter dateFormat = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.UTC);
 
     private final DateTimeFormatter dateFormatMillis = ISODateTimeFormat.dateTime().withZone(DateTimeZone.UTC);
+
+    private final DateTimeFormatter dateFormat_YYYYMMDD = ISODateTimeFormat.date().withZone(DateTimeZone.UTC);
 
     private int maxListSize;
 
@@ -700,12 +707,21 @@ public class OAIProviderService {
         }
 
         // dateTime format validation
+        int from_gran = DATE_GRANULARITY_EMPTY;
+        int until_gran = DATE_GRANULARITY_EMPTY;
         try {
-            validateDateTimeFormat(from);
-            validateDateTimeFormat(until);
+            from_gran = validateDateTimeFormat(from);
+            until_gran = validateDateTimeFormat(until);
         } catch (final IllegalArgumentException e) {
             return error(VerbType.LIST_IDENTIFIERS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
                     e.getMessage());
+        }
+        if ( from_gran != DATE_GRANULARITY_EMPTY
+                && until_gran != DATE_GRANULARITY_EMPTY
+                && from_gran != until_gran
+                ) {
+            return error(VerbType.LIST_IDENTIFIERS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
+                    "The request has different granularities for the from and until parameters.");
         }
 
         final HttpResourceConverter converter
@@ -1029,11 +1045,20 @@ public class OAIProviderService {
         }
 
         // dateTime format validation
+        int from_gran = DATE_GRANULARITY_EMPTY;
+        int until_gran = DATE_GRANULARITY_EMPTY;
         try {
-            validateDateTimeFormat(from);
-            validateDateTimeFormat(until);
+            from_gran = validateDateTimeFormat(from);
+            until_gran = validateDateTimeFormat(until);
         } catch (final IllegalArgumentException e) {
             return error(VerbType.LIST_RECORDS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT, e.getMessage());
+        }
+        if ( from_gran != DATE_GRANULARITY_EMPTY
+                && until_gran != DATE_GRANULARITY_EMPTY
+                && from_gran != until_gran
+                ) {
+            return error(VerbType.LIST_IDENTIFIERS, null, metadataPrefix, OAIPMHerrorcodeType.BAD_ARGUMENT,
+                    "The request has different granularities for the from and until parameters.");
         }
 
         if (StringUtils.isNotBlank(set) && !setsEnabled) {
@@ -1188,7 +1213,7 @@ public class OAIProviderService {
             // thus the comparison fails "from" <= object.timestamp <= "until" fails
             // E.G., 2017-03-13T22:36:23Z <= 2017-03-13T22:36:23.655Z <= 2017-03-13T22:36:23Z fails
             // Fix: add 999 milliseconds to the end of the "until" thus accounting for the second granularity
-            DateTime dt = dateFormat.parseDateTime(until);
+            DateTime dt = convertStrToDateTime(until);
             dt = dt.plusMillis(999);
             jql.append(" AND");
             jql.append(" res.[" + propJcrLastModifiedDate + "] <= CAST('"
@@ -1234,10 +1259,43 @@ public class OAIProviderService {
         return results.getRows();
     }
 
-    private void validateDateTimeFormat(final String dateTime) {
+    private int validateDateTimeFormat(final String dateTime) {
+        // http://www.openarchives.org/OAI/openarchivesprotocol.html#SelectiveHarvestingandDatestamps
+        // three valid possibilities:
+        // 1. date empty (no date specified)
+        // 2. YYYY-MM-DD (time optional)
+        // 3. yyyy-MM-dd'T'HH:mm:ss.SSZZ (time second granularity
+        // date optional or if date then requires YYYY-MM-DD with optional time
+        int ret = DATE_GRANULARITY_EMPTY;
         if (StringUtils.isNotBlank(dateTime)) {
-            dateFormat.parseDateTime(dateTime);
+            if (dateTime.length() == 10) {
+                dateFormat_YYYYMMDD.parseDateTime(dateTime);
+                ret = DATE_GRANULARITY_DAY;
+            } else {
+                dateFormat.parseDateTime(dateTime);
+                ret = DATE_GRANULARITY_SECOND;
+            }
         }
+        return ret;
+    }
+
+    private DateTime convertStrToDateTime(final String dateTime) {
+        // http://www.openarchives.org/OAI/openarchivesprotocol.html#SelectiveHarvestingandDatestamps
+        // three valid possibilities:
+        // 1. date empty (no date specified)
+        // 2. YYYY-MM-DD (time optional)
+        // 3. yyyy-MM-dd'T'HH:mm:ss.SSZZ (time second granularity
+        // date optional or if date then requires YYYY-MM-DD with optional time
+        // ret contains timezone
+        DateTime ret = null;
+        if (StringUtils.isNotBlank(dateTime)) {
+            if (dateTime.length() == 10) {
+                ret = dateFormat_YYYYMMDD.parseDateTime(dateTime);
+            } else {
+                ret = dateFormat.parseDateTime(dateTime);
+            }
+        }
+        return ret;
     }
 
     /**
