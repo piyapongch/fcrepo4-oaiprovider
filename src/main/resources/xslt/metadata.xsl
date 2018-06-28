@@ -46,7 +46,7 @@
 		<xsl:copy copy-namespaces="no">
 		    <xsl:namespace name="etd_ms">http://www.ndltd.org/standards/metadata/etdms/1.0/</xsl:namespace>
 			<xsl:namespace name="xsi2">http://www.w3.org/2001/XMLSchema-instance</xsl:namespace>
-		    <xsl:attribute name="xsi2:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">http://www.ndltd.org/standards/metadata/etdms/1.0/ http://www.ndltd.org/standards/metadata/etdms/1.0/etdms.xsd</xsl:attribute>
+		    <xsl:attribute name="xsi2:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance">http://www.ndltd.org/standards/metadata/etdms/1.0/ http://www.ndltd.org/standards/metadata/etdms/1-0/etdms.xsd</xsl:attribute>
 			<xsl:apply-templates select="@* | node()"/>
 		</xsl:copy>
 	</xsl:template>
