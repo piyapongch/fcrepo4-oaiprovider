@@ -11,7 +11,7 @@
     <artifactId>fcrepo-oaiprovider</artifactId>
     <description>The Fedora Commons repository OAI provider.</description>
     <packaging>jar</packaging>
-    <version>4.7.4.9</version>
+    <version>4.7.4.10</version>
 
     <properties>
       <fcrepo.version>4.7.4</fcrepo.version> <!-- change for Fcrepo update -->
