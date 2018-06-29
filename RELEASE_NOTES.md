@@ -242,7 +242,7 @@ Why? ModeShape JCR and JCR SQL uses registered prefixs e.g., dcterms:title and i
 
 ## v4.7.4.10 Fcrepo4 OAI Provider
 
-* Addresses issue #45 - LAC date (without time) validation error
+* Addresses issue #45 - LAC schema validation error
 
 
 <a name="v4.7.5.0"/>
