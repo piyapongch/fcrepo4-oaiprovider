@@ -11,6 +11,7 @@
 * [Release v4.7.4.7 Notes](#v4.7.4.7)
 * [Release v4.7.4.8 Notes](#v4.7.4.8)
 * [Release v4.7.4.9 Notes](#v4.7.4.9)
+* [Release v4.7.4.10 Notes](#v4.7.4.10)
 * [Release v4.7.5.0 Notes](#v4.7.5.0)
 
 
@@ -236,6 +237,12 @@ Why? ModeShape JCR and JCR SQL uses registered prefixs e.g., dcterms:title and i
 ## v4.7.4.9 Fcrepo4 OAI Provider
 
 * Addresses issue #44 - LAC date (without time) validation error
+
+<a name="v4.7.4.10"/>
+
+## v4.7.4.10 Fcrepo4 OAI Provider
+
+* Addresses issue #45 - LAC date (without time) validation error
 
 
 <a name="v4.7.5.0"/>
